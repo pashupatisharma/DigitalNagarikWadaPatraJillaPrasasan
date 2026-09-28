@@ -1,0 +1,1246 @@
+﻿```cshtml
+@{
+    Layout = null;
+
+    var ofc = Utility.officeDetail();
+
+    HelpDesk.Models.ApplicationDbContext db =
+        new HelpDesk.Models.ApplicationDbContext();
+
+    var notice = db.Notice
+        .OrderByDescending(x => x.NoticeId)
+        .Take(5)
+        .ToList();
+
+    var date = DateTime.Now;
+    var month_name = date.ToString("MMMM");
+}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @if (ofc != null)
+        {
+            @ofc.Office_Name
+        }
+        else
+        {
+            <text>डिजिटल नागरिक वडापत्र प्रणाली</text>
+        }
+    </title>
+
+
+    <!-- =====================================================
+         CSS FILES
+         ===================================================== -->
+
+    <link href="~/Content/fontawesome-all.css"
+          rel="stylesheet" />
+
+    <link href="~/Content/bootstrap.css"
+          rel="stylesheet" />
+
+    <link href="~/Content/fontawesome.css"
+          rel="stylesheet" />
+
+    <link href="~/Styles/style.css"
+          rel="stylesheet" />
+
+    <link href="~/css/asstes/css/styles.css"
+          rel="stylesheet" />
+
+    <link href="~/Content/chosen.css"
+          rel="stylesheet" />
+
+    <link href="~/Content/PagedList.css"
+          rel="stylesheet" />
+
+    <link href="~/fontawesome-free-6.7.2-web/css/all.css"
+          rel="stylesheet" />
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+
+    <!-- =====================================================
+         DIGITAL CITIZEN CHARTER STYLE
+         ===================================================== -->
+
+    <style>
+
+        /* =====================================================
+           GLOBAL
+           ===================================================== */
+
+        html {
+            scrollbar-width: none;
+        }
+
+            html::-webkit-scrollbar {
+                display: none;
+            }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #eef2f7;
+            font-family: "Segoe UI", "Noto Sans Devanagari", "Mangal", Arial, sans-serif;
+        }
+
+
+        /* =====================================================
+           OLD HEADER OVERRIDE
+           ===================================================== */
+
+        header.navigation1 {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+
+        /* =====================================================
+           MAIN OFFICE HEADER
+           ===================================================== */
+
+        .office-header {
+            position: relative;
+            width: 100%;
+            min-height: 120px;
+            display: grid;
+            /*
+                More space for office name/location
+                13% | 74% | 13%
+            */
+
+            grid-template-columns: 13% 74% 13%;
+            align-items: center;
+            /*
+                Reduced right padding so the
+                center section gets more space.
+            */
+
+            padding: 10px 50px 10px 25px;
+            background: linear-gradient( 135deg, #0f1f3d 0%, #172554 38%, #1e3a5f 70%, #274c77 100% );
+            border-left: 7px solid #c9a227;
+            border-bottom: 4px solid #c9a227;
+            box-shadow: 0 4px 15px rgba(0,0,0,.25);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+
+            /* =====================================================
+           DECORATIVE HEADER EFFECT
+           ===================================================== */
+
+            .office-header::before {
+                content: "";
+                position: absolute;
+                top: -80px;
+                right: 12%;
+                width: 240px;
+                height: 240px;
+                border-radius: 50%;
+                background: rgba(255,255,255,.035);
+                pointer-events: none;
+            }
+
+
+            .office-header::after {
+                content: "";
+                position: absolute;
+                bottom: -100px;
+                left: 35%;
+                width: 300px;
+                height: 200px;
+                border-radius: 50%;
+                background: rgba(201,162,39,.035);
+                pointer-events: none;
+            }
+
+
+        /* =====================================================
+           LEFT - NEPAL EMBLEM
+           ===================================================== */
+
+        .office-logo {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+
+
+            .office-logo a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                width: 100%;
+            }
+
+
+        .nepal-emblem {
+            display: block;
+            width: auto;
+            height: 90px;
+            max-width: 130px;
+            object-fit: contain;
+            filter: drop-shadow( 0 3px 4px rgba(0,0,0,.35) );
+        }
+
+
+        /* =====================================================
+           CENTER - OFFICE INFORMATION
+           ===================================================== */
+
+        .office-header-content {
+            text-align: center;
+            /*
+                Small horizontal padding.
+                This prevents location text
+                from being clipped.
+            */
+
+            padding: 0 10px;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* =====================================================
+           OFFICE NAME
+           ===================================================== */
+
+        .office-name {
+            color: #ffffff;
+            font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
+            font-size: clamp( 28px, 2.5vw, 52px );
+            font-weight: 800;
+            line-height: 1.15;
+            text-shadow: 0 2px 4px rgba(0,0,0,.35);
+            /*
+                Office name stays one line.
+            */
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* =====================================================
+           OFFICE LOCATION
+           ===================================================== */
+
+        .office-address {
+            margin-top: 5px;
+            color: #e7eef7;
+            font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
+            font-size: clamp( 17px, 1.35vw, 30px );
+            font-weight: 500;
+            /*
+                Increased line-height slightly so
+                Devanagari characters are not clipped.
+            */
+
+            line-height: 1.35;
+            /*
+                IMPORTANT:
+                Do NOT use nowrap here.
+                It was causing the final part
+                of the location to disappear.
+            */
+
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 5px;
+        }
+
+
+        /* =====================================================
+           DIGITAL CITIZEN CHARTER BADGE
+           ===================================================== */
+
+        .office-welcome {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 18px;
+            color: #ffffff;
+            background: rgba( 201, 162, 39, .18 );
+            border: 1px solid rgba( 201, 162, 39, .75 );
+            border-radius: 20px;
+            font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
+            font-size: clamp( 15px, 1.05vw, 24px );
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* =====================================================
+           RIGHT - FLAG / DATE / LOGIN
+           ===================================================== */
+
+        .office-right {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding-right: 5px;
+            position: relative;
+            z-index: 2;
+            min-width: 0;
+        }
+
+
+        /* =====================================================
+           NEPAL FLAG
+           ===================================================== */
+
+        .nepal-flag {
+            width: auto;
+            height: 48px;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow( 0 2px 4px rgba(0,0,0,.35) );
+        }
+
+
+        /* =====================================================
+           DATE
+           ===================================================== */
+
+        .header-date {
+            text-align: center;
+            color: #ffffff;
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: clamp( 12px, .8vw, 18px );
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           LOGIN BUTTON
+           ===================================================== */
+
+        .login-button {
+            display: inline-block;
+            padding: 4px 16px;
+            color: #ffffff !important;
+            background: #9b111e;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 5px;
+            text-decoration: none !important;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .2s ease;
+        }
+
+
+            .login-button:hover {
+                background: #b91c2b;
+                color: #ffffff !important;
+                transform: translateY(-1px);
+            }
+
+
+        /* =====================================================
+           FULLSCREEN BUTTON
+           ===================================================== */
+
+        .fullscreen-button {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 50%;
+            background: rgba(255,255,255,.12);
+            color: #ffffff;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 20;
+            transition: all .2s ease;
+        }
+
+
+            .fullscreen-button:hover {
+                background: rgba(255,255,255,.25);
+                transform: translateY(-50%) scale(1.05);
+            }
+
+
+        /* =====================================================
+           MAIN PAGE AREA
+           ===================================================== */
+
+        .website-main {
+            width: 100%;
+            background: #eef2f7;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+
+        .website-content {
+            width: 100%;
+            background: #eef2f7;
+            overflow: hidden;
+            scroll-behavior: smooth;
+        }
+
+
+        /* =====================================================
+           NOTICE BAR
+           ===================================================== */
+
+        .notice-bar {
+            background: linear-gradient( 90deg, #0f1f3d, #172554, #1e3a5f ) !important;
+            color: #ffffff;
+            border-top: 3px solid #c9a227;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+
+            .notice-bar .notice-title {
+                background: #9b111e;
+                color: #ffffff;
+                font-weight: 700;
+                padding: 8px 18px;
+                min-width: 120px;
+                text-align: center;
+                z-index: 2;
+            }
+
+
+            .notice-bar marquee {
+                color: #ffffff;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 40px;
+                flex: 1;
+            }
+
+
+            .notice-bar a {
+                color: #ffffff !important;
+                text-decoration: none;
+            }
+
+
+                .notice-bar a:hover {
+                    color: #ffe9a3 !important;
+                }
+
+
+        /* =====================================================
+           FOOTER
+           ===================================================== */
+
+        .website-footer {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: #0f1f3d;
+            color: #ffffff !important;
+            border-top: 4px solid #c9a227;
+        }
+
+
+        .footer-info {
+            padding: 8px 15px;
+            background: #0f1f3d;
+            color: #ffffff;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+            .footer-info a {
+                color: #ffe08a !important;
+                text-decoration: none;
+            }
+
+
+                .footer-info a:hover {
+                    color: #ffffff !important;
+                }
+
+
+        .footer-office {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+
+        .footer-developed {
+            text-align: right;
+        }
+
+
+        /* =====================================================
+           LARGE DESKTOP
+           ===================================================== */
+
+        @@media (min-width: 1600px) {
+
+            .office-header {
+                min-height: 140px;
+            }
+
+
+            .nepal-emblem {
+                height: 110px;
+            }
+
+
+            .nepal-flag {
+                height: 58px;
+            }
+
+
+            .office-welcome {
+                padding: 7px 22px;
+            }
+        }
+
+
+        /* =====================================================
+           VERY LARGE DISPLAY BOARD
+           ===================================================== */
+
+        @@media (min-width: 2500px) {
+
+            .office-header {
+                min-height: 165px;
+                grid-template-columns: 12% 76% 12%;
+            }
+
+
+            .nepal-emblem {
+                height: 135px;
+                max-width: 170px;
+            }
+
+
+            .nepal-flag {
+                height: 70px;
+            }
+
+
+            .fullscreen-button {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+            }
+
+
+            .notice-bar {
+                min-height: 55px;
+            }
+
+
+                .notice-bar marquee {
+                    font-size: 22px;
+                    line-height: 52px;
+                }
+
+
+            .footer-info {
+                font-size: 18px;
+            }
+        }
+
+
+        /* =====================================================
+           TABLET / SMALL SCREEN
+           ===================================================== */
+
+        @@media (max-width: 900px) {
+
+            .office-header {
+                grid-template-columns: 18% 64% 18%;
+                padding-left: 10px;
+                padding-right: 50px;
+                min-height: 100px;
+            }
+
+
+            .nepal-emblem {
+                height: 70px;
+                max-width: 90px;
+            }
+
+
+            .nepal-flag {
+                height: 35px;
+            }
+
+
+            .office-header-content {
+                padding: 0 5px;
+            }
+
+
+            .office-name {
+                font-size: clamp( 20px, 3vw, 32px );
+            }
+
+
+            .office-address {
+                font-size: clamp( 13px, 2vw, 20px );
+                line-height: 1.35;
+            }
+
+
+            .office-welcome {
+                padding: 3px 10px;
+            }
+
+
+            .fullscreen-button {
+                width: 35px;
+                height: 35px;
+                right: 7px;
+                font-size: 18px;
+            }
+
+
+            .login-button {
+                padding: 3px 9px;
+                font-size: 11px;
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE
+           ===================================================== */
+
+        @@media (max-width: 600px) {
+
+            .office-header {
+                grid-template-columns: 20% 60% 20%;
+                min-height: 90px;
+                padding: 5px 42px 5px 5px;
+            }
+
+
+            .nepal-emblem {
+                height: 58px;
+                max-width: 70px;
+            }
+
+
+            .nepal-flag {
+                height: 27px;
+            }
+
+
+            .office-header-content {
+                padding: 0 3px;
+            }
+
+
+            .office-name {
+                font-size: 20px;
+                line-height: 1.15;
+            }
+
+
+            .office-address {
+                font-size: 12px;
+                line-height: 1.3;
+                margin-top: 3px;
+                padding: 0 2px;
+            }
+
+
+            .office-welcome {
+                margin-top: 3px;
+                padding: 2px 7px;
+                font-size: 10px;
+                line-height: 1.2;
+            }
+
+
+            .header-date {
+                font-size: 9px;
+            }
+
+
+            .login-button {
+                padding: 2px 7px;
+                font-size: 9px;
+            }
+
+
+            .fullscreen-button {
+                width: 30px;
+                height: 30px;
+                font-size: 15px;
+                right: 5px;
+            }
+
+
+            .notice-bar {
+                min-height: 38px;
+            }
+
+
+                .notice-bar .notice-title {
+                    min-width: 70px;
+                    padding: 7px 10px;
+                    font-size: 13px;
+                }
+
+
+                .notice-bar marquee {
+                    font-size: 13px;
+                    line-height: 36px;
+                }
+
+
+            .footer-info {
+                font-size: 12px;
+            }
+
+
+            .footer-developed {
+                text-align: center;
+            }
+        }
+
+
+        /* =====================================================
+           EXTRA SMALL MOBILE
+           ===================================================== */
+
+        @@media (max-width: 400px) {
+
+            .office-header {
+                grid-template-columns: 18% 64% 18%;
+                padding: 4px 38px 4px 4px;
+                min-height: 85px;
+            }
+
+
+            .nepal-emblem {
+                height: 52px;
+                max-width: 60px;
+            }
+
+
+            .nepal-flag {
+                height: 24px;
+            }
+
+
+            .office-name {
+                font-size: 17px;
+            }
+
+
+            .office-address {
+                font-size: 10px;
+            }
+
+
+            .office-welcome {
+                font-size: 8px;
+                padding: 2px 5px;
+            }
+
+
+            .header-date {
+                font-size: 8px;
+            }
+
+
+            .login-button {
+                font-size: 8px;
+                padding: 2px 5px;
+            }
+        }
+
+
+        /* =====================================================
+           PRINT
+           ===================================================== */
+
+        @@media print {
+
+            .fullscreen-button,
+            .login-button {
+                display: none !important;
+            }
+
+
+            .office-header {
+                box-shadow: none !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+
+            .notice-bar,
+            .website-footer {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         MAIN HEADER
+         ===================================================== -->
+
+    <header class="sticky-top navbar navbar-default navigation1"
+            role="navigation">
+
+        <div class="office-header">
+
+
+            <!-- =================================================
+                 LEFT : NEPAL EMBLEM
+                 ================================================= -->
+
+            <div class="office-logo">
+
+                <a href="@Url.Action("Index", "Home")">
+
+                    <img src="~/Content/Image/Emblem_of_Nepal.png"
+                         class="nepal-emblem"
+                         alt="नेपाल सरकारको प्रतीक" />
+
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 CENTER : OFFICE INFORMATION
+                 ================================================= -->
+
+            <div class="office-header-content">
+
+
+                <!-- OFFICE NAME -->
+
+                <div class="office-name">
+
+                    @if (ofc != null)
+                    {
+                        @ofc.Office_Name
+                    }
+                    else
+                    {
+                        <text>
+                            स्थानीय तहको कार्यालय
+                        </text>
+                    }
+
+                </div>
+
+
+                <!-- OFFICE LOCATION -->
+
+                <div class="office-address">
+
+                    @if (ofc != null)
+                    {
+                        @ofc.Office_Location
+                    }
+
+                </div>
+
+
+                <!-- DIGITAL CITIZEN CHARTER -->
+
+                <div class="office-welcome">
+
+                    डिजिटल नागरिक वडापत्र प्रणाली
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT : NEPAL FLAG + DATE + LOGIN
+                 ================================================= -->
+
+            <div class="office-right">
+
+
+                <!-- NEPAL FLAG -->
+
+                <img src="~/Content/Image/animated-nepal-flag-image-0004.gif"
+                     class="nepal-flag"
+                     alt="नेपालको राष्ट्रिय झण्डा" />
+
+
+                <!-- DATE -->
+
+                <div class="header-date">
+
+                    <div>
+
+                        @DateTime.Now.DayOfWeek -
+                        @DateTime.Now.Day
+
+                        @{
+                            int day = DateTime.Now.Day;
+
+                            string suffix = "th";
+
+                            if (day % 100 < 11 ||
+                                day % 100 > 13)
+                            {
+                                switch (day % 10)
+                                {
+                                    case 1:
+                                        suffix = "st";
+                                        break;
+
+                                    case 2:
+                                        suffix = "nd";
+                                        break;
+
+                                    case 3:
+                                        suffix = "rd";
+                                        break;
+                                }
+                            }
+                        }
+
+                        @suffix
+
+                    </div>
+
+
+                    <div>
+
+                        @month_name
+                        @DateTime.Now.Year
+
+                    </div>
+
+                </div>
+
+
+                <!-- LOGIN -->
+
+                <a href="@Url.Action("Login", "Account")"
+                   class="login-button"
+                   target="_blank">
+
+                    Login
+
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 FULL SCREEN BUTTON
+                 ================================================= -->
+
+            <button type="button"
+                    class="fullscreen-button"
+                    onclick="toggleFullscreen()"
+                    title="Full Screen">
+
+                ⛶
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN WEBSITE CONTENT
+         ===================================================== -->
+
+    <section class="website-main">
+
+
+        <div class="clearfix"
+             id="clearfixMaster"
+             style="clear:both;">
+        </div>
+
+
+        <div class="website-content">
+
+            @RenderBody()
+
+        </div>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="website-footer">
+
+
+            <!-- =================================================
+                 NOTICE BAR
+                 ================================================= -->
+
+            <div class="row notice-bar"
+                 style="margin:0;">
+
+                <div class="notice-title">
+
+                    सूचना
+
+                </div>
+
+
+                <marquee behavior="scroll"
+                         direction="left"
+                         scrollamount="6"
+                         onmouseover="this.stop();"
+                         onmouseout="this.start();">
+
+                    @if (notice != null &&
+                         notice.Count > 0)
+                    {
+                        foreach (var item in notice)
+                        {
+                            <span style="margin-right:50px;">
+
+                                @item.Title
+
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <span>
+
+                            हाल कुनै सूचना उपलब्ध छैन।
+
+                        </span>
+                    }
+
+                </marquee>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOOTER INFORMATION
+                 ================================================= -->
+
+            <div class="footer-info">
+
+
+                <div class="row"
+                     style="margin:0;">
+
+
+                    <!-- OFFICE -->
+
+                    <div class="col-md-4 col-sm-4">
+
+                        <div class="footer-office">
+
+                            @if (ofc != null)
+                            {
+                                @ofc.Office_Name
+                            }
+
+                        </div>
+
+
+                        @if (ofc != null)
+                        {
+                            <div>
+
+                                @ofc.Office_Location
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- SYSTEM -->
+
+                    <div class="col-md-4 col-sm-4 text-center">
+
+                        <div>
+
+                            डिजिटल नागरिक वडापत्र प्रणाली
+
+                        </div>
+
+
+                        <div>
+
+                            © @DateTime.Now.Year
+                            All Rights Reserved.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DEVELOPER -->
+
+                    <div class="col-md-4 col-sm-4 footer-developed">
+
+                        <div>
+
+                            Developed By
+
+                            <strong>
+                                APOGEE
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            Think Digital. Think Apogee.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </footer>
+
+    </section>
+
+
+    <!-- =====================================================
+         FULLSCREEN SCRIPT
+         ===================================================== -->
+
+    <script>
+
+        function toggleFullscreen() {
+
+            var element =
+                document.documentElement;
+
+
+            if (!document.fullscreenElement) {
+
+                if (element.requestFullscreen) {
+
+                    element.requestFullscreen();
+
+                }
+                else if (element.webkitRequestFullscreen) {
+
+                    element.webkitRequestFullscreen();
+
+                }
+                else if (element.msRequestFullscreen) {
+
+                    element.msRequestFullscreen();
+
+                }
+
+            }
+            else {
+
+                if (document.exitFullscreen) {
+
+                    document.exitFullscreen();
+
+                }
+                else if (document.webkitExitFullscreen) {
+
+                    document.webkitExitFullscreen();
+
+                }
+                else if (document.msExitFullscreen) {
+
+                    document.msExitFullscreen();
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
+```

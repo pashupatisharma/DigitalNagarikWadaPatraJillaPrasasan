@@ -1,0 +1,74 @@
+﻿@using System.Collections.Generic
+
+@model HelpDesk.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container">
+
+    <div class="modal-content">
+
+        <form action="@Url.Action("Register","Account")" method="post">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <div class="login-form-head">
+                <h4>Sign up</h4>
+                <p>Hello there, Sign up and Join with Us</p>
+            </div>
+            <div class="login-form-body row">
+            
+                <div class="col-md-3">
+                    <label class="control-label" for="exampleInputEmail1">UserName</label>
+                    <i class="ti-email placeholder"></i>@Html.TextBoxFor(m => m.UserName, new { @class = "form-control iconp", @id = "exampleInputEmail1" })
+                </div>
+                <div class="col-md-3">
+                    <label class="control-label" for="exampleInputPassword1">Password</label> <i class="ti-lock placeholder"></i>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control iconp", @id = "exampleInputPassword1" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    <label class="control-label" for="exampleInputPassword2">Confirm Password</label> <i class="ti-lock placeholder"></i>
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control iconp", @id = "exampleInputPassword2" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.RoleName, new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.RoleName, Utility.GetRolesList(), "छान्नुहोस्", new { @class = "form-control chosen-select" })
+                </div>
+
+                <div class="submit-btn-area pt-4">
+                    <button class="btn btn-default button" id="form_submit" type="submit">Submit <i class="ti-arrow-right"></i></button>
+
+                </div>
+
+                <p style="color:red;">@ViewBag.ErrorMessage</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .placeholder {
+        position: absolute;
+        color: gray;
+        top: 45px;
+        left: 25px;
+    }
+
+    .iconp {
+        text-indent: 20px;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".nepali-calendar").nepaliDatePicker();
+
+        $(".chosen-select").chosen({
+
+            no_results_text: "Oops, nothing found!",
+
+        });
+    });
+</script>

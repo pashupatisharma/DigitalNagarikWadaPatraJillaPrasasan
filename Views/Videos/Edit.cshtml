@@ -1,0 +1,116 @@
+﻿@model HelpDesk.Models.Video
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Edit", "Videos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.VideoId)
+    @Html.HiddenFor(m => m.VideoData)
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <hr />
+                <div class="card-header bg-info">
+                    <h4 class="m-b-0 text-white">Videos</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.VideoData) <span class="text-danger">*</span>
+
+                            <input type="file" name="UploadedVideo" id="fileToUpload" class="form-control bordered-input" onchange="ChangeVideo(this)" />
+                            @Html.ValidationMessageFor(model => model.VideoData, "", new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.VideoName)
+
+                            @Html.EditorFor(model => model.VideoName, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.VideoName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.UploadedBy)
+
+                            @Html.EditorFor(model => model.UploadedBy, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.UploadedBy, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            @if (Model.VideoData != null)
+                            {
+                                <video width="300" height="220" id="imgThumbnail" controls autoplay="autoplay">
+                                    <source src="~/UploadedVideos/@Model.VideoData" type="video/mp4">
+                                </video>
+                            }
+                            else
+                            {
+                                <video width="300" height="220" id="imgThumbnail" controls>
+                                </video>
+                            }
+                        </div>
+                    </div>
+
+
+                    <div>
+                    </div><br />
+
+                    <div></div><br />
+                    <div class="row">
+                        <div class="form-actions text-right">
+                            <button class="btn btn-info" type="submit">
+                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                बचत
+                            </button>
+
+
+                            <button class="btn btn-reset" type="reset">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var k = jQuery.noConflict();
+
+        k(document).ready(function () {
+            k(".chosen-select").chosen({
+                no_result_text: "Oops Something went wrong !!",
+            });
+            k('.nepali-calendar').nepaliDatePicker();
+        });
+
+        function ChangeVideo(input) {
+            //alert(input);
+            if (input.files && input.files[0]) {
+                var ImageDir = new FileReader();
+                ImageDir.onload = function (e) {
+                    k('#imgThumbnail').attr('src', e.target.result);
+                }
+                ImageDir.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

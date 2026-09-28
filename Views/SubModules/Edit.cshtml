@@ -1,0 +1,115 @@
+﻿@model HelpDesk.Models.SubModule
+@using HelpDesk.Helpers;
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Content/ckeditor/ckeditor.js"></script>
+@using (Html.BeginForm("Edit", "SubModules", FormMethod.Post, new { id = "form0", enctype = "multipart/form-data" }))
+{
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.FileName)
+    @Html.HiddenFor(m => m.FilePath)
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <hr />
+                <div class="card-header bg-info">
+                    <h4 class="m-b-0 text-white">सेवा</h4>
+                </div>
+                <div class="card-body">
+
+
+
+                    <div class="row">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Title)
+
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.MainModuleId)
+                            @Html.DropDownList("MainModuleId", null, htmlAttributes: new { @class = "form-control form-select bordered-input" })
+                            @Html.ValidationMessageFor(model => model.MainModuleId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.TimeNeed, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.TimeNeed, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.TimeNeed, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.DasturNeed, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.DasturNeed, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.DasturNeed, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            Video
+                            <input type="file" id="fileupload" name="fileupload" class="custom-file-input" />
+
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            @Html.LabelFor(model => model.DocumentNeeded, htmlAttributes: new { @class = "control-label " })
+
+                            @Html.TextAreaFor(model => model.DocumentNeeded, new { @class = "form-control ckeditor", @id = "sampleEditor" })
+                            @Html.ValidationMessageFor(model => model.DocumentNeeded, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            @Html.LabelFor(model => model.Process, htmlAttributes: new { @class = "control-label " })
+
+                            @Html.TextAreaFor(model => model.Process, new { @class = "form-control ckeditor", @id = "sampleEditor1" })
+                            @Html.ValidationMessageFor(model => model.Process, "", new { @class = "text-danger" })
+
+                        </div>
+                    </div>
+                    <div></div><br />
+
+                    <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="form-actions text-right">
+                            <button class="btn btn-info" type="submit">
+                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                बचत
+                            </button>
+
+
+                            <button class="btn btn-reset" type="reset">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        CKEDITOR.replace("sampleEditor")
+        CKEDITOR.replace("sampleEditor1")
+    });
+</script>

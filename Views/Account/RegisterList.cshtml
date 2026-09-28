@@ -1,0 +1,118 @@
+﻿@using System.Collections.Generic
+@using System.Data.Entity;
+@model HelpDesk.Models.RegisterViewModel
+@{
+    ViewBag.Title = "RegisterList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var sn = 1;
+    HelpDesk.Models.ApplicationDbContext db = new HelpDesk.Models.ApplicationDbContext();
+
+
+}
+<div class="page-header">
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="title">
+                <h4 class="animated fadeInDown">कर्मचारी Account Setup</h4>
+            </div>
+            <nav aria-label="breadcrumb" role="navigation">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item animated fadeInLeft">
+                        <a href="#">कर्मचारी मुख्य विवरण</a>
+                    </li>
+                    <li class="breadcrumb-item active animated fadeInLeft" aria-current="page">
+                        <a href="@Url.Action("RegisterList", "Account")">कर्मचारी Account Setup</a>
+                    </li>
+                    <li class="breadcrumb-item active animated fadeInLeft" aria-current="page">
+                        कर्मचारी Accountका सूचीहरु
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-4 pt-4">
+        <p>
+            @Html.ActionLink("नया थप्नुहोस्", "Register", null, new { @class = "btn btn-primary button" })
+        </p>
+    </div>
+</div>
+<table id="example2" class="table table-hover">
+    <thead style="background-color:#C1BBB7">
+        <tr>
+            <th>
+                S.N.
+            </th>
+            <th>
+                Username
+            </th>
+            <th>
+                Role Name
+            </th>
+            <th>
+                Status
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.UserList)
+        {
+
+            string id = item.Id;
+            var Users = db.Users.Where(x => x.UserName == item.UserName).Include(u => u.Roles);
+            var rolelist = item.Roles.Select(r => r.RoleId).ToList();
+
+
+
+
+            <tr>
+                <td style="padding:5px;">
+                    @sn
+                </td>
+                <td style="padding:5px;">@item.UserName</td>
+
+                <td style="padding:5px;">
+                    @foreach (var items in rolelist)
+                    {
+                        string role = db.Roles.Where(x => x.Id == items).FirstOrDefault().Name;
+                        <text>@role</text>
+                    }
+                </td>
+
+                <td style="padding:5px;">
+                    @if (item.Status == 0)
+                    {
+                        <text>No Active</text>
+                    }
+                    else
+                    {
+                        <text>Active</text>
+                    }
+                </td>
+
+
+
+                <td style="padding:5px;">
+                    @if (item.Status == 0)
+                    {
+                        <a href="@Url.Action("Enable", "Account", new { Id = item.Id })">Enable</a>
+
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Disable", "Account", new { Id = item.Id })">Disable</a>
+                    }
+                </td>
+
+
+            </tr>
+            sn++;
+
+        }
+    </tbody>
+
+</table>

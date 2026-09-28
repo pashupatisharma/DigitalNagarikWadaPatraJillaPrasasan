@@ -1,0 +1,417 @@
+﻿
+@model HelpDesk.Models.HomePageViewModel
+
+<style>
+    /* =========================================================
+       DIGITAL CITIZEN CHARTER
+       SERVICE / MODULE PANEL
+       ========================================================= */
+
+    .module-panel {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    /* ---------------------------------------------------------
+       HEADER
+       --------------------------------------------------------- */
+
+    .module-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        margin-bottom: 10px;
+        background: #172554;
+        color: #ffffff;
+        border-radius: 7px;
+        border-bottom: 3px solid #c9a227;
+        box-shadow: 0 3px 10px rgba(15, 31, 61, .15);
+    }
+
+    .module-header-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: clamp(19px, 1.35vw, 28px);
+        font-weight: 700;
+    }
+
+        .module-header-title i {
+            color: #f4d76a;
+        }
+
+    .module-header-subtitle {
+        color: #dbe4f0;
+        font-size: clamp(12px, .8vw, 17px);
+        font-weight: 400;
+    }
+
+    .module-count {
+        min-width: 36px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+        background: rgba(255,255,255,.12);
+        color: #ffffff;
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 18px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* ---------------------------------------------------------
+       MODULE GRID
+       --------------------------------------------------------- */
+
+    .module-box {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-content: start;
+        gap: 10px;
+        padding: 3px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    /* ---------------------------------------------------------
+       SERVICE CARD
+       --------------------------------------------------------- */
+
+    .module-card-link {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: inherit;
+        text-decoration: none !important;
+        outline: none;
+    }
+
+    .module-card {
+        position: relative;
+        width: 100%;
+        min-height: 92px;
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        box-sizing: border-box;
+        background: #ffffff;
+        border: 1px solid #d5dce6;
+        border-left: 5px solid #172554;
+        border-radius: 7px;
+        box-shadow: 0 3px 10px rgba(15, 31, 61, .08);
+        transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    /* Decorative number/icon area */
+
+    .module-card-icon {
+        flex: 0 0 42px;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 13px;
+        background: #eef2f7;
+        color: #172554;
+        border: 1px solid #d8dee8;
+        border-radius: 6px;
+        font-size: 19px;
+    }
+
+    .module-card-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .module-card-title {
+        display: block;
+        color: #172554;
+        font-size: clamp(16px, 1.05vw, 22px);
+        font-weight: 700;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    .module-card-action {
+        flex: 0 0 auto;
+        margin-left: 8px;
+        color: #9b111e;
+        font-size: 16px;
+        opacity: .75;
+    }
+
+    /* ---------------------------------------------------------
+       HOVER / ACTIVE
+       --------------------------------------------------------- */
+
+    .module-card-link:hover .module-card {
+        transform: translateY(-2px);
+        background: #f8fafc;
+        border-color: #172554;
+        box-shadow: 0 7px 18px rgba(15, 31, 61, .15);
+    }
+
+    .module-card-link:hover .module-card-icon {
+        background: #172554;
+        color: #ffffff;
+        border-color: #172554;
+    }
+
+    .module-card-link:hover .module-card-action {
+        color: #c9a227;
+        opacity: 1;
+    }
+
+    .module-card-link:focus .module-card {
+        border-color: #c9a227;
+        box-shadow: 0 0 0 2px rgba(201, 162, 39, .25);
+    }
+
+    /* ---------------------------------------------------------
+       EMPTY STATE
+       --------------------------------------------------------- */
+
+    .module-empty {
+        grid-column: 1 / -1;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+    }
+
+        .module-empty i {
+            margin-bottom: 12px;
+            color: #94a3b8;
+            font-size: clamp(45px, 4vw, 70px);
+        }
+
+    .module-empty-title {
+        color: #334155;
+        font-size: clamp(18px, 1.3vw, 26px);
+        font-weight: 600;
+    }
+
+    .module-empty-text {
+        margin-top: 5px;
+        font-size: clamp(13px, .85vw, 18px);
+    }
+
+    /* ---------------------------------------------------------
+       LARGE DISPLAY
+       --------------------------------------------------------- */
+
+    @@media screen and (min-width: 1800px) {
+
+        .module-panel {
+            padding: 10px;
+        }
+
+        .module-header {
+            padding: 13px 18px;
+            margin-bottom: 13px;
+        }
+
+        .module-box {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .module-card {
+            min-height: 105px;
+            padding: 17px 19px;
+        }
+
+        .module-card-icon {
+            width: 48px;
+            height: 48px;
+            flex-basis: 48px;
+            margin-right: 15px;
+            font-size: 21px;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       VERY LARGE DISPLAY
+       --------------------------------------------------------- */
+
+    @@media screen and (min-width: 2500px) {
+
+        .module-panel {
+            padding: 14px;
+        }
+
+        .module-box {
+            gap: 16px;
+        }
+
+        .module-card {
+            min-height: 120px;
+            padding: 20px 22px;
+        }
+
+        .module-card-icon {
+            width: 54px;
+            height: 54px;
+            flex-basis: 54px;
+            font-size: 24px;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       TABLET / SMALL SCREEN
+       --------------------------------------------------------- */
+
+    @@media screen and (max-width: 1100px) {
+
+        .module-box {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media screen and (max-width: 650px) {
+
+        .module-panel {
+            padding: 5px;
+        }
+
+        .module-header {
+            padding: 8px 10px;
+        }
+
+        .module-header-subtitle {
+            display: none;
+        }
+
+        .module-box {
+            grid-template-columns: 1fr;
+            gap: 7px;
+        }
+
+        .module-card {
+            min-height: 72px;
+            padding: 10px 12px;
+        }
+
+        .module-card-icon {
+            width: 36px;
+            height: 36px;
+            flex-basis: 36px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+    }
+</style>
+
+
+<div class="module-panel">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <div class="module-header-title">
+                <i class="fa-solid fa-list-check"></i>
+                <span>नागरिक सेवा तथा जानकारी</span>
+            </div>
+
+            <div class="module-header-subtitle">
+                उपलब्ध सेवा तथा जानकारी छनोट गर्नुहोस्
+            </div>
+
+        </div>
+
+        <div class="module-count">
+            @(Model.mainModule != null &&
+              Model.mainModule.List != null
+                ? Model.mainModule.List.Count()
+                : 0)
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SERVICE MODULES
+         ===================================================== -->
+
+    <div class="module-box">
+
+        @if (Model.mainModule != null &&
+             Model.mainModule.List != null &&
+             Model.mainModule.List.Any())
+        {
+            var moduleIndex = 1;
+
+            foreach (var item in Model.mainModule.List)
+            {
+                <a class="module-card-link"
+                   href="@Url.Action("Service", "Home", new { id = item.Id })">
+
+                    <div class="module-card">
+
+                        <div class="module-card-icon">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+
+                        <div class="module-card-content">
+
+                            <span class="module-card-title">
+                                @item.Title
+                            </span>
+
+                        </div>
+
+                        <div class="module-card-action">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+
+                    </div>
+
+                </a>
+
+                moduleIndex++;
+            }
+        }
+        else
+        {
+            <div class="module-empty">
+
+                <i class="fa-solid fa-folder-open"></i>
+
+                <div class="module-empty-title">
+                    कुनै सेवा तथा जानकारी उपलब्ध छैन
+                </div>
+
+                <div class="module-empty-text">
+                    हाल प्रदर्शन गर्नका लागि सेवा सूची उपलब्ध छैन।
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

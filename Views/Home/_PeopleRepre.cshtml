@@ -1,0 +1,790 @@
+﻿
+@model HelpDesk.Models.HomePageViewModel
+
+<style>
+    /* =========================================================
+       DIGITAL CITIZEN CHARTER
+       ELECTED REPRESENTATIVE DISPLAY
+       ========================================================= */
+
+    .people-panel {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        box-sizing: border-box;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    /* ---------------------------------------------------------
+       HEADER
+       --------------------------------------------------------- */
+
+    .people-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        margin-bottom: 9px;
+        background: #172554;
+        color: #ffffff;
+        border-radius: 7px;
+        border-bottom: 3px solid #c9a227;
+        box-shadow: 0 3px 10px rgba(15,31,61,.15);
+    }
+
+    .people-header-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: clamp(19px, 1.35vw, 28px);
+        font-weight: 700;
+    }
+
+        .people-header-title i {
+            color: #f4d76a;
+        }
+
+    .people-header-subtitle {
+        margin-top: 2px;
+        color: #dbe4f0;
+        font-size: clamp(12px, .8vw, 17px);
+    }
+
+    .people-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 30px;
+        padding: 0 10px;
+        color: #ffffff;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 18px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       REPRESENTATIVE DETAIL AREA
+       ========================================================= */
+
+    .people-detail-area {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 5px;
+    }
+
+    .childtabcontent {
+        display: none;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        box-sizing: border-box;
+        animation: representativeFade .25s ease;
+    }
+
+        .childtabcontent.active-detail {
+            display: flex;
+        }
+
+    @@keyframes representativeFade {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ---------------------------------------------------------
+       PROFILE CARD
+       --------------------------------------------------------- */
+
+    .representative-card {
+        width: min(900px, 96%);
+        min-height: 210px;
+        display: flex;
+        align-items: center;
+        padding: 18px 22px;
+        background: #ffffff;
+        border: 1px solid #d5dce6;
+        border-left: 6px solid #172554;
+        border-radius: 9px;
+        box-shadow: 0 7px 22px rgba(15,31,61,.12);
+        box-sizing: border-box;
+    }
+
+    /* ---------------------------------------------------------
+       IMAGE
+       --------------------------------------------------------- */
+
+    .representative-image-box {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 25px;
+    }
+
+    .peoplerep-image {
+        width: 190px;
+        height: 190px;
+        object-fit: cover;
+        display: block;
+        background: #f1f5f9;
+        border: 4px solid #ffffff;
+        outline: 2px solid #c9a227;
+        border-radius: 50%;
+        box-shadow: 0 5px 16px rgba(15,31,61,.18);
+    }
+
+    /* ---------------------------------------------------------
+       DETAILS
+       --------------------------------------------------------- */
+
+    .representative-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .representative-name {
+        margin: 0 0 7px 0;
+        color: #172554;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        font-size: clamp(25px, 2vw, 42px);
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .representative-name-eng {
+        margin-left: 7px;
+        color: #64748b;
+        font-family: "Segoe UI", "Times New Roman", sans-serif;
+        font-size: clamp(15px, 1vw, 22px);
+        font-weight: 600;
+    }
+
+    .representative-divider {
+        width: 70px;
+        height: 3px;
+        margin: 7px 0 13px;
+        background: #c9a227;
+        border-radius: 2px;
+    }
+
+    .representative-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: #334155;
+        font-size: clamp(15px, 1vw, 21px);
+        line-height: 1.5;
+    }
+
+    .representative-info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+    }
+
+        .representative-info-row i {
+            flex: 0 0 21px;
+            margin-top: 4px;
+            color: #9b111e;
+            text-align: center;
+        }
+
+    .representative-info-label {
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .representative-info-value {
+        color: #172554;
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       REPRESENTATIVE SELECTOR
+       ========================================================= */
+
+    .people-selector {
+        flex: 0 0 auto;
+        width: 100%;
+        margin-top: 8px;
+        padding: 9px;
+        background: #f8fafc;
+        border: 1px solid #d5dce6;
+        border-radius: 7px;
+        box-shadow: 0 -2px 8px rgba(15,31,61,.06);
+        box-sizing: border-box;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+    }
+
+    .child-bar {
+        width: max-content;
+        min-width: 100%;
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    /* ---------------------------------------------------------
+       PERSON SELECTOR BUTTON
+       --------------------------------------------------------- */
+
+    .childtablink {
+        flex: 0 0 auto;
+        width: 235px;
+        min-height: 74px;
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        margin: 0;
+        background: #ffffff;
+        color: #172554;
+        border: 1px solid #d5dce6;
+        border-left: 4px solid #172554;
+        border-radius: 6px;
+        text-decoration: none !important;
+        cursor: pointer;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        text-align: left;
+        box-shadow: 0 2px 7px rgba(15,31,61,.07);
+        transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+
+    .child-img {
+        flex: 0 0 auto;
+        width: 54px;
+        height: 54px;
+        margin-right: 10px;
+        object-fit: cover;
+        border: 2px solid #ffffff;
+        outline: 1px solid #cbd5e1;
+        border-radius: 50%;
+        background: #f1f5f9;
+    }
+
+    .child-person-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .child-person-name {
+        display: block;
+        color: #172554;
+        font-size: clamp(14px, .85vw, 18px);
+        font-weight: 700;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .child-person-post {
+        display: block;
+        margin-top: 3px;
+        color: #64748b;
+        font-size: clamp(12px, .72vw, 16px);
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    .childtablink:hover {
+        background: #eef2f7;
+        border-color: #172554;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 12px rgba(15,31,61,.12);
+    }
+
+    .childtablink.active {
+        background: #172554;
+        border-color: #c9a227;
+        color: #ffffff;
+        box-shadow: 0 5px 14px rgba(15,31,61,.18);
+    }
+
+        .childtablink.active .child-person-name {
+            color: #ffffff;
+        }
+
+        .childtablink.active .child-person-post {
+            color: #dbe4f0;
+        }
+
+        .childtablink.active .child-img {
+            outline-color: #c9a227;
+        }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .people-empty {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+    }
+
+        .people-empty i {
+            margin-bottom: 12px;
+            color: #94a3b8;
+            font-size: clamp(45px, 4vw, 75px);
+        }
+
+    .people-empty-title {
+        color: #334155;
+        font-size: clamp(18px, 1.3vw, 27px);
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       LARGE DISPLAY
+       ========================================================= */
+
+    @@media screen and (min-width: 1800px) {
+
+        .people-panel {
+            padding: 10px;
+        }
+
+        .representative-card {
+            width: min(1050px, 94%);
+            min-height: 250px;
+            padding: 22px 28px;
+        }
+
+        .peoplerep-image {
+            width: 215px;
+            height: 215px;
+        }
+
+        .representative-image-box {
+            margin-right: 30px;
+        }
+
+        .childtablink {
+            width: 270px;
+            min-height: 82px;
+        }
+
+        .child-img {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    /* =========================================================
+       VERY LARGE DISPLAY
+       ========================================================= */
+
+    @@media screen and (min-width: 2500px) {
+
+        .people-panel {
+            padding: 14px;
+        }
+
+        .representative-card {
+            width: min(1250px, 92%);
+            min-height: 285px;
+            padding: 28px 35px;
+        }
+
+        .peoplerep-image {
+            width: 245px;
+            height: 245px;
+        }
+
+        .representative-image-box {
+            margin-right: 35px;
+        }
+
+        .childtablink {
+            width: 300px;
+            min-height: 92px;
+        }
+
+        .child-img {
+            width: 68px;
+            height: 68px;
+        }
+    }
+
+    /* =========================================================
+       SMALL SCREEN
+       ========================================================= */
+
+    @@media screen and (max-width: 700px) {
+
+        .people-panel {
+            padding: 5px;
+        }
+
+        .people-header {
+            padding: 8px 10px;
+        }
+
+        .people-header-subtitle {
+            display: none;
+        }
+
+        .representative-card {
+            min-height: 170px;
+            padding: 12px;
+        }
+
+        .representative-image-box {
+            margin-right: 15px;
+        }
+
+        .peoplerep-image {
+            width: 110px;
+            height: 110px;
+        }
+
+        .representative-info {
+            gap: 4px;
+        }
+
+        .childtablink {
+            width: 190px;
+            min-height: 65px;
+        }
+
+        .child-img {
+            width: 45px;
+            height: 45px;
+        }
+    }
+</style>
+
+
+<div class="people-panel">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="people-header">
+
+        <div>
+
+            <div class="people-header-title">
+                <i class="fa-solid fa-users"></i>
+                <span>जनप्रतिनिधि</span>
+            </div>
+
+            <div class="people-header-subtitle">
+                जनप्रतिनिधिहरूको विवरण
+            </div>
+
+        </div>
+
+        <div class="people-count">
+            @(Model.peopleRepresentative != null &&
+              Model.peopleRepresentative.List != null
+                ? Model.peopleRepresentative.List.Count()
+                : 0)
+        </div>
+
+    </div>
+
+
+    @if (Model.peopleRepresentative != null &&
+         Model.peopleRepresentative.List != null &&
+         Model.peopleRepresentative.List.Any())
+    {
+        <!-- =================================================
+             REPRESENTATIVE DETAILS
+             ================================================= -->
+
+        <div class="people-detail-area">
+
+            @foreach (var item in Model.peopleRepresentative.List)
+            {
+                <div id="person_@item.Id"
+                     class="childtabcontent">
+
+                    <div class="representative-card">
+
+                        <!-- IMAGE -->
+
+                        <div class="representative-image-box">
+
+                            @if (!string.IsNullOrEmpty(item.Image))
+                            {
+                                <img src="@Url.Content("~/JanaPratinidhiImages/" + item.Image)"
+                                     class="peoplerep-image"
+                                     alt="@item.Name" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/Content/images/UserImage.png")"
+                                     class="peoplerep-image"
+                                     alt="@item.Name" />
+                            }
+
+                        </div>
+
+
+                        <!-- DETAILS -->
+
+                        <div class="representative-details">
+
+                            <h2 class="representative-name">
+
+                                @item.Name
+
+                                @if (!string.IsNullOrEmpty(item.NameEng))
+                                {
+                                    <span class="representative-name-eng">
+                                        (@item.NameEng)
+                                    </span>
+                                }
+
+                            </h2>
+
+                            <div class="representative-divider"></div>
+
+                            <div class="representative-info">
+
+                                <div class="representative-info-row">
+
+                                    <i class="fa-solid fa-user-tie"></i>
+
+                                    <div>
+                                        <span class="representative-info-label">
+                                            पद:
+                                        </span>
+
+                                        <span class="representative-info-value">
+                                            @Utility.GetPostNameById(item.PostId)
+                                        </span>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="representative-info-row">
+
+                                    <i class="fa-solid fa-phone"></i>
+
+                                    <div>
+                                        <span class="representative-info-label">
+                                            सम्पर्क नम्बर:
+                                        </span>
+
+                                        <span class="representative-info-value">
+                                            @item.Contact
+                                        </span>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="representative-info-row">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    <div>
+                                        <span class="representative-info-label">
+                                            ठेगाना:
+                                        </span>
+
+                                        <span class="representative-info-value">
+                                            @item.Address
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- =================================================
+             REPRESENTATIVE SELECTOR
+             ================================================= -->
+
+        <div class="people-selector">
+
+            <div class="child-bar">
+
+                @foreach (var item in Model.peopleRepresentative.List)
+                {
+                    <button type="button"
+                            class="childtablink"
+                            onclick="openDetail(this, '@item.Id')">
+
+                        @if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <img class="child-img"
+                                 src="@Url.Content("~/JanaPratinidhiImages/" + item.Image)"
+                                 alt="@item.Name" />
+                        }
+                        else
+                        {
+                            <img class="child-img"
+                                 src="@Url.Content("~/Content/images/UserImage.png")"
+                                 alt="@item.Name" />
+                        }
+
+                        <span class="child-person-info">
+
+                            <span class="child-person-name">
+                                @item.Name
+                            </span>
+
+                            <span class="child-person-post">
+                                @item.PostSetup.PostTitle
+                            </span>
+
+                        </span>
+
+                    </button>
+                }
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <div class="people-detail-area">
+
+            <div class="people-empty">
+
+                <i class="fa-solid fa-users-slash"></i>
+
+                <div class="people-empty-title">
+                    जनप्रतिनिधिको विवरण उपलब्ध छैन
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+<script>
+
+    /* =========================================================
+       REPRESENTATIVE DETAIL SWITCHING
+       ========================================================= */
+
+    function openDetail(button, id) {
+
+        var tabContent =
+            document.getElementsByClassName("childtabcontent");
+
+        var tabLinks =
+            document.getElementsByClassName("childtablink");
+
+
+        /* Hide all representatives */
+
+        for (var i = 0; i < tabContent.length; i++) {
+
+            tabContent[i].classList.remove("active-detail");
+
+        }
+
+
+        /* Remove active state */
+
+        for (var j = 0; j < tabLinks.length; j++) {
+
+            tabLinks[j].classList.remove("active");
+
+        }
+
+
+        /* Show selected representative */
+
+        var selected =
+            document.getElementById("person_" + id);
+
+        if (selected) {
+
+            selected.classList.add("active-detail");
+
+        }
+
+
+        /* Activate selected button */
+
+        if (button) {
+
+            button.classList.add("active");
+
+        }
+
+    }
+
+
+    /* =========================================================
+       FIRST REPRESENTATIVE
+       ========================================================= */
+
+    $(document).ready(function () {
+
+        var firstButton =
+            document.querySelector(".childtablink");
+
+        if (firstButton) {
+
+            var firstId =
+                firstButton.getAttribute("onclick")
+                    .match(/'([^']+)'/);
+
+            if (firstId && firstId[1]) {
+
+                openDetail(
+                    firstButton,
+                    firstId[1]
+                );
+
+            }
+
+        }
+
+    });
+
+</script>

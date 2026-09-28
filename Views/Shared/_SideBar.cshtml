@@ -1,0 +1,96 @@
+﻿
+@{
+    HelpDesk.Models.ApplicationDbContext db = new HelpDesk.Models.ApplicationDbContext();
+}
+<div class="sidebar-menu" style="background-color:#068afa">
+    <div class="sidebar-header" style="background-color:#068afa">
+        <div class="logo" style="background-color:#068afa">
+
+            <a href="@Url.Action("Index","Home")"><img src="~/Content/images/icon/nepal-logo.png" alt="logo"></a>
+        </div>
+
+    </div>
+    <div class="main-menu" style="background-color:#068afa">
+        <div class="menu-inner">
+            <nav>
+                <ul class="metismenu" id="menu">
+                    @if (User.IsInRole("Admin"))
+                    {
+                      
+                            <li>
+                                <a href="javascript:void(0)" aria-expanded="true">
+                                    <i class="ti-dashboard"></i><span>
+                                        ड्यासबोर्ड
+
+                                    </span>
+                                </a>
+
+                                <ul class="collapse">
+                                    <li><a href="@Url.Action("Index", "Home")">ड्यासबोर्ड</a></li>
+
+                                </ul>
+                            </li>
+
+                            <li>
+                                <a href="javascript:void(0)" aria-expanded="true">
+                                    <i class="ti-settings"></i><span>
+                                        सेटअप
+
+                                    </span>
+                                </a>
+
+                                <ul class="collapse">
+                                   
+                                        <li><a href="@Url.Action("Index", "MyOffices")">My Office</a></li>
+
+                                        <li><a href="@Url.Action("Index", "Offces")"> Office </a></li>
+
+                                        <li><a href="@Url.Action("Index", "Staffs")">Staffd</a></li>
+                                      
+                                    
+
+                                </ul>
+                            </li>
+                            
+
+                           
+
+
+                            <li>
+
+                                <a href="javascript:void(0)" aria-expanded="true">
+                                    <i class="ti-settings"></i><span>
+                                        Security
+                                    </span>
+                                </a>
+                                <ul class="collapse">
+                                 
+                                        <li><a href="@Url.Action("RegisterUser", "Account")">प्रयोगकर्ताको सेटअप</a></li>
+                                    
+                                    <li><a href="@Url.Action("UserList", "Account")" class="dim"><i class="fa fa-lock"></i> &nbsp;पासओर्ड परिवर्तन</a></li>
+
+                                </ul>
+
+
+                            </li>
+
+                        }
+                    }
+                  
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.sidebar-menu ul li').find('a').each(function () {
+        var link = new RegExp($(this).attr('href')); //Check if some menu compares inside your the browsers link
+        if (link.test(document.location.href)) {
+            if (!$(this).parents().hasClass('active')) {
+                $(this).parents('li').addClass('menu-open');
+                $(this).parents().addClass("active");
+                $(this).addClass("active"); //Add this too
+            }
+        }
+    });
+</script>

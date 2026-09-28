@@ -1,0 +1,543 @@
+﻿
+@model HelpDesk.Models.HomePageViewModel
+
+<style>
+    /* =========================================================
+       DIGITAL CITIZEN CHARTER - VIDEO PANEL
+       Professional Display Board Theme
+       ========================================================= */
+
+    .video-panel {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        background: #ffffff;
+    }
+
+    /* ---------------------------------------------------------
+       VIDEO DISPLAY AREA
+       --------------------------------------------------------- */
+
+    .video-display-area {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+        border: 1px solid #d8dee8;
+        border-radius: 8px;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
+    }
+
+    #VideoDiv {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        #VideoDiv:empty::before {
+            content: "भिडियो सामग्री लोड हुँदैछ...";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #64748b;
+            font-size: clamp(18px, 1.4vw, 28px);
+            font-weight: 500;
+        }
+
+        /* Content returned by ShowVideos */
+        #VideoDiv video,
+        #VideoDiv .player {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            margin: auto;
+            border-radius: 8px;
+            background: #000;
+            box-shadow: 0 8px 25px rgba(15, 31, 61, .22);
+            outline: none;
+        }
+
+    /* ---------------------------------------------------------
+       VIDEO NAVIGATION
+       --------------------------------------------------------- */
+
+    .video-navigation {
+        flex: 0 0 auto;
+        margin-top: 10px;
+        padding: 10px;
+        background: #ffffff;
+        border: 1px solid #d8dee8;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(15, 31, 61, .08);
+    }
+
+    .video-navigation-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        padding-bottom: 7px;
+        border-bottom: 2px solid #c9a227;
+    }
+
+    .video-navigation-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #172554;
+        font-size: clamp(17px, 1.25vw, 25px);
+        font-weight: 700;
+    }
+
+        .video-navigation-title i {
+            color: #9b111e;
+            font-size: 1.05em;
+        }
+
+    .video-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 28px;
+        padding: 0 9px;
+        border-radius: 15px;
+        background: #eef2f7;
+        color: #172554;
+        border: 1px solid #d5dce6;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .Videotab {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 7px;
+        max-height: 100px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 2px;
+    }
+
+    .Videotablinks {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 42px;
+        max-width: 100%;
+        padding: 7px 14px !important;
+        margin: 0 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        background: #f8fafc !important;
+        color: #172554 !important;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif !important;
+        font-size: clamp(15px, 1vw, 21px) !important;
+        font-weight: 600;
+        line-height: 1.35;
+        white-space: normal;
+        transition: all .18s ease;
+        box-shadow: none !important;
+    }
+
+        .Videotablinks i {
+            flex: 0 0 auto;
+            color: #9b111e;
+            font-size: .95em;
+        }
+
+        .Videotablinks:hover {
+            background: #eef2f7 !important;
+            border-color: #172554 !important;
+            color: #172554 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(15, 31, 61, .12) !important;
+        }
+
+        .Videotablinks.active-video {
+            background: #172554 !important;
+            color: #ffffff !important;
+            border-color: #c9a227 !important;
+            box-shadow: 0 3px 10px rgba(15, 31, 61, .20) !important;
+        }
+
+            .Videotablinks.active-video i {
+                color: #f4d76a;
+            }
+
+    /* ---------------------------------------------------------
+       EMPTY VIDEO STATE
+       --------------------------------------------------------- */
+
+    .video-empty {
+        width: 100%;
+        height: 100%;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+    }
+
+        .video-empty i {
+            margin-bottom: 12px;
+            color: #94a3b8;
+            font-size: clamp(42px, 4vw, 72px);
+        }
+
+    .video-empty-title {
+        color: #334155;
+        font-size: clamp(18px, 1.4vw, 28px);
+        font-weight: 600;
+    }
+
+    .video-empty-text {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: clamp(14px, 1vw, 20px);
+    }
+
+    /* ---------------------------------------------------------
+       LOADING
+       --------------------------------------------------------- */
+
+    .video-loading {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #64748b;
+    }
+
+        .video-loading i {
+            color: #172554;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .video-loading span {
+            font-size: clamp(15px, 1vw, 21px);
+        }
+
+    /* ---------------------------------------------------------
+       LARGE DISPLAY
+       --------------------------------------------------------- */
+
+    @@media screen and (min-width: 1800px) {
+
+        .video-display-area {
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .video-navigation {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 10px;
+        }
+
+        .Videotab {
+            gap: 9px;
+            max-height: 125px;
+        }
+
+        .Videotablinks {
+            min-height: 50px;
+            padding: 9px 17px !important;
+        }
+    }
+
+    @@media screen and (min-width: 2500px) {
+
+        .video-display-area {
+            padding: 22px;
+        }
+
+        .video-navigation {
+            padding: 16px;
+        }
+
+        .Videotab {
+            max-height: 145px;
+            gap: 10px;
+        }
+
+        .Videotablinks {
+            min-height: 58px;
+            padding: 11px 20px !important;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       SMALL SCREEN
+       --------------------------------------------------------- */
+
+    @@media screen and (max-width: 768px) {
+
+        .video-display-area {
+            padding: 7px;
+        }
+
+        .video-navigation {
+            padding: 7px;
+        }
+
+        .video-navigation-header {
+            margin-bottom: 6px;
+        }
+
+        .Videotab {
+            max-height: 90px;
+        }
+
+        .Videotablinks {
+            min-height: 38px;
+            padding: 6px 10px !important;
+        }
+    }
+</style>
+
+
+<div class="video-panel">
+
+    <!-- =====================================================
+         VIDEO DISPLAY
+         ===================================================== -->
+    <div class="video-display-area">
+
+        <div id="VideoDiv">
+            <div class="video-loading">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>भिडियो लोड हुँदैछ...</span>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         VIDEO NAVIGATION
+         ===================================================== -->
+    <div class="video-navigation">
+
+        <div class="video-navigation-header">
+
+            <div class="video-navigation-title">
+                <i class="fa-solid fa-circle-play"></i>
+                <span>भिडियो सामग्री</span>
+            </div>
+
+            <div class="video-count">
+                @(Model.video != null && Model.video.Lists != null
+                    ? Model.video.Lists.Count()
+                    : 0)
+            </div>
+
+        </div>
+
+
+        <div class="Videotab">
+
+            @if (Model.video != null &&
+                 Model.video.Lists != null &&
+                 Model.video.Lists.Any())
+            {
+                var firstVideo = true;
+
+                foreach (var videoitem in Model.video.Lists)
+                {
+                    <button type="button"
+                            class="Videotablinks @(firstVideo ? "active-video" : "")"
+                            data-video-id="@videoitem.VideoId"
+                            onclick="openVideo(@videoitem.VideoId, this)">
+
+                        <i class="fa-solid fa-video"></i>
+
+                        <span>
+                            @videoitem.VideoName
+                        </span>
+
+                    </button>
+
+                    firstVideo = false;
+                }
+            }
+            else
+            {
+                <div class="video-empty"
+                     style="height:auto; min-height:70px;">
+
+                    <i class="fa-regular fa-folder-open"></i>
+
+                    <div class="video-empty-title">
+                        कुनै भिडियो उपलब्ध छैन
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =========================================================
+       OPEN VIDEO
+       ========================================================= */
+
+    function openVideo(id, buttonElement) {
+
+        if (!id) {
+            return;
+        }
+
+        /* Active button */
+        $(".Videotablinks").removeClass("active-video");
+
+        if (buttonElement) {
+            $(buttonElement).addClass("active-video");
+        }
+
+        /* Loading state */
+        $("#VideoDiv").html(
+            '<div class="video-loading">' +
+                '<i class="fa-solid fa-spinner fa-spin"></i>' +
+                '<span>भिडियो लोड हुँदैछ...</span>' +
+            '</div>'
+        );
+
+        $.ajax({
+            url: '@Url.Action("ShowVideos", "Home")',
+            data: {
+                id: id
+            },
+            type: "GET",
+            dataType: "html",
+
+            error: function () {
+
+                $("#VideoDiv").html(
+                    '<div class="video-empty">' +
+                        '<i class="fa-solid fa-triangle-exclamation"></i>' +
+                        '<div class="video-empty-title">' +
+                            'भिडियो लोड गर्न सकिएन' +
+                        '</div>' +
+                        '<div class="video-empty-text">' +
+                            'कृपया पुनः प्रयास गर्नुहोस्।' +
+                        '</div>' +
+                    '</div>'
+                );
+
+            },
+
+            success: function (dataresult) {
+
+                $("#VideoDiv").html(dataresult);
+
+                initializeVideoPlayers();
+            }
+        });
+    }
+
+
+    /* =========================================================
+       VIDEO PLAYER CONTROL
+       Only one video plays at a time
+       ========================================================= */
+
+    function initializeVideoPlayers() {
+
+        $(".player").off("play.videoBoard click.videoBoard");
+
+        $(".player").on("play.videoBoard", function () {
+
+            var currentPlayer = this;
+
+            $(".player").each(function () {
+
+                if (this !== currentPlayer) {
+                    this.pause();
+                }
+
+            });
+
+        });
+
+        $(".player").on("click.videoBoard", function () {
+
+            var video = this;
+
+            if (video.paused) {
+                video.play();
+            }
+            else {
+                video.pause();
+            }
+
+        });
+    }
+
+
+    /* =========================================================
+       INITIAL VIDEO
+       ========================================================= */
+
+    $(document).ready(function () {
+
+        var firstVideoButton = $(".Videotablinks").first();
+
+        if (firstVideoButton.length > 0) {
+
+            openVideo(
+                firstVideoButton.data("video-id"),
+                firstVideoButton[0]
+            );
+
+        }
+        else {
+
+            $("#VideoDiv").html(
+                '<div class="video-empty">' +
+                    '<i class="fa-solid fa-video-slash"></i>' +
+                    '<div class="video-empty-title">' +
+                        'कुनै भिडियो उपलब्ध छैन' +
+                    '</div>' +
+                    '<div class="video-empty-text">' +
+                        'प्रदर्शन गर्नका लागि भिडियो सामग्री उपलब्ध छैन।' +
+                    '</div>' +
+                '</div>'
+            );
+
+        }
+
+    });
+
+</script>

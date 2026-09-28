@@ -1,0 +1,108 @@
+﻿@model HelpDesk.Models.HomePageViewModel
+@{
+    var count = 1;
+}
+<style>
+    .modal-content {
+        max-height: 800px;
+        overflow: auto;
+        border: 5px solid darkblue;
+        border-left:0px;
+    }
+
+        .modal-content button {
+            display: block;
+            background-color: inherit;
+            color: #337ab7;
+            font-weight: bold;
+            padding: 6px 10px;
+            width: 100%;
+            height: auto;
+            border: none;
+            outline: none;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 28px;
+            font-family: Kalimati !important;
+        }
+        .modal-body {
+            margin-left:20px;
+        }
+
+    .modal-body p {
+        font-family: Kalimati !important;
+        color: black;
+    }
+
+    .modal-body b {
+        color: red !important;
+        font-size: 16px !important;
+        text-align: center;
+        font-weight: bold;
+    }
+
+            .modal-body span {
+                color: #337ab7 !important;
+                font-size: 14px !important;
+                font-weight: bold;
+            }
+
+    @@media screen and (max-width: 600px) {
+        .modal-content {
+            height: 400px;
+        }
+
+            .modal-content span {
+                font-size: 18px;
+            }
+
+        .modal-body b {
+            font-size: 14px !important;
+        }
+
+        .modal-body span {
+            font-size: 12px !important;
+        }
+    }
+</style>
+<div class="row">
+        
+
+            <div class="modal-content">
+
+                <button class="tablinks">
+                    सेवाहरु:-
+                    <span>७</span>
+                </button>
+
+                <hr class="w-25 mx-auto" />
+                <div class="modal-body">
+                    <table>
+
+                        @foreach (var item in Model.subModule.List.Take(5))
+                        {
+                            <tr style="font-family: Kalimati !important;">
+                                <td>
+                                    <p>
+                                        <b>@count) @item.Title</b> <br />
+                                        &nbsp;&nbsp;<span>शाखा:- @item.MainModule.Title</span><br />
+                                        &nbsp;&nbsp;<span>चाहिने कागज पत्र:-</span> @Html.Raw(item.DocumentNeeded)
+                                        &nbsp;&nbsp;<span>प्रक्रिया:-</span> @Html.Raw(item.Process)
+                                    </p>
+                                    <hr class="w-25 mx-auto" />
+
+                                </td>
+
+                            </tr>
+
+                            count++;
+                        }
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Service", "Home")" class="btn btn-default btn-primary button">See More <i class="fa-solid fa-right-to-bracket"></i></a>
+                </div>
+
+            </div>
+  </div>

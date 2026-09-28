@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/Content/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="~/Content/assets/img/home-decor-1.jpg">
+
+    <title style="font-family:Kalimati !important;">
+        डिजिटल नागरिक वडापत्र प्रणाली
+    </title>
+
+    <link href="~/Content/assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/nucleo-icons.css" rel="stylesheet" />
+
+
+
+    <link href="" rel="stylesheet" />
+    <link id="pagestyle" href="~/Content/assets/css/material-dashboard.min.css?v=3.1.0" rel="stylesheet" />
+
+
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+
+    <!--For chosen select Dropdown-->
+    <link href="~/Content/chosen.css" rel="stylesheet" />
+
+
+
+    <link href="~/fontawesome-free-6.7.2-web/css/all.css" rel="stylesheet" />
+
+
+    <!---For nepali-calendar-->
+    <link href="~/Content/Styles/style.css" rel="stylesheet" />
+
+    <link href="~/Content/nepali.datepicker.v4.0.4/nepali.datepicker.v4.0.4.min.css" rel="stylesheet" />
+
+
+    <style>
+        .modal-content {
+            padding: 5px 10px;
+            border: 1px solid white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            /* box-shadow: 5px 10px 5px lightblue;*/
+        }
+
+        tbody {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            text-align: center;
+        }
+
+        thead {
+            padding: 8px;
+            background-color: #808080;
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 5px rgba(0, 0, 0, 0.19);
+        }
+
+        .button {
+            margin-top: 8px;
+            padding: 10px;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        }
+
+            .button:hover {
+                box-shadow: 2px 8px 8px rgba(0, 0, 0, 1) inset;
+            }
+    </style>
+
+    <style>
+        .ul.pagination {
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul.pagination li {
+            display: inline;
+        }
+
+            ul.pagination li a {
+                color: black;
+                float: left;
+                padding: 8px 16px;
+                text-decoration: none;
+                transition: background-color .3s;
+                background-color: lightcyan;
+            }
+
+                ul.pagination li a.active {
+                    background-color: #4CAF50;
+                    color: white;
+                }
+
+                ul.pagination li a:hover:not(.active) {
+                    background-color: cornflowerblue;
+                }
+    </style>
+    <style>
+        /* style for form input border*/
+        .bordered-input {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+            .bordered-input:focus {
+                border: 1px solid #3498db;
+                outline: none;
+            }
+    </style>
+
+
+</head>
+
+<body class="g-sidenav-show  bg-gray-200">
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
+        @Html.Partial("_LSidebar")
+    </aside>
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg" style="font-family:Kalimati !important;">
+        <!-- Navbar -->
+        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl sticky-top" id="navbarBlur" data-scroll="true">
+            <div class="container-fluid py-1 px-3">
+                <div class="row" style="font-family:Kalimati !important;">
+                    <div class="col-8">
+                        <img src="~/Content/images/animated-nepal-flag-image-0004.gif" sstyle="height:100px; width:100px;" />
+                    </div>
+                    <div class="col-9 animated fadeInRight">
+                    </div>
+                </div>
+                <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                    <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                        @*<div class="input-group input-group-outline">
+                                <label class="form-label">Type here...</label>
+                                <input type="text" class="form-control">
+                            </div>*@
+                    </div>
+                    <ul class="navbar-nav  justify-content-end">
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                                <div class="sidenav-toggler-inner">
+                                    <i class="sidenav-toggler-line"></i>
+                                    <i class="sidenav-toggler-line"></i>
+                                    <i class="sidenav-toggler-line"></i>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item px-3 d-flex align-items-center">
+                            <a href="javascript:;" class="nav-link text-body p-0">
+                                <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer" style="font-size: 30px;"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item d-flex align-items-center justify-content-sm-between">
+                            @Html.Partial("_LoginPartial")
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+
+
+
+
+
+    </main>
+    @Html.Partial("_RSideBar")
+    <!--   Core JS Files   -->
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Content/assets/js/core/popper.min.js"></script>
+    <script src="~/Content/assets/js/core/bootstrap.min.js"></script>
+    <script src="~/Content/assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="~/Content/assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="~/Content/assets/js/plugins/chartjs.min.js"></script>
+
+    <!--For nepali-calendar-->
+    <script src="~/Content/nepali.datepicker.v4.0.4/nepali.datepicker.v4.0.4.min.js"></script>
+
+    <script src="~/Scripts/jquery.maskedinput.js"></script>
+
+
+    <!--For chosen select dropdown-->
+    <script src="~/Scripts/chosen.jquery.js"></script>
+    <script src="~/Scripts/chosen.jquery.min.js"></script>
+
+   
+
+    @RenderSection("scripts", required: false)
+    <script>
+
+
+        $(function () {
+            $('.nepali-calendar').mask("9999-99-99");
+            $('.nepali-calendar').nepaliDatePicker();
+
+        });</script>
+    <!-- Github buttons -->
+
+    <script src="~/Content/assets/js/material-dashboard.min.js?v=3.1.0"></script>
+</body>
+
+</html>
+
+<div class="modal inmodal fade" id="modelUserInfo" role="dialog">
+</div>

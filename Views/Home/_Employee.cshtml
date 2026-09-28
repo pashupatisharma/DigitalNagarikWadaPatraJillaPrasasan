@@ -1,0 +1,605 @@
+﻿
+@model HelpDesk.Models.HomePageViewModel
+
+<style>
+    /* =========================================================
+       EMPLOYEE DISPLAY PANEL
+       ========================================================= */
+
+    .employee-panel {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        box-sizing: border-box;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+
+    .employee-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        margin-bottom: 9px;
+        background: #172554;
+        color: #ffffff;
+        border-radius: 7px;
+        border-bottom: 3px solid #c9a227;
+        box-shadow: 0 3px 10px rgba(15,31,61,.15);
+    }
+
+    .employee-header-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: clamp(19px, 1.35vw, 28px);
+        font-weight: 700;
+    }
+
+        .employee-header-title i {
+            color: #f4d76a;
+        }
+
+    .employee-header-subtitle {
+        margin-top: 2px;
+        color: #dbe4f0;
+        font-size: clamp(12px, .8vw, 17px);
+    }
+
+    .employee-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 30px;
+        padding: 0 10px;
+        color: #ffffff;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.25);
+        border-radius: 18px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    /* =========================================================
+       EMPLOYEE DETAIL
+       ========================================================= */
+
+    .employee-detail-area {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 5px;
+        box-sizing: border-box;
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+        border: 1px solid #d8dee8;
+        border-radius: 7px;
+    }
+
+    #Employeetabcontent {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+    }
+
+    /* =========================================================
+       EMPLOYEE NAVIGATION
+       ========================================================= */
+
+    .employee-selector {
+        flex: 0 0 auto;
+        width: 100%;
+        margin-top: 8px;
+        padding: 9px;
+        background: #f8fafc;
+        border: 1px solid #d5dce6;
+        border-radius: 7px;
+        box-shadow: 0 -2px 8px rgba(15,31,61,.06);
+        box-sizing: border-box;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .employee-list {
+        width: max-content;
+        min-width: 100%;
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    /* =========================================================
+       EMPLOYEE BUTTON
+       ========================================================= */
+
+    .Employeetablinks {
+        flex: 0 0 auto;
+        width: 245px;
+        min-height: 76px;
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        margin: 0;
+        background: #ffffff;
+        color: #172554;
+        border: 1px solid #d5dce6;
+        border-left: 4px solid #172554;
+        border-radius: 6px;
+        text-decoration: none !important;
+        cursor: pointer;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
+        text-align: left;
+        box-shadow: 0 2px 7px rgba(15,31,61,.07);
+        transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+
+    .child-emp {
+        flex: 0 0 auto;
+        width: 58px;
+        height: 58px;
+        margin-right: 10px;
+        object-fit: cover;
+        background: #f1f5f9;
+        border: 2px solid #ffffff;
+        outline: 1px solid #cbd5e1;
+        border-radius: 50%;
+    }
+
+    .employee-person-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .employee-person-name {
+        display: block;
+        color: #172554;
+        font-size: clamp(14px, .85vw, 18px);
+        font-weight: 700;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .employee-person-post {
+        display: block;
+        margin-top: 3px;
+        color: #64748b;
+        font-size: clamp(12px, .72vw, 16px);
+        line-height: 1.3;
+        word-break: break-word;
+    }
+
+    .employee-arrow {
+        flex: 0 0 auto;
+        margin-left: 7px;
+        color: #9b111e;
+        font-size: 15px;
+    }
+
+    /* =========================================================
+       HOVER / ACTIVE
+       ========================================================= */
+
+    .Employeetablinks:hover {
+        background: #eef2f7;
+        border-color: #172554;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 12px rgba(15,31,61,.12);
+    }
+
+    .Employeetablinks.active-employee {
+        background: #172554;
+        border-color: #c9a227;
+        color: #ffffff;
+        box-shadow: 0 5px 14px rgba(15,31,61,.18);
+    }
+
+        .Employeetablinks.active-employee .employee-person-name {
+            color: #ffffff;
+        }
+
+        .Employeetablinks.active-employee .employee-person-post {
+            color: #dbe4f0;
+        }
+
+        .Employeetablinks.active-employee .employee-arrow {
+            color: #f4d76a;
+        }
+
+        .Employeetablinks.active-employee .child-emp {
+            outline-color: #c9a227;
+        }
+
+    /* =========================================================
+       LOADING
+       ========================================================= */
+
+    .employee-loading {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+    }
+
+        .employee-loading i {
+            margin-bottom: 12px;
+            color: #172554;
+            font-size: 36px;
+        }
+
+        .employee-loading span {
+            font-size: clamp(15px, 1vw, 21px);
+        }
+
+    /* =========================================================
+       EMPTY STATE
+       ========================================================= */
+
+    .employee-empty {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+    }
+
+        .employee-empty i {
+            margin-bottom: 12px;
+            color: #94a3b8;
+            font-size: clamp(45px, 4vw, 75px);
+        }
+
+    .employee-empty-title {
+        color: #334155;
+        font-size: clamp(18px, 1.3vw, 27px);
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       LARGE DISPLAY
+       ========================================================= */
+
+    @@media screen and (min-width: 1800px) {
+
+        .employee-panel {
+            padding: 10px;
+        }
+
+        .employee-header {
+            padding: 13px 18px;
+        }
+
+        .employee-selector {
+            padding: 11px;
+        }
+
+        .employee-list {
+            gap: 10px;
+        }
+
+        .Employeetablinks {
+            width: 275px;
+            min-height: 84px;
+        }
+
+        .child-emp {
+            width: 64px;
+            height: 64px;
+        }
+    }
+
+    /* =========================================================
+       VERY LARGE DISPLAY
+       ========================================================= */
+
+    @@media screen and (min-width: 2500px) {
+
+        .employee-panel {
+            padding: 14px;
+        }
+
+        .employee-selector {
+            padding: 14px;
+        }
+
+        .employee-list {
+            gap: 12px;
+        }
+
+        .Employeetablinks {
+            width: 310px;
+            min-height: 94px;
+        }
+
+        .child-emp {
+            width: 70px;
+            height: 70px;
+        }
+    }
+
+    /* =========================================================
+       SMALL SCREEN
+       ========================================================= */
+
+    @@media screen and (max-width: 700px) {
+
+        .employee-panel {
+            padding: 5px;
+        }
+
+        .employee-header {
+            padding: 8px 10px;
+        }
+
+        .employee-header-subtitle {
+            display: none;
+        }
+
+        .Employeetablinks {
+            width: 195px;
+            min-height: 65px;
+            padding: 7px 8px;
+        }
+
+        .child-emp {
+            width: 46px;
+            height: 46px;
+        }
+
+        .employee-arrow {
+            display: none;
+        }
+    }
+</style>
+
+
+<div class="employee-panel">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="employee-header">
+
+        <div>
+
+            <div class="employee-header-title">
+                <i class="fa-solid fa-user-group"></i>
+                <span>कर्मचारी विवरण</span>
+            </div>
+
+            <div class="employee-header-subtitle">
+                कार्यालयका कर्मचारीहरूको विवरण
+            </div>
+
+        </div>
+
+        <div class="employee-count">
+            @(Model.employeeSetup != null &&
+              Model.employeeSetup.Lists != null
+                ? Model.employeeSetup.Lists.Count()
+                : 0)
+        </div>
+
+    </div>
+
+
+    @if (Model.employeeSetup != null &&
+         Model.employeeSetup.Lists != null &&
+         Model.employeeSetup.Lists.Any())
+    {
+        <!-- =================================================
+             EMPLOYEE DETAIL AREA
+             ================================================= -->
+
+        <div class="employee-detail-area">
+
+            <div id="Employeetabcontent">
+
+                <div class="employee-loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <span>
+                        कर्मचारी विवरण लोड हुँदैछ...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EMPLOYEE SELECTOR
+             ================================================= -->
+
+        <div class="employee-selector">
+
+            <div class="employee-list">
+
+                @foreach (var EmpItem in Model.employeeSetup.Lists)
+                {
+                    <button type="button"
+                            class="Employeetablinks"
+                            data-employee-id="@EmpItem.EmpId"
+                            onclick="openEmployee(@EmpItem.EmpId, this)">
+
+                        @if (!string.IsNullOrEmpty(EmpItem.Image))
+                        {
+                            <img src="@Url.Content("~/EmployeeImage/" + EmpItem.Image)"
+                                 class="child-emp"
+                                 alt="@EmpItem.EmpName" />
+                        }
+                        else
+                        {
+                            <img src="@Url.Content("~/Content/images/UserImage.png")"
+                                 class="child-emp"
+                                 alt="@EmpItem.EmpName" />
+                        }
+
+                        <span class="employee-person-info">
+
+                            <span class="employee-person-name">
+                                @EmpItem.EmpName
+                            </span>
+
+                            <span class="employee-person-post">
+                                @EmpItem.PostSetup.PostTitle
+                            </span>
+
+                        </span>
+
+                        <span class="employee-arrow">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+
+                    </button>
+                }
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <div class="employee-detail-area">
+
+            <div class="employee-empty">
+
+                <i class="fa-solid fa-user-slash"></i>
+
+                <div class="employee-empty-title">
+                    कर्मचारी विवरण उपलब्ध छैन
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+<script>
+
+    /* =========================================================
+       OPEN EMPLOYEE
+       ========================================================= */
+
+    function openEmployee(id, buttonElement) {
+
+        if (!id) {
+            return;
+        }
+
+        /* Active employee */
+
+        $(".Employeetablinks")
+            .removeClass("active-employee");
+
+        if (buttonElement) {
+            $(buttonElement)
+                .addClass("active-employee");
+        }
+
+
+        /* Loading */
+
+        $("#Employeetabcontent").html(
+            '<div class="employee-loading">' +
+                '<i class="fa-solid fa-spinner fa-spin"></i>' +
+                '<span>कर्मचारी विवरण लोड हुँदैछ...</span>' +
+            '</div>'
+        );
+
+
+        /* AJAX */
+
+        $.ajax({
+
+            url: '@Url.Action("ShowEmployee", "Home")',
+
+            data: {
+                id: id
+            },
+
+            type: "GET",
+
+            dataType: "html",
+
+            error: function () {
+
+                $("#Employeetabcontent").html(
+
+                    '<div class="employee-empty">' +
+                        '<i class="fa-solid fa-triangle-exclamation"></i>' +
+                        '<div class="employee-empty-title">' +
+                            'कर्मचारी विवरण लोड गर्न सकिएन' +
+                        '</div>' +
+                    '</div>'
+
+                );
+
+            },
+
+            success: function (dataresult) {
+
+                $("#Employeetabcontent")
+                    .html(dataresult);
+
+            }
+
+        });
+
+    }
+
+
+    /* =========================================================
+       INITIAL EMPLOYEE
+       ========================================================= */
+
+    $(document).ready(function () {
+
+        var firstEmployee =
+            $(".Employeetablinks").first();
+
+        if (firstEmployee.length > 0) {
+
+            openEmployee(
+                firstEmployee.data("employee-id"),
+                firstEmployee[0]
+            );
+
+        }
+
+    });
+
+</script>

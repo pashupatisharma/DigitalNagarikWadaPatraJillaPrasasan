@@ -1,0 +1,1292 @@
+﻿@{
+    Layout = null;
+
+    var ofc = Utility.officeDetail();
+    HelpDesk.Models.ApplicationDbContext db = new HelpDesk.Models.ApplicationDbContext();
+    var emp = db.EmployeeSetup.FirstOrDefault();
+    var roomId = (string)ViewBag.Room ?? "demo";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no" />
+
+    <title>Live Viewer - @roomId</title>
+
+    <style>
+
+        /* =========================================================
+           GLOBAL
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+
+        /* =========================================================
+           MAIN VIEWER
+        ========================================================= */
+
+        .viewer-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            overflow: hidden;
+        }
+
+
+        /* =========================================================
+           VIDEO
+        ========================================================= */
+
+        #remoteVideo {
+            position: absolute;
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            background: #000;
+
+            /*
+                contain = entire video visible
+                cover   = fills screen
+            */
+            object-fit: contain;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           TOP BAR
+        ========================================================= */
+
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+
+            z-index: 20;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 14px 18px;
+
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,.80),
+                rgba(0,0,0,0)
+            );
+
+            color: #fff;
+
+            transition: opacity .3s ease;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            min-width: 0;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+
+            background: #ff2d2d;
+
+            border-radius: 50%;
+
+            box-shadow: 0 0 10px rgba(255,45,45,.9);
+
+            animation: livePulse 1.4s infinite;
+        }
+
+        @@keyframes livePulse {
+
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .45;
+                transform: scale(.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .room-title {
+            font-size: 15px;
+            font-weight: 600;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        /* =========================================================
+           STATUS
+        ========================================================= */
+
+        #connectionStatus {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            font-size: 13px;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            background: rgba(0,0,0,.55);
+
+            backdrop-filter: blur(8px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+        }
+
+        .status-connected .status-dot {
+            background: #28d17c;
+            box-shadow: 0 0 8px rgba(40,209,124,.8);
+        }
+
+        .status-error .status-dot {
+            background: #ff3b30;
+        }
+
+
+        /* =========================================================
+           CENTER LOADING
+        ========================================================= */
+
+        #loadingOverlay {
+            position: absolute;
+            inset: 0;
+
+            z-index: 10;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(0,0,0,.25);
+
+            pointer-events: none;
+
+            transition: opacity .3s ease;
+        }
+
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+
+            color: #fff;
+
+            padding: 24px 30px;
+
+            border-radius: 14px;
+
+            background: rgba(0,0,0,.65);
+
+            backdrop-filter: blur(10px);
+        }
+
+        .spinner {
+            width: 34px;
+            height: 34px;
+
+            border: 3px solid rgba(255,255,255,.25);
+            border-top-color: #fff;
+
+            border-radius: 50%;
+
+            animation: spin .8s linear infinite;
+        }
+
+        @@keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =========================================================
+           BOTTOM CONTROLS
+        ========================================================= */
+
+        .controls {
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            z-index: 30;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 16px 18px;
+
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,.85),
+                rgba(0,0,0,0)
+            );
+
+            transition: opacity .3s ease;
+        }
+
+        .control-left,
+        .control-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+
+        .control-btn {
+            border: 0;
+
+            min-width: 42px;
+            height: 42px;
+
+            padding: 0 14px;
+
+            border-radius: 10px;
+
+            color: #fff;
+
+            background: rgba(255,255,255,.13);
+
+            backdrop-filter: blur(8px);
+
+            cursor: pointer;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition:
+                background .2s ease,
+                transform .15s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,.24);
+        }
+
+        .control-btn:active {
+            transform: scale(.95);
+        }
+
+        .join-btn {
+            background: rgba(28,175,88,.85);
+        }
+
+        .join-btn:hover {
+            background: rgba(28,175,88,1);
+        }
+
+        .leave-btn {
+            background: rgba(220,53,69,.80);
+        }
+
+        .leave-btn:hover {
+            background: rgba(220,53,69,1);
+        }
+
+        .control-btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+
+        /* =========================================================
+           LOG
+        ========================================================= */
+
+        #log {
+            position: absolute;
+
+            left: 15px;
+            bottom: 75px;
+
+            z-index: 25;
+
+            max-width: 420px;
+            max-height: 120px;
+
+            overflow-y: auto;
+
+            color: rgba(255,255,255,.75);
+
+            font-size: 11px;
+
+            pointer-events: none;
+        }
+
+        #log div {
+            margin-bottom: 3px;
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @@media (max-width: 768px) {
+
+            .top-bar {
+                padding: 10px 12px;
+            }
+
+            .room-title {
+                font-size: 13px;
+            }
+
+            #connectionStatus {
+                font-size: 11px;
+                padding: 5px 8px;
+            }
+
+            .controls {
+                padding: 10px 12px;
+            }
+
+            .control-btn {
+                min-width: 38px;
+                height: 38px;
+
+                padding: 0 10px;
+
+                font-size: 12px;
+            }
+
+            #log {
+                bottom: 60px;
+                left: 10px;
+                max-width: calc(100vw - 20px);
+            }
+        }
+
+
+        /* =========================================================
+           VERY SMALL SCREEN
+        ========================================================= */
+
+        @@media (max-width: 420px) {
+
+            .room-title {
+                max-width: 150px;
+            }
+
+            .control-btn {
+                min-width: 36px;
+                height: 36px;
+            }
+
+            .join-btn span,
+            .leave-btn span {
+                display: none;
+            }
+        }
+
+
+        /* =========================================================
+           FULLSCREEN
+        ========================================================= */
+
+        :fullscreen #remoteVideo {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        :-webkit-full-screen #remoteVideo {
+            width: 100vw;
+            height: 100vh;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="viewer-container">
+
+        <!-- =====================================================
+             VIDEO
+        ====================================================== -->
+
+        <video id="remoteVideo"
+               autoplay
+               playsinline
+               muted></video>
+
+
+        <!-- =====================================================
+             TOP INFORMATION
+        ====================================================== -->
+
+        <div class="top-bar">
+
+            <div class="room-info">
+
+                <span class="live-dot"></span>
+
+                <div class="room-title">
+                    Live Viewer — @roomId
+                </div>
+
+            </div>
+
+            <div id="connectionStatus"
+                 class="status-disconnected">
+
+                <span class="status-dot"></span>
+
+                <span id="statusText">
+                    Disconnected
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             LOADING
+        ====================================================== -->
+
+        <div id="loadingOverlay">
+
+            <div class="loading-box">
+
+                <div class="spinner"></div>
+
+                <div id="loadingText">
+                    Waiting for live stream...
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             LOG
+        ====================================================== -->
+
+        <div id="log"></div>
+
+
+        <!-- =====================================================
+             CONTROLS
+        ====================================================== -->
+
+        <div class="controls">
+
+            <div class="control-left">
+
+                <button type="button"
+                        id="btnJoin"
+                        class="control-btn join-btn">
+
+                    ▶ <span>Join Live</span>
+
+                </button>
+
+                <button type="button"
+                        id="btnLeave"
+                        class="control-btn leave-btn"
+                        disabled>
+
+                    ■ <span>Leave</span>
+
+                </button>
+
+            </div>
+
+
+            <div class="control-right">
+
+                <button type="button"
+                        id="btnFullscreen"
+                        class="control-btn"
+                        title="Fullscreen">
+
+                    ⛶
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+
+    <script src="/signalr/hubs"></script>
+
+
+    <script>
+
+        (function () {
+
+            "use strict";
+
+
+            /* =====================================================
+               CONFIGURATION
+            ====================================================== */
+
+            const roomId = "@roomId";
+
+            const iceServers = [
+                {
+                    urls: "stun:stun.l.google.com:19302"
+                }
+            ];
+
+
+            /* =====================================================
+               ELEMENTS
+            ====================================================== */
+
+            const remoteVideo =
+                document.getElementById("remoteVideo");
+
+            const btnJoin =
+                document.getElementById("btnJoin");
+
+            const btnLeave =
+                document.getElementById("btnLeave");
+
+            const btnFullscreen =
+                document.getElementById("btnFullscreen");
+
+            const logEl =
+                document.getElementById("log");
+
+            const statusBox =
+                document.getElementById("connectionStatus");
+
+            const statusText =
+                document.getElementById("statusText");
+
+            const loadingOverlay =
+                document.getElementById("loadingOverlay");
+
+            const loadingText =
+                document.getElementById("loadingText");
+
+
+            /* =====================================================
+               STATE
+            ====================================================== */
+
+            let viewerPc = null;
+
+            let broadcasterId = null;
+
+            let joined = false;
+
+
+            /* =====================================================
+               LOG
+            ====================================================== */
+
+            function log(message) {
+
+                const p =
+                    document.createElement("div");
+
+                p.textContent =
+                    new Date().toLocaleTimeString()
+                    + " - "
+                    + message;
+
+                logEl.appendChild(p);
+
+                logEl.scrollTop =
+                    logEl.scrollHeight;
+            }
+
+
+            /* =====================================================
+               STATUS
+            ====================================================== */
+
+            function setStatus(text, type) {
+
+                statusText.textContent = text;
+
+                statusBox.classList.remove(
+                    "status-connected",
+                    "status-error",
+                    "status-disconnected"
+                );
+
+                statusBox.classList.add(
+                    type || "status-disconnected"
+                );
+            }
+
+
+            /* =====================================================
+               LOADING
+            ====================================================== */
+
+            function showLoading(text) {
+
+                loadingText.textContent =
+                    text || "Loading...";
+
+                loadingOverlay.style.opacity = "1";
+            }
+
+
+            function hideLoading() {
+
+                loadingOverlay.style.opacity = "0";
+            }
+
+
+            /* =====================================================
+               SIGNALR
+            ====================================================== */
+
+            const connection =
+                $.hubConnection();
+
+            const hub =
+                connection.createHubProxy("liveHub");
+
+
+            /* =====================================================
+               RECEIVE OFFER
+            ====================================================== */
+
+            hub.on(
+                "ReceiveOffer",
+                async function (fromId, offer) {
+
+                    try {
+
+                        broadcasterId = fromId;
+
+                        log(
+                            "Offer received from broadcaster."
+                        );
+
+                        showLoading(
+                            "Connecting to live stream..."
+                        );
+
+
+                        /* Close previous connection */
+
+                        if (viewerPc) {
+
+                            viewerPc.close();
+
+                            viewerPc = null;
+                        }
+
+
+                        /* Create WebRTC connection */
+
+                        viewerPc =
+                            new RTCPeerConnection({
+                                iceServers: iceServers
+                            });
+
+
+                        /* =================================================
+                           REMOTE TRACK
+                        ================================================== */
+
+                        viewerPc.ontrack =
+                            function (event) {
+
+                                log(
+                                    "Live video stream received."
+                                );
+
+                                if (event.streams &&
+                                    event.streams.length > 0) {
+
+                                    remoteVideo.srcObject =
+                                        event.streams[0];
+
+                                    remoteVideo.play()
+                                        .catch(function () { });
+
+                                    hideLoading();
+
+                                    setStatus(
+                                        "Live",
+                                        "status-connected"
+                                    );
+                                }
+                            };
+
+
+                        /* =================================================
+                           ICE CANDIDATE
+                        ================================================== */
+
+                        viewerPc.onicecandidate =
+                            function (event) {
+
+                                if (
+                                    event.candidate &&
+                                    broadcasterId
+                                ) {
+
+                                    hub.invoke(
+                                        "SendIceCandidate",
+                                        broadcasterId,
+                                        event.candidate
+                                    );
+                                }
+                            };
+
+
+                        /* =================================================
+                           CONNECTION STATE
+                        ================================================== */
+
+                        viewerPc.onconnectionstatechange =
+                            function () {
+
+                                if (!viewerPc)
+                                    return;
+
+                                const state =
+                                    viewerPc.connectionState;
+
+                                log(
+                                    "WebRTC state: " + state
+                                );
+
+
+                                if (
+                                    state === "connected"
+                                ) {
+
+                                    hideLoading();
+
+                                    setStatus(
+                                        "Live",
+                                        "status-connected"
+                                    );
+                                }
+
+
+                                if (
+                                    state === "connecting"
+                                ) {
+
+                                    setStatus(
+                                        "Connecting...",
+                                        "status-disconnected"
+                                    );
+                                }
+
+
+                                if (
+                                    state === "disconnected" ||
+                                    state === "failed"
+                                ) {
+
+                                    setStatus(
+                                        "Disconnected",
+                                        "status-error"
+                                    );
+                                }
+                            };
+
+
+                        /* =================================================
+                           REMOTE DESCRIPTION
+                        ================================================== */
+
+                        await viewerPc
+                            .setRemoteDescription(offer);
+
+
+                        /* =================================================
+                           CREATE ANSWER
+                        ================================================== */
+
+                        const answer =
+                            await viewerPc.createAnswer();
+
+
+                        await viewerPc
+                            .setLocalDescription(answer);
+
+
+                        /* =================================================
+                           SEND ANSWER
+                        ================================================== */
+
+                        await hub.invoke(
+                            "SendAnswer",
+                            broadcasterId,
+                            {
+                                type: answer.type,
+                                sdp: answer.sdp
+                            }
+                        );
+
+
+                        log(
+                            "Answer sent to broadcaster."
+                        );
+
+                    }
+                    catch (error) {
+
+                        console.error(error);
+
+                        log(
+                            "WebRTC error: "
+                            + error.message
+                        );
+
+                        setStatus(
+                            "Connection error",
+                            "status-error"
+                        );
+
+                        showLoading(
+                            "Unable to connect."
+                        );
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               RECEIVE ICE
+            ====================================================== */
+
+            hub.on(
+                "ReceiveIceCandidate",
+                async function (fromId, candidate) {
+
+                    try {
+
+                        if (
+                            viewerPc &&
+                            candidate
+                        ) {
+
+                            await viewerPc.addIceCandidate(
+                                new RTCIceCandidate(candidate)
+                            );
+                        }
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "ICE error:",
+                            error
+                        );
+                    }
+
+                }
+            );
+
+
+            /* =====================================================
+               BROADCASTER LEFT
+            ====================================================== */
+
+            hub.on(
+                "BroadcasterLeft",
+                function () {
+
+                    log(
+                        "Broadcaster left the room."
+                    );
+
+                    closeViewer();
+
+                    setStatus(
+                        "Broadcaster offline",
+                        "status-error"
+                    );
+
+                    showLoading(
+                        "Waiting for broadcaster..."
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               SIGNALR CONNECTION
+            ====================================================== */
+
+            connection.start()
+
+                .done(function () {
+
+                    log(
+                        "SignalR connected: "
+                        + connection.id
+                    );
+
+                    setStatus(
+                        "Connected",
+                        "status-connected"
+                    );
+
+                })
+
+                .fail(function (error) {
+
+                    console.error(error);
+
+                    log(
+                        "SignalR connection failed."
+                    );
+
+                    setStatus(
+                        "Connection failed",
+                        "status-error"
+                    );
+
+                    showLoading(
+                        "Unable to connect to server."
+                    );
+
+                });
+
+
+            /* =====================================================
+               JOIN
+            ====================================================== */
+
+            btnJoin.onclick =
+                async function () {
+
+                    try {
+
+                        await hub.invoke(
+                            "JoinAsViewer",
+                            roomId
+                        );
+
+                        joined = true;
+
+                        btnJoin.disabled = true;
+
+                        btnLeave.disabled = false;
+
+                        showLoading(
+                            "Waiting for live stream..."
+                        );
+
+                        setStatus(
+                            "Waiting",
+                            "status-disconnected"
+                        );
+
+                        log(
+                            "Joined room: " + roomId
+                        );
+
+                    }
+                    catch (error) {
+
+                        console.error(error);
+
+                        log(
+                            "Unable to join room."
+                        );
+
+                        setStatus(
+                            "Join failed",
+                            "status-error"
+                        );
+                    }
+
+                };
+
+
+            /* =====================================================
+               LEAVE
+            ====================================================== */
+
+            btnLeave.onclick =
+                function () {
+
+                    closeViewer();
+
+                    joined = false;
+
+                    btnJoin.disabled = false;
+
+                    btnLeave.disabled = true;
+
+                    hideLoading();
+
+                    setStatus(
+                        "Disconnected",
+                        "status-disconnected"
+                    );
+
+                    log(
+                        "Left room."
+                    );
+                };
+
+
+            /* =====================================================
+               CLOSE VIEWER
+            ====================================================== */
+
+            function closeViewer() {
+
+                if (viewerPc) {
+
+                    viewerPc.ontrack = null;
+
+                    viewerPc.onicecandidate = null;
+
+                    viewerPc.close();
+
+                    viewerPc = null;
+                }
+
+                broadcasterId = null;
+
+                remoteVideo.srcObject = null;
+            }
+
+
+            /* =====================================================
+               FULLSCREEN
+            ====================================================== */
+
+            async function enterFullscreen() {
+
+                const container =
+                    document.querySelector(
+                        ".viewer-container"
+                    );
+
+                try {
+
+                    if (document.fullscreenElement) {
+
+                        await document.exitFullscreen();
+
+                        return;
+                    }
+
+
+                    if (
+                        container.requestFullscreen
+                    ) {
+
+                        await container.requestFullscreen();
+
+                    }
+                    else if (
+                        container.webkitRequestFullscreen
+                    ) {
+
+                        container.webkitRequestFullscreen();
+
+                    }
+                    else if (
+                        container.msRequestFullscreen
+                    ) {
+
+                        container.msRequestFullscreen();
+                    }
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Fullscreen error:",
+                        error
+                    );
+                }
+            }
+
+
+            btnFullscreen.onclick =
+                enterFullscreen;
+
+
+            /* =====================================================
+               VIDEO CLICK = FULLSCREEN
+            ====================================================== */
+
+            remoteVideo.addEventListener(
+                "click",
+                function () {
+
+                    enterFullscreen();
+
+                }
+            );
+
+
+            /* =====================================================
+               DOUBLE CLICK = FULLSCREEN
+            ====================================================== */
+
+            remoteVideo.addEventListener(
+                "dblclick",
+                function () {
+
+                    enterFullscreen();
+
+                }
+            );
+
+
+            /* =====================================================
+               KEYBOARD SHORTCUT
+            ====================================================== */
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    /* F = fullscreen */
+
+                    if (
+                        event.key.toLowerCase() === "f"
+                    ) {
+
+                        enterFullscreen();
+                    }
+
+
+                    /* Escape handled by browser */
+
+                }
+            );
+
+
+            /* =====================================================
+               VIDEO PLAY EVENT
+            ====================================================== */
+
+            remoteVideo.addEventListener(
+                "playing",
+                function () {
+
+                    hideLoading();
+
+                    setStatus(
+                        "Live",
+                        "status-connected"
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               VIDEO ERROR
+            ====================================================== */
+
+            remoteVideo.addEventListener(
+                "error",
+                function () {
+
+                    log(
+                        "Video playback error."
+                    );
+
+                    setStatus(
+                        "Video error",
+                        "status-error"
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               INITIAL STATE
+            ====================================================== */
+
+            showLoading(
+                "Ready to join live stream..."
+            );
+
+        })();
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+html {
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+* {
+	padding: 0;
+	margin: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+body {
+	font-size: 14px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+img {
+	max-width: 100%
+}
+.clearfix {
+	clear: both;
+}
+.id-wrap {
+	background: #D79F00;
+	width: 980px;
+	margin: 0 auto;
+	padding: 20px;
+	border:1px solid rgba(0, 0, 0, 0.14);
+	border-radius:2px;
+}
+.certificate-border {
+	border: 3px solid #000;
+	padding: 10px;
+	border-radius: 5px;
+}
+.header-left, .header-center {
+	float: left
+}
+.header-left {
+	width: 25%;
+	padding: 20px;
+}
+.header-center {
+	width: 50%;
+	text-align: center
+}
+.header-center h2 {
+	font-size: 3em
+}
+.header-center h2 span {
+	display: block;
+	font-weight: 900
+}
+.header-address {
+	font-size: 1.2em
+}
+.certificate-title {
+	text-align: center;
+}
+.certificate-title h3 {
+	background: #000;
+	color: #d79f00;
+	display: inline-block;
+	padding: 5px 20px;
+	margin: 10px auto;
+	font-size: 1.6em;
+	outline-style: solid;
+	outline-color: rgba(0, 0, 0, 0.15);
+	outline-width: 6px;
+	text-transform: uppercase;
+}
+.exam-term {
+	text-align: center;
+	font-size: 1.4em;
+	font-weight: 600;
+	text-decoration: underline
+}
+.Licence Distribution-info {
+	margin-top: 15px;
+}
+.Licence Distribution-info table {
+	width: 100%
+}
+.Licence Distribution-info table td {
+	padding: 5px 10px;
+}
+.table {
+	width: 100%;
+	max-width: 100%;
+	    border-spacing: 0;
+    border-collapse: collapse;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+	padding: 8px;
+	line-height: 1.42857143;
+	vertical-align: top;
+	border-left: 1px solid #000;
+border-right: 1px solid #000;
+}
+.table>thead>tr>th {
+	vertical-align: bottom;
+	border-bottom: 1px solid #000
+}
+.table>tfoot>tr>th{
+	border-top: 1px solid #000
+}
+.table>caption+thead>tr:first-child>td, .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th {
+	border-top: 0
+}
+.table>tbody+tbody {
+	border-top: 1px solid #000
+}
+.table-bordered {
+	border: 1px solid #000
+}
+.table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+	border-left: 1px solid #000;
+border-right: 1px solid #000;
+}
+.table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+	border-bottom-width: 1px
+}
+
+table col[class*=col-] {
+	position: static;
+	display: table-column;
+	float: none
+}
+table td[class*=col-], table th[class*=col-] {
+	position: static;
+	display: table-cell;
+	float: none
+}
+
+.mark-status{
+	margin-top:15px;
+}
+.mark-status table{
+	width:100%;
+	text-align:left
+}
+.mark-status span{
+	border:1px solid #000;
+	padding:5px 15px;
+}
+.evaluation{
+	margin-top:50px;
+	text-align:center
+}
+.evaluation h3{
+	text-decoration:underline;
+	font-size:1.3em
+}
+.eval-left{
+	width:55%;
+	float:left;
+}
+.eval-left table{
+	width:100%;
+	padding:10px;
+	text-align:left;
+	border:1px solid #000
+}
+.eval-left table td{
+	padding:4px
+}
+.eval-right{
+	width:40%;
+	float:right;
+	
+}
+.eval-right table {
+	text-align:left;
+	font-weight:600
+}
+.eval-right .table-bordered>tbody>tr>td{
+	border: 1px solid #000
+}
+.remraks fieldset{
+	border:1px solid #000;
+	padding:15px;
+	margin-top:15px;
+}
+.remraks fieldset legend{
+	padding:0 5px;
+	font-weight:600
+}
+.remraks fieldset p{
+	font-style:italic
+}
+.certificate-ft{
+	margin-top:40px;
+}
+.certificate-ft .ft-left, .certificate-ft .ft-right{
+	width:200px;
+	text-align:center
+}
+.certificate-ft .ft-left{
+	float:left;
+	
+}
+
+.certificate-ft .ft-right{
+	float:right
+}
+.certificate-ft span{
+	    border-bottom: 1px dashed #000;
+    display: block;
+    padding-bottom: 5px;
+	margin-bottom:5px;
+}

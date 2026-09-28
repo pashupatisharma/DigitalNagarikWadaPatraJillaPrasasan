@@ -1,0 +1,140 @@
+﻿@model HelpDesk.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_Layout.Login.cshtml";
+
+
+    HelpDesk.Models.ApplicationDbContext db = new HelpDesk.Models.ApplicationDbContext();
+   
+    var data = db.Offices.FirstOrDefault();
+
+
+
+
+}
+<link rel="stylesheet" href="~/css/bootstrap.min.css" />
+
+
+<style type="text/css">
+    html,
+    body {
+        height: 100%;
+    }
+
+    html {
+        display: table;
+        margin: auto;
+    }
+
+    body {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .margin {
+        margin: 0 !important;
+    }
+</style>
+<link href="~/Media/Login/Login.css" rel="stylesheet" />
+@using (Html.BeginForm())
+{
+
+
+    @Html.AntiForgeryToken();
+
+
+    <body style="background: #03a9f4 !important">
+
+
+        <div id="login-page" class="row">
+            <div class="col s12 z-depth-6 card-panel">
+                <form class="login-form">
+                    <div class="row">
+                        <div class="input-field col s12 center">
+                            <img src="~/Content/images/nepal-logo.png" alt="" class="responsive-img valign profile-image-login" style="width:100px;height:100px">
+                            <div class="col-sm-12 clearfix" style="font-family: Kalimati !important;">
+                                <span class="align-content-center">
+                                   
+
+                                    <span class="align-content-center" style="color:white">
+                                        <h5 class="text-uppercase" style="text-align:center;color:black">
+                                        </h5>
+                             
+                             
+                        
+                                    </span>
+
+                                    <span class="align-content-center" style="color:white">
+
+                                        @if (data != null)
+                                        {
+                                            <h6 style="color:black;text-align:center">
+
+                                                
+                                                <b> @data.Office_Name <br />डिजिटल  नागरिक वडापत्र</b>
+                                            </h6>
+
+                                        }
+                                    </span>
+                                    
+
+                                </span>
+                            </div>
+
+
+                            <h6 class="center login-form-text" style="font-family:'Times New Roman'">Please Login To Your Account</h6>
+                        </div>
+                    </div>
+                    <div class="row margin" style="font-family:'Times New Roman'">
+                        <div class="input-field col s12">
+                            <i class="ace-icon fa fa-user prefix"></i>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control validate", @placeholder = "User Name" })
+
+
+
+
+                        </div>
+                    </div>
+                    <div class="row margin" style="font-family:'Times New Roman'">
+                        <div class="input-field col s12">
+                            <i class="ace-icon fa fa-lock prefix"></i>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="row" style="font-family:'Times New Roman'">
+                        <div class="input-field col s12 m12 l12  login-text">
+                            <input type="checkbox" id="remember-me" />
+                            <label for="remember-me">Remember me</label>
+                        </div>
+                    </div>
+                    <div class="row" style="font-family:'Times New Roman'">
+                        <div class="input-field col s12">
+                            <button type="submit" class="btn btn-info col s12">Login</button>
+                        </div>
+                    </div>
+                   
+
+                </form>
+            </div>
+        </div>
+
+    </body>
+
+
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+

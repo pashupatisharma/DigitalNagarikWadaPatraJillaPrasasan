@@ -1,0 +1,272 @@
+﻿@model HelpDesk.Models.HomeModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<style>
+    .card-counter {
+        box-shadow: 2px 2px 10px #DADADA;
+        margin: 5px;
+        padding: 20px 10px;
+        background-color: #fff;
+        height: 100px;
+        border-radius: 5px;
+        transition: .3s linear all;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+    }
+
+        .card-counter i {
+            font-size: 2.5em;
+            opacity: 0.5;
+            margin-right: 20px;
+        }
+
+        .card-content{
+            display:flex;
+            flex-direction:column;
+        }
+        .card-counter .count-numbers {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .card-counter .count-name {
+            font-size: 18px;
+        }
+
+        .card-counter.primary {
+            background-color: #007bff;
+            color: #FFF;
+        }
+
+            .card-counter.primary:hover {
+                background-color: #053a73;
+            }
+
+        .card-counter.danger {
+            background-color: #ef5350;
+            color: #FFF;
+        }
+
+            .card-counter.danger:hover {
+                background-color: #ef0804;
+            }
+
+        .card-counter.success {
+            background-color: #66bb6a;
+            color: #FFF;
+        }
+
+            .card-counter.success:hover {
+                background-color: #06790b;
+            }
+
+        .card-counter.info {
+            background-color: #26c6da;
+            color: #FFF;
+        }
+
+            .card-counter.info:hover {
+                background-color: #0196a9;
+            }
+
+        .card-counter.warning {
+            background-color: rgb(255, 159, 64);
+            color: #FFF;
+        }
+
+            .card-counter.warning:hover {
+                background-color: rgb(210,107, 6);
+            }
+
+        .card-counter.purple {
+            background-color: rgb(153, 102, 255);
+            color: #FFF;
+        }
+
+            .card-counter.purple:hover {
+                background-color: rgb(70, 20, 171);
+            }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
+<div class="container">
+    <main class="main pt-4 pl-4">
+        <div class="container-fluid animated fadeIn">
+            <div class="row">
+                <!-- First card: Total Candidates -->
+                <div class="col-md-3">
+                    <div class="card-counter primary">
+                        <i class="fa fa-users"></i>
+                        <div class="card-content">
+                            <span class="count-name">जम्मा कर्मचारी</span>
+                            <span class="count-numbers" id="total_candidate">@ViewBag.TotalEmployees</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second card: Total Representatives -->
+                <div class="col-md-3">
+                    <div class="card-counter warning">
+                        <i class="fa fa-users"></i>
+                        <div  class="card-content">
+                            <span class="count-name">जम्मा जनप्रतिनिधि</span>
+                            <span class="count-numbers" id="total_representative">@ViewBag.TotalPeopleRepresentatives</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Third card: Total Branches -->
+                <div class="col-md-3">
+                    <div class="card-counter danger">
+                        <i class="fa fa-building"></i>
+                        <div  class="card-content">
+                            <span class="count-name">साखाहरु</span>
+                            <span class="count-numbers" id="total_branches">@ViewBag.TotalSakha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fourth card: Total Services -->
+                <div class="col-md-3">
+                    <div class="card-counter success">
+                        <i class="fa fa-cogs"></i>
+                        <div  class="card-content">
+                            <span class="count-name">जम्मा सेवाहरु</span>
+                            <span class="count-numbers" id="total_services">@ViewBag.TotalServices</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="sip_type_wise_chart" height="350" width="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <canvas id="sip_type_wise_pie_chart" height="350" width="450"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+<!-- ./app-body -->
+
+
+
+
+
+
+
+
+
+
+<script>
+    $('.count-numbers').each(function () {
+        $(this).prop('Counter', 0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 2000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    });
+</script>
+
+
+
+
+<script>
+    $.ajax({
+        type: "POST",
+
+         url: "@Url.Action("NewChart", "Home")",
+
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (chData) {
+            var aData = chData;
+            var aLabels = aData[0];
+            var aDatasets1 = aData[1];
+            var bg = aData[2];
+            var boarderColor = aData[3];
+
+            var dataT = {
+                labels: aLabels,
+                datasets: [{
+                    label: "कार्य",
+                    data: aDatasets1,
+                    fill: false,
+                    backgroundColor: bg,
+                    borderColor: boarderColor,
+
+                    borderWidth: 1
+
+                }]
+            };
+            var ctx = $("#sip_type_wise_chart").get(0).getContext("2d");
+            var myNewChart = new Chart(ctx, {
+                type: 'bar',
+                data: dataT,
+                options: {
+                    responsive: true,
+                    title: { display: true, text: 'हाल सम्म जारी गरिएको कार्य' },
+                    legend: { position: 'bottom' },
+                    scales: {
+                        xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 50, beginAtZero: true } }]
+                    },
+                }
+            });
+
+
+
+            //for Piechart
+            var ctxpie = $("#sip_type_wise_pie_chart").get(0).getContext("2d");
+            var myNewChart = new Chart(ctxpie, {
+                type: 'doughnut',
+                data: dataT,
+                options: {
+                    responsive: true,
+                    title: { display: true, text: 'हाल सम्म जारी गरिएको सिफारिस' },
+                    legend: { position: 'bottom' },
+                    //scales: {
+                    //    xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
+                    //    yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 50, beginAtZero: true } }]
+                    //},
+                }
+            });
+
+
+
+
+
+
+
+
+
+
+        }
+    });
+</script>

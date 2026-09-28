@@ -1,0 +1,31 @@
+﻿@model HelpDesk.Models.NoticeFiles
+@{
+    ViewBag.Title = "Show Image";
+    //Layout = "~/Views/Shared/_BlankLayout.cshtml";
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div class="container-fluid text-center">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.NoticeId)
+
+            <div>
+                @if (Model.Image != null)
+                {
+                    <img src="~/Notice_Upload/@Model.Image" height="500" width="350"> <br />
+
+                }
+                else
+                {
+                    <img src="~/Content/images/team/team-author1.jpg" height="500" width="350" /> <br />
+                }
+                @*<span style="font-size: 24px; font-family: Kalimati !important; color: green; font-weight: bold;">@Model.Title</span>*@
+            </div>
+        }
+
+    </div>
+</div>

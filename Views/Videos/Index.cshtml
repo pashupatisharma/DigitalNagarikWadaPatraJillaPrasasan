@@ -1,0 +1,157 @@
+﻿@model PagedList.IPagedList<HelpDesk.Models.Video>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var count = (Model.PageCount - 1) * Model.PageSize;
+}
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-block alert-success">
+        <button type="button" class="close" data-dismiss="alert">
+            <i class="ace-icon fa fa-times"></i>
+        </button>
+
+        <i class="ace-icon fa fa-check green"></i>
+        @TempData["Msg"]
+    </div>
+}
+<style type="text/css">
+    video {
+        position: relative;
+        overflow: hidden;
+        margin: 5px;
+        border: 1px solid white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .video-title {
+        font-family: 'Times New Roman' !important;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .butFrame:hover,
+    .butFrame:active {
+        animation: bounce 0.6s ease;
+        -webkit-animation: bounce 0.6s ease;
+    }
+    /* KEYFRAME STYLE  */
+    @@keyframes butFrame {
+        0% {
+            top: 0px;
+        }
+
+        25% {
+            top: -25px;
+        }
+
+        50% {
+            top: 15px;
+        }
+
+        75% {
+            top: -10px;
+        }
+
+        100% {
+            top: 0px;
+        }
+    }
+
+    @@-webkit-keyframes bounce {
+        0% {
+            top: 0px;
+        }
+
+        25% {
+            top: -10px;
+        }
+
+        50% {
+            top: 5px;
+        }
+
+        75% {
+            top: -5px;
+        }
+
+        100% {
+            top: 0px;
+        }
+    }
+</style>
+
+
+
+<div class="row page-titles">
+
+    <div class="col-md-12 align-self-right text-end">
+        <div class="d-flex justify-content-end align-items-center">
+            <ol class="breadcrumb justify-content-end">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">सेटअप</a></li>
+                <li class="breadcrumb-item active">Videos</li>
+                <li class="breadcrumb-item">
+                    <a href='@Url.Action("Create","Videos")'><i class="fa fa-plus-circle"></i>ADD</a>
+                </li>
+            </ol>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h4 class="m-b-0 text-white">विडियो सुची</h4>
+            </div>
+            <div class="card-body">
+                <div class="body_blocks top">
+                    <div class="row">
+                        @foreach (var item in Model)
+                        {
+                            count++;
+                            <div class="col-md-4">
+                                <div class="butFrame">
+                                    @if (item.VideoData != null)
+                                    {
+                                        <video width="300" height="220" id="imgThumbnail" controls>
+                                            <source src="~/UploadedVideos/@item.VideoData" type="video/mp4">
+                                        </video>
+                                    }
+                                    else
+                                    {
+                                        <video width="300" height="220" id="imgThumbnail" controls>
+                                        </video>
+                                    }
+                                </div>
+                                <div class="text-center video-title">
+                                    <span style="font-family: Kalimati !important;">@item.VideoName</span><br />
+                                    <button value="@item.VideoId" class="btn btn-default btn-warning btn-sm" onclick='window.location.href="/Videos/Edit/@item.VideoId"'><i class="fa-solid fa-pen-to-square"></i></button> |
+                                    @*@Html.ActionLink("Delete", "Delete", new { id = item.VideoId }, new { onclick = "return confirm('Do you want to delete?')", @class = "mdc-button mdc-button--raised filled-button--danger" })*@
+                                    <button value="@item.VideoId" class="btn btn-default btn-danger btn-sm" onclick='window.location.href="/Videos/Delete/@item.VideoId"'><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <nav aria-label="Products navigation example">
+                        <div class="row">
+                            <div class=" col-md-3 col-sm-3">
+                                <div class="pull-left pagination">
+                                    page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                                </div>
+                            </div>
+                            <div class="col-md-9 col-sm-9 pagination">
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { pageSize = ViewBag.PageSize, page }))
+                            </div>
+                        </div>
+                    </nav>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

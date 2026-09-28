@@ -1,0 +1,92 @@
+﻿
+@{
+    Layout = null;
+
+    var ofc = Utility.officeDetail();
+    HelpDesk.Models.ApplicationDbContext db = new HelpDesk.Models.ApplicationDbContext();
+    var emp = db.EmployeeSetup.FirstOrDefault();
+    var roomId = (string)ViewBag.Room ?? "demo";
+}
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: black;
+    }
+
+    #remoteVideo {
+        width: 90vw;
+        height: 90vh;
+        object-fit: cover; /* ensures video fills screen without distortion */
+        display: block;
+    }
+
+</style>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Viewer - @roomId</title>
+</head>
+<body>
+    <h2>Viewer Room: @roomId</h2>
+    <button id="btnJoin">Join</button>
+    <button id="btnLeave" disabled>Leave</button>
+    <video class="player" id="remoteVideo" autoplay playsinline></video>
+
+
+    <div id="log"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script>
+        const remoteVideo = document.getElementById("remoteVideo");
+        remoteVideo.addEventListener("click", () => {
+            if (remoteVideo.requestFullscreen) remoteVideo.requestFullscreen();
+            else if (remoteVideo.webkitRequestFullscreen) remoteVideo.webkitRequestFullscreen();
+            else if (remoteVideo.msRequestFullscreen) remoteVideo.msRequestFullscreen();
+        });
+    </script>
+    <script>
+
+    (function() {
+        const roomId = "@roomId";
+        const iceServers = [{ urls: "stun:stun.l.google.com:19302" }];
+        const logEl = document.getElementById('log');
+        function log(msg){ const p=document.createElement('div'); p.textContent=msg; logEl.appendChild(p); logEl.scrollTop=logEl.scrollHeight; }
+
+        const connection = $.hubConnection();
+        const hub = connection.createHubProxy("liveHub");
+
+        const btnJoin = document.getElementById("btnJoin");
+        const btnLeave = document.getElementById("btnLeave");
+        const remoteVideo = document.getElementById("remoteVideo");
+
+        let viewerPc=null, broadcasterId=null;
+
+        hub.on("ReceiveOffer", async (fromId, offer) => {
+            broadcasterId = fromId;
+            viewerPc = new RTCPeerConnection({ iceServers });
+            viewerPc.ontrack = e => { remoteVideo.srcObject = e.streams[0]; };
+            viewerPc.onicecandidate = e => { if(e.candidate) hub.invoke("SendIceCandidate", broadcasterId, e.candidate); };
+            await viewerPc.setRemoteDescription(offer);
+            const answer = await viewerPc.createAnswer();
+            await viewerPc.setLocalDescription(answer);
+            hub.invoke("SendAnswer", broadcasterId, { type: answer.type, sdp: answer.sdp });
+            log("Sent answer to broadcaster");
+        });
+
+        hub.on("ReceiveIceCandidate", async (fromId, candidate) => { if(viewerPc) await viewerPc.addIceCandidate(new RTCIceCandidate(candidate)); });
+        hub.on("BroadcasterLeft", () => { if(viewerPc){ viewerPc.close(); viewerPc=null; remoteVideo.srcObject=null; log("Broadcaster left"); } });
+
+        connection.start().done(() => {
+            log("SignalR connected: " + connection.id);
+            btnJoin.onclick = () => { hub.invoke("JoinAsViewer", roomId); btnJoin.disabled=true; btnLeave.disabled=false; log("Joined room"); };
+            btnLeave.onclick = () => { if(viewerPc){ viewerPc.close(); viewerPc=null; remoteVideo.srcObject=null; } btnJoin.disabled=false; btnLeave.disabled=true; log("Left room"); };
+        });
+    })();
+    </script>
+</body>
+</html>

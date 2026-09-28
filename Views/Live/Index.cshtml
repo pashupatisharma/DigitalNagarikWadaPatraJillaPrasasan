@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var roomId = (string)ViewBag.Room ?? "demo";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Broadcast - @roomId</title>
+</head>
+<body>
+    <h2>Broadcast Room: @roomId</h2>
+    <button id="btnStart">Start Broadcast</button>
+    <button id="btnStop" disabled>Stop</button>
+    <button id="btnToggleCamera" disabled>Toggle Camera</button>
+    <video id="localVideo" autoplay muted playsinline></video>
+    <div id="log"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script>
+    (function() {
+        const roomId = "@roomId";
+        const iceServers = [{ urls: "stun:stun.l.google.com:19302" }];
+        const logEl = document.getElementById('log');
+        function log(msg) { const p=document.createElement('div'); p.textContent=msg; logEl.appendChild(p); logEl.scrollTop=logEl.scrollHeight; }
+
+        const connection = $.hubConnection();
+        const hub = connection.createHubProxy("liveHub");
+
+        const btnStart = document.getElementById("btnStart");
+        const btnStop = document.getElementById("btnStop");
+        const btnToggleCamera = document.getElementById("btnToggleCamera");
+        const localVideo = document.getElementById("localVideo");
+
+        let localStream=null, isBroadcaster=false, useBackCamera=true;
+        const peers={};
+
+        hub.on("ViewerJoined", async viewerId => {
+            log("Viewer joined: " + viewerId);
+            const pc = new RTCPeerConnection({ iceServers });
+            peers[viewerId] = pc;
+            localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+
+            pc.onicecandidate = e => { if(e.candidate) hub.invoke("SendIceCandidate", viewerId, e.candidate); };
+
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            hub.invoke("SendOffer", viewerId, { type: offer.type, sdp: offer.sdp });
+        });
+
+        hub.on("ViewerLeft", viewerId => {
+            const pc = peers[viewerId]; if(pc){ pc.close(); delete peers[viewerId]; log("Viewer left: " + viewerId); }
+        });
+
+        hub.on("ReceiveAnswer", async (fromId, answer) => {
+            const pc = peers[fromId];
+            if(pc) await pc.setRemoteDescription(answer);
+        });
+
+        hub.on("ReceiveIceCandidate", async (fromId, candidate) => {
+            const pc = peers[fromId];
+            if(pc) await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        });
+
+        async function getCameraStream(backCamera){
+            try { return await navigator.mediaDevices.getUserMedia({ video: { facingMode: backCamera?"environment":"user" }, audio:true }); }
+            catch(e){ log("Camera error: " + e); return null; }
+        }
+
+        connection.start().done(() => {
+            log("SignalR connected: " + connection.id);
+            btnStart.onclick = async () => {
+                localStream = await getCameraStream(useBackCamera);
+                if(!localStream) return;
+                localVideo.srcObject = localStream;
+                isBroadcaster = true;
+                hub.invoke("JoinAsBroadcaster", roomId);
+                btnStart.disabled=true; btnStop.disabled=false; btnToggleCamera.disabled=false;
+                log("Broadcast started");
+            };
+
+            btnStop.onclick = () => {
+                Object.values(peers).forEach(pc => pc.close());
+                for(const k in peers) delete peers[k];
+                if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localVideo.srcObject=null; localStream=null; }
+                isBroadcaster=false; btnStart.disabled=false; btnStop.disabled=true; btnToggleCamera.disabled=true;
+                log("Broadcast stopped");
+            };
+
+            btnToggleCamera.onclick = async () => {
+                useBackCamera = !useBackCamera;
+                if(localStream) localStream.getTracks().forEach(t=>t.stop());
+                localStream = await getCameraStream(useBackCamera);
+                if(localStream) {
+                    localVideo.srcObject = localStream;
+                    for(const pc of Object.values(peers)){
+                        const sender = pc.getSenders().find(s => s.track && s.track.kind=="video");
+                        if(sender) sender.replaceTrack(localStream.getVideoTracks()[0]);
+                    }
+                    log("Camera switched");
+                }
+            };
+        });
+    })();
+    </script>
+</body>
+</html>

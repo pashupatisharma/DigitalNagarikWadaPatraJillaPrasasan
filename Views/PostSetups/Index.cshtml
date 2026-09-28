@@ -1,0 +1,107 @@
+﻿@model PagedList.IPagedList<HelpDesk.Models.PostSetup>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int count = (Model.PageCount - 1) * Model.PageSize;
+}
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-block alert-success">
+        <button type="button" class="close" data-dismiss="alert">
+            <i class="ace-icon fa fa-times"></i>
+        </button>
+
+        <i class="ace-icon fa fa-check green"></i>
+        @TempData["Msg"]
+    </div>
+}
+
+
+<div class="row page-titles">
+
+    <div class="col-md-12 align-self-right text-end">
+        <div class="d-flex justify-content-end align-items-center">
+            <ol class="breadcrumb justify-content-end">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">सेटअप</a></li>
+                <li class="breadcrumb-item active">पद सेटअप</li>
+                <li class="breadcrumb-item">
+                    <a href='@Url.Action("Create","PostSetups")'><i class="fa fa-plus-circle"></i>ADD</a>
+                </li>
+            </ol>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h4 class="m-b-0 text-white">पद सुची</h4>
+            </div>
+            <div class="card-body">
+                <div class="body_blocks top">
+
+                    <div class="table-responsive">
+
+                        <table id="simple-table" class="table color-table success-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        सी.न.
+                                    </th>
+                                    <th>
+                                        पदको नाम
+                                    </th>
+                                    <th>
+                                        पदको नाम[अङ्ग्रेजीमा]
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    count++;
+                                    <tr>
+                                        <td>
+                                            @count
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PostTitle)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PostTitleEng)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.PostId }) |
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.PostId })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+
+
+                        <nav aria-label="Products navigation example">
+                            <div class="row">
+                                <div class=" col-md-3 col-sm-3">
+                                    <div class="pull-left pagination">
+                                        page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                                    </div>
+                                </div>
+                                <div class="col-md-9 col-sm-9 pagination">
+                                    @Html.PagedListPager(Model, page => Url.Action("Index", new { pageSize = ViewBag.PageSize, page }))
+                                </div>
+                            </div>
+                        </nav>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

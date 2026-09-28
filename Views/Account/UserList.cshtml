@@ -1,0 +1,50 @@
+﻿@model HelpDesk.Models.ManageUserViewModel
+
+@{
+    ViewData["Title"] = "प्रयोगकर्ता";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int sn = 0;
+}
+<div class="wrapper wrapper-content" id="body" style="padding-left:20px; padding-right:20px">
+
+    <div class="modal-header" style="background-color:#afccf5 ;align-content:center">
+        <h></h>
+        <h5>प्रयोगकर्ता सुची</h5>
+        <h></h>
+    </div>
+
+    <table id="example2" class="table table-bordered table-hover" style="background-color: #D5D4D3">
+        <thead style="background-color:#afccf5;border:  groove">
+            <tr>
+                <th>क्र.सं</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+
+
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.UserList)
+        {
+            sn++;
+    <tr>
+        <td>
+            @sn
+        </td>
+        <td>@item.UserName</td>
+     
+        <td>
+            @if (item.UserName != null)
+            {
+
+                <a href="@Url.Action("Manage", "Account", new { UserName = item.UserName })">Change Password</a>
+            }
+        </td>
+
+    </tr>
+        }
+
+    </table>
+
+</div>

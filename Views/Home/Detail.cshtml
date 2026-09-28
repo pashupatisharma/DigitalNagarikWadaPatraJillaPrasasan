@@ -1,0 +1,1085 @@
+﻿
+@model HelpDesk.Models.SubModule
+
+@{
+    Layout = "~/Views/Shared/_WebSiteLayout.cshtml";
+    var ofc = Utility.officeDetail();
+}
+
+<style>
+
+    /* =========================================================
+       PROFESSIONAL SERVICE DETAIL PAGE
+       ========================================================= */
+
+    .service-detail-page {
+        width: 100%;
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 25px 15px 40px;
+        font-family: Kalimati, "Noto Sans Devanagari", "Mangal", sans-serif !important;
+    }
+
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+
+    .service-layout {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        gap: 22px;
+    }
+
+
+    /* =========================================================
+       LEFT SERVICE INFORMATION
+       ========================================================= */
+
+    .service-information {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .service-card {
+        width: 100%;
+        display: flex;
+        background: #ffffff;
+        border: 1px solid #e3e7eb;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .07);
+    }
+
+
+    /* =========================================================
+       SERVICE NAVIGATION
+       ========================================================= */
+
+    .service-tabs {
+        flex: 0 0 31%;
+        width: 31%;
+        background: #f8fafc;
+        border-right: 1px solid #e4e8ec;
+        padding: 8px 0;
+    }
+
+    .service-tab-btn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-height: 70px;
+        padding: 14px 16px;
+        margin: 0;
+        border: 0;
+        border-bottom: 1px solid #e7eaee;
+        background: transparent;
+        color: #374151;
+        text-align: left;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.45;
+        cursor: pointer;
+        transition: all .25s ease;
+    }
+
+        .service-tab-btn:last-child {
+            border-bottom: 0;
+        }
+
+        .service-tab-btn:hover {
+            background: #ffffff;
+            padding-left: 20px;
+        }
+
+        .service-tab-btn.active {
+            color: #ffffff;
+            padding-left: 20px;
+        }
+
+
+    /* =========================================================
+       NAVIGATION ICON
+       ========================================================= */
+
+    .tab-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        margin-right: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        font-size: 17px;
+        transition: all .25s ease;
+    }
+
+
+    /* Document */
+    .tab-document .tab-icon {
+        background: #e8f1ff;
+        color: #1769aa;
+    }
+
+    .tab-document.active {
+        background: linear-gradient(90deg, #1769aa, #2584c7);
+    }
+
+        .tab-document.active .tab-icon {
+            background: rgba(255,255,255,.18);
+            color: #ffffff;
+        }
+
+
+    /* Process */
+    .tab-process .tab-icon {
+        background: #f1eaff;
+        color: #7444b8;
+    }
+
+    .tab-process.active {
+        background: linear-gradient(90deg, #7042a8, #8958c5);
+    }
+
+        .tab-process.active .tab-icon {
+            background: rgba(255,255,255,.18);
+            color: #ffffff;
+        }
+
+
+    /* Rate */
+    .tab-rate .tab-icon {
+        background: #e6f7ed;
+        color: #198754;
+    }
+
+    .tab-rate.active {
+        background: linear-gradient(90deg, #198754, #25a468);
+    }
+
+        .tab-rate.active .tab-icon {
+            background: rgba(255,255,255,.18);
+            color: #ffffff;
+        }
+
+
+    /* Time */
+    .tab-time .tab-icon {
+        background: #fff1df;
+        color: #d97706;
+    }
+
+    .tab-time.active {
+        background: linear-gradient(90deg, #d97706, #ed941f);
+    }
+
+        .tab-time.active .tab-icon {
+            background: rgba(255,255,255,.18);
+            color: #ffffff;
+        }
+
+
+    /* =========================================================
+       CONTENT AREA
+       ========================================================= */
+
+    .service-content {
+        flex: 1 1 auto;
+        min-width: 0;
+        background: #ffffff;
+    }
+
+    .tabcontent {
+        display: none;
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    /* =========================================================
+       COMMON CONTENT HEADER
+       ========================================================= */
+
+    .tabcontent-header {
+        margin: 0;
+        padding: 18px 22px;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.5;
+        letter-spacing: .1px;
+    }
+
+        .tabcontent-header i {
+            margin-right: 9px;
+        }
+
+
+    /* =========================================================
+       DOCUMENT CONTENT
+       ========================================================= */
+
+    #Document .tabcontent-header {
+        background: linear-gradient(135deg, #1769aa, #2584c7);
+    }
+
+    #Document .tabcontent-body {
+        border-left: 5px solid #1769aa;
+        background: #f7fbff;
+    }
+
+
+    /* =========================================================
+       PROCESS CONTENT
+       ========================================================= */
+
+    #Process .tabcontent-header {
+        background: linear-gradient(135deg, #7042a8, #8958c5);
+    }
+
+    #Process .tabcontent-body {
+        border-left: 5px solid #7042a8;
+        background: #fbf9ff;
+    }
+
+
+    /* =========================================================
+       RATE CONTENT
+       ========================================================= */
+
+    #Rate .tabcontent-header {
+        background: linear-gradient(135deg, #198754, #25a468);
+    }
+
+    #Rate .tabcontent-body {
+        border-left: 5px solid #198754;
+        background: #f7fcf9;
+    }
+
+
+    /* =========================================================
+       TIME CONTENT
+       ========================================================= */
+
+    #Time .tabcontent-header {
+        background: linear-gradient(135deg, #d97706, #ed941f);
+    }
+
+    #Time .tabcontent-body {
+        border-left: 5px solid #d97706;
+        background: #fffaf3;
+    }
+
+
+    /* =========================================================
+       CONTENT BODY
+       ========================================================= */
+
+    .tabcontent-body {
+        width: 100%;
+        min-height: 150px;
+        padding: 25px;
+        color: #374151;
+        font-size: 15.5px;
+        font-weight: 500;
+        line-height: 1.95;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+        .tabcontent-body p {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .tabcontent-body strong,
+        .tabcontent-body b {
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+
+        /* =========================================================
+       CONTENT LISTS
+       ========================================================= */
+
+        .tabcontent-body ul,
+        .tabcontent-body ol {
+            margin-top: 8px;
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+
+        .tabcontent-body li {
+            margin-bottom: 7px;
+        }
+
+
+        /* =========================================================
+       RESPONSIVE CONTENT
+       ========================================================= */
+
+        .tabcontent-body img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .tabcontent-body iframe {
+            max-width: 100%;
+        }
+
+        .tabcontent-body video {
+            max-width: 100%;
+        }
+
+        .tabcontent-body pre {
+            max-width: 100%;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .tabcontent-body table {
+            width: 100% !important;
+            max-width: 100%;
+            border-collapse: collapse;
+        }
+
+            .tabcontent-body table th,
+            .tabcontent-body table td {
+                word-break: break-word;
+                padding: 7px;
+            }
+
+
+    /* =========================================================
+       EMPTY CONTENT
+       ========================================================= */
+
+    .empty-service-content {
+        color: #9ca3af;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 0;
+    }
+
+
+    /* =========================================================
+       VIDEO SECTION
+       ========================================================= */
+
+    .video-section {
+        flex: 0 0 31%;
+        width: 31%;
+        min-width: 280px;
+    }
+
+    .video-card {
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #e3e7eb;
+        border-radius: 10px;
+        padding: 9px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .07);
+    }
+
+    .video-title {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px 12px;
+        color: #374151;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+        .video-title i {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 9px;
+            border-radius: 7px;
+            background: #ffe9e9;
+            color: #dc3545;
+        }
+
+    .video-frame {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #111827;
+        border-radius: 7px;
+        overflow: hidden;
+    }
+
+        .video-frame video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #111827;
+        }
+
+    .no-video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        border-radius: 7px;
+        background: #f8fafc;
+        color: #9ca3af;
+        text-align: center;
+        font-size: 14px;
+    }
+
+
+    /* =========================================================
+       BACK BUTTON
+       ========================================================= */
+
+    .service-back {
+        margin-top: 20px;
+    }
+
+        .service-back .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0,0,0,.08);
+        }
+
+
+    /* =========================================================
+       LAPTOP
+       ========================================================= */
+
+    @@media (max-width: 1199px) {
+
+        .service-layout {
+            gap: 16px;
+        }
+
+        .service-tabs {
+            flex-basis: 34%;
+            width: 34%;
+        }
+
+        .video-section {
+            flex-basis: 30%;
+            width: 30%;
+            min-width: 240px;
+        }
+
+        .service-tab-btn {
+            font-size: 15px;
+            padding: 13px;
+        }
+
+        .tab-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+        }
+
+        .tabcontent-header {
+            font-size: 18px;
+            padding: 16px 18px;
+        }
+
+        .tabcontent-body {
+            padding: 20px;
+        }
+    }
+
+
+    /* =========================================================
+       TABLET
+       ========================================================= */
+
+    @@media (max-width: 991px) {
+
+        .service-detail-page {
+            padding-top: 18px;
+        }
+
+        .service-layout {
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .service-information,
+        .video-section {
+            width: 100%;
+            flex: 0 0 100%;
+            min-width: 0;
+        }
+
+        .video-section {
+            order: 2;
+        }
+
+        .video-frame,
+        .no-video {
+            aspect-ratio: 16 / 8;
+        }
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @@media (max-width: 767px) {
+
+        .service-detail-page {
+            padding: 10px;
+        }
+
+        .service-card {
+            display: block;
+        }
+
+        .service-tabs {
+            width: 100%;
+            border-right: 0;
+            border-bottom: 1px solid #e3e7eb;
+            padding: 0;
+        }
+
+        .service-tab-btn {
+            min-height: auto;
+            padding: 13px 15px;
+            font-size: 15px;
+        }
+
+            .service-tab-btn.active {
+                border-left: 0;
+                padding-left: 15px;
+            }
+
+        .tab-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            margin-right: 10px;
+        }
+
+        .tabcontent-header {
+            font-size: 17px;
+            padding: 14px 15px;
+        }
+
+        .tabcontent-body {
+            min-height: 120px;
+            padding: 17px 15px;
+            font-size: 14px;
+            line-height: 1.85;
+        }
+
+        .video-frame,
+        .no-video {
+            aspect-ratio: 16 / 9;
+        }
+
+        .service-back {
+            margin-top: 15px;
+        }
+    }
+
+
+    /* =========================================================
+       SMALL MOBILE
+       ========================================================= */
+
+    @@media (max-width: 480px) {
+
+        .service-detail-page {
+            padding: 5px;
+        }
+
+        .service-card,
+        .video-card {
+            border-radius: 6px;
+        }
+
+        .service-tab-btn {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+            .service-tab-btn.active {
+                padding-left: 12px;
+            }
+
+        .tab-icon {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            font-size: 14px;
+        }
+
+        .tabcontent-header {
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        .tabcontent-body {
+            padding: 13px;
+            font-size: 13.5px;
+        }
+
+        .video-card {
+            padding: 6px;
+        }
+
+        .video-title {
+            font-size: 14px;
+        }
+
+        .service-back .btn {
+            width: 100%;
+        }
+    }
+
+
+    /* =========================================================
+       EXTRA SMALL MOBILE
+       ========================================================= */
+
+    @@media (max-width: 360px) {
+
+        .service-detail-page {
+            padding: 3px;
+        }
+
+        .service-tab-btn {
+            font-size: 13px;
+            padding: 10px;
+        }
+
+            .service-tab-btn.active {
+                padding-left: 10px;
+            }
+
+        .tab-icon {
+            width: 31px;
+            height: 31px;
+            min-width: 31px;
+            margin-right: 8px;
+        }
+
+        .tabcontent-header {
+            font-size: 15px;
+            padding: 11px;
+        }
+
+        .tabcontent-body {
+            padding: 11px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+
+<!-- =========================================================
+     SERVICE DETAIL PAGE
+     ========================================================= -->
+
+<div class="service-detail-page">
+
+    <div class="service-layout">
+
+
+        <!-- =====================================================
+             SERVICE INFORMATION
+             ===================================================== -->
+
+        <div class="service-information">
+
+            <div class="service-card">
+
+
+                <!-- =================================================
+                     SERVICE NAVIGATION
+                     ================================================= -->
+
+                <div class="service-tabs">
+
+
+                    <!-- DOCUMENT -->
+                    <button type="button"
+                            class="service-tab-btn tablinks tab-document"
+                            onclick="openServiceTab(event, 'Document')"
+                            id="defaultOpen">
+
+                        <span class="tab-icon">
+                            <i class="fa fa-file-text-o"></i>
+                        </span>
+
+                        <span>
+                            आवश्यक कागजात तथा प्रमाणहरु
+                        </span>
+
+                    </button>
+
+
+                    <!-- PROCESS -->
+                    <button type="button"
+                            class="service-tab-btn tablinks tab-process"
+                            onclick="openServiceTab(event, 'Process')">
+
+                        <span class="tab-icon">
+                            <i class="fa fa-refresh"></i>
+                        </span>
+
+                        <span>
+                            प्रकृया
+                        </span>
+
+                    </button>
+
+
+                    <!-- RATE -->
+                    <button type="button"
+                            class="service-tab-btn tablinks tab-rate"
+                            onclick="openServiceTab(event, 'Rate')">
+
+                        <span class="tab-icon">
+                            <i class="fa fa-money"></i>
+                        </span>
+
+                        <span>
+                            सेवामा लाग्ने रकम
+                        </span>
+
+                    </button>
+
+
+                    <!-- TIME -->
+                    <button type="button"
+                            class="service-tab-btn tablinks tab-time"
+                            onclick="openServiceTab(event, 'Time')">
+
+                        <span class="tab-icon">
+                            <i class="fa fa-clock-o"></i>
+                        </span>
+
+                        <span>
+                            सेवामा लाग्ने समय
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     CONTENT
+                     ================================================= -->
+
+                <div class="service-content">
+
+
+                    <!-- =================================================
+                         DOCUMENT
+                         ================================================= -->
+
+                    <div id="Document" class="tabcontent">
+
+                        <h3 class="tabcontent-header">
+
+                            <i class="fa fa-file-text-o"></i>
+
+                            आवश्यक कागजात तथा प्रमाणहरु
+
+                        </h3>
+
+                        <div class="tabcontent-body">
+
+                            @if (!string.IsNullOrWhiteSpace(Model.DocumentNeeded))
+                            {
+                                @Html.Raw(Model.DocumentNeeded)
+                            }
+                            else
+                            {
+                                <div class="empty-service-content">
+                                    आवश्यक कागजात तथा प्रमाणहरुको विवरण उपलब्ध छैन।
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         PROCESS
+                         ================================================= -->
+
+                    <div id="Process" class="tabcontent">
+
+                        <h3 class="tabcontent-header">
+
+                            <i class="fa fa-refresh"></i>
+
+                            प्रकृया
+
+                        </h3>
+
+                        <div class="tabcontent-body">
+
+                            @if (!string.IsNullOrWhiteSpace(Model.Process))
+                            {
+                                @Html.Raw(Model.Process)
+                            }
+                            else
+                            {
+                                <div class="empty-service-content">
+                                    प्रक्रियाको विवरण उपलब्ध छैन।
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         RATE
+                         ================================================= -->
+
+                    <div id="Rate" class="tabcontent">
+
+                        <h3 class="tabcontent-header">
+
+                            <i class="fa fa-money"></i>
+
+                            सेवामा लाग्ने रकम
+
+                        </h3>
+
+                        <div class="tabcontent-body">
+
+                            @if (!string.IsNullOrWhiteSpace(Model.DasturNeed))
+                            {
+                                @Model.DasturNeed
+                            }
+                            else
+                            {
+                                <div class="empty-service-content">
+                                    सेवामा लाग्ने रकमको विवरण उपलब्ध छैन।
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TIME
+                         ================================================= -->
+
+                    <div id="Time" class="tabcontent">
+
+                        <h3 class="tabcontent-header">
+
+                            <i class="fa fa-clock-o"></i>
+
+                            सेवामा लाग्ने समय
+
+                        </h3>
+
+                        <div class="tabcontent-body">
+
+                            @if (!string.IsNullOrWhiteSpace(Model.TimeNeed))
+                            {
+                                @Model.TimeNeed
+                            }
+                            else
+                            {
+                                <div class="empty-service-content">
+                                    सेवामा लाग्ने समयको विवरण उपलब्ध छैन।
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             VIDEO
+             ===================================================== -->
+
+        <div class="video-section">
+
+            <div class="video-card">
+
+                <div class="video-title">
+
+                    <i class="fa fa-play"></i>
+
+                    <span>
+                        सेवासम्बन्धी जानकारी
+                    </span>
+
+                </div>
+
+
+                @if (!string.IsNullOrWhiteSpace(Model.FilePath))
+                {
+
+                    <div class="video-frame">
+
+                        <video controls
+                               preload="metadata"
+                               playsinline>
+
+                            <source src="@Url.Content(Model.FilePath)"
+                                    type="video/mp4" />
+
+                            तपाईंको ब्राउजरले भिडियो समर्थन गर्दैन।
+
+                        </video>
+
+                    </div>
+
+                }
+                else
+                {
+
+                    <div class="no-video">
+
+                        भिडियो उपलब्ध छैन।
+
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================================================
+         BACK BUTTON
+         ========================================================= -->
+
+    <div class="service-back">
+
+        <a href="@Url.Action("Service", "Home", new { id = Model.MainModuleId })"
+           class="btn btn-primary">
+
+            <i class="fa fa-arrow-left"></i>
+
+            &nbsp; पछाडि
+
+        </a>
+
+    </div>
+
+
+</div>
+
+
+<!-- =============================================================
+     TAB JAVASCRIPT
+     ============================================================= -->
+
+<script>
+
+    function openServiceTab(evt, tabName) {
+
+        var i;
+        var tabcontent;
+        var tablinks;
+
+        /*
+         * Hide all tab content
+         */
+        tabcontent = document.getElementsByClassName("tabcontent");
+
+        for (i = 0; i < tabcontent.length; i++) {
+
+            tabcontent[i].style.display = "none";
+
+        }
+
+
+        /*
+         * Remove active state
+         */
+        tablinks = document.getElementsByClassName("tablinks");
+
+        for (i = 0; i < tablinks.length; i++) {
+
+            tablinks[i].classList.remove("active");
+
+        }
+
+
+        /*
+         * Display selected content
+         */
+        var selectedTab = document.getElementById(tabName);
+
+        if (selectedTab) {
+
+            selectedTab.style.display = "block";
+
+        }
+
+
+        /*
+         * Activate selected button
+         */
+        if (evt && evt.currentTarget) {
+
+            evt.currentTarget.classList.add("active");
+
+        }
+
+    }
+
+
+    /*
+     * Automatically open first tab
+     */
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var defaultOpen = document.getElementById("defaultOpen");
+
+        if (defaultOpen) {
+
+            defaultOpen.click();
+
+        }
+
+    });
+
+</script>

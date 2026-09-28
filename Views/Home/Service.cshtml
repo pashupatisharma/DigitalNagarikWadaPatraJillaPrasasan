@@ -1,0 +1,466 @@
+﻿@model HelpDesk.Models.SubModule
+
+@{
+    ViewBag.Title = "Service";
+    Layout = "~/Views/Shared/_WebSiteLayout.cshtml";
+}
+
+<style>
+    /* =========================================================
+       SERVICE PAGE
+       ========================================================= */
+
+    .service-page {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 12px;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", Arial, sans-serif;
+    }
+
+    /* ---------------------------------------------------------
+       HEADER
+       --------------------------------------------------------- */
+
+    .service-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        margin-bottom: 15px;
+        background: #172554;
+        border-bottom: 3px solid #c9a227;
+        border-radius: 7px;
+        color: #ffffff;
+    }
+
+    .service-header-title {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: #ffffff;
+        font-size: 27px;
+        font-weight: 700;
+    }
+
+        .service-header-title i {
+            color: #f4d76a;
+        }
+
+    .service-header-subtitle {
+        color: #dbe4f0;
+        font-size: 15px;
+    }
+
+    /* ---------------------------------------------------------
+       SERVICE LIST
+       --------------------------------------------------------- */
+
+    .service-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 5px 5px 20px 3px;
+    }
+
+        .service-list::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .service-list::-webkit-scrollbar-track {
+            background: #eef2f7;
+            border-radius: 10px;
+        }
+
+        .service-list::-webkit-scrollbar-thumb {
+            background: #9aa8bb;
+            border-radius: 10px;
+        }
+
+            .service-list::-webkit-scrollbar-thumb:hover {
+                background: #172554;
+            }
+
+    /* ---------------------------------------------------------
+       SERVICE GRID
+       --------------------------------------------------------- */
+
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    /* ---------------------------------------------------------
+       SERVICE CARD
+       --------------------------------------------------------- */
+
+    .service-card-link {
+        display: block;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
+    }
+
+        .service-card-link:hover,
+        .service-card-link:focus {
+            color: inherit;
+            text-decoration: none;
+        }
+
+    .service-card {
+        position: relative;
+        min-height: 125px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 18px 20px;
+        background: #ffffff;
+        border: 1px solid #dbe2ea;
+        border-left: 5px solid #c9a227;
+        border-radius: 8px;
+        box-shadow: 0 4px 13px rgba(15, 31, 61, 0.08);
+        box-sizing: border-box;
+        transition: all .2s ease;
+    }
+
+        .service-card:hover {
+            border-left-color: #172554;
+            box-shadow: 0 8px 22px rgba(15, 31, 61, 0.15);
+            transform: translateY(-2px);
+        }
+
+    .service-icon {
+        flex: 0 0 48px;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: #ffffff;
+        background: #172554;
+        border-radius: 8px;
+        font-size: 21px;
+    }
+
+    .service-card:hover .service-icon {
+        background: #9b111e;
+    }
+
+    .service-title {
+        flex: 1;
+        min-width: 0;
+        color: #172554;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .service-arrow {
+        flex: 0 0 auto;
+        margin-left: 10px;
+        color: #9b111e;
+        font-size: 18px;
+        transition: transform .2s ease;
+    }
+
+    .service-card:hover .service-arrow {
+        transform: translateX(5px);
+    }
+
+    /* ---------------------------------------------------------
+       EMPTY STATE
+       --------------------------------------------------------- */
+
+    .service-empty {
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .service-empty-icon {
+        margin-bottom: 15px;
+        color: #c9a227;
+        font-size: 55px;
+    }
+
+    .service-empty-title {
+        color: #172554;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .service-empty-text {
+        margin-top: 7px;
+        color: #64748b;
+        font-size: 17px;
+    }
+
+    /* ---------------------------------------------------------
+       BACK BUTTON
+       --------------------------------------------------------- */
+
+    .service-footer {
+        flex: 0 0 auto;
+        padding-top: 10px;
+    }
+
+    .service-back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        color: #ffffff !important;
+        background: #172554;
+        border: 1px solid #172554;
+        border-radius: 5px;
+        font-family: "Segoe UI", "Noto Sans Devanagari", "Kalimati", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: all .2s ease;
+    }
+
+        .service-back-button:hover {
+            color: #172554 !important;
+            background: #ffffff;
+            border-color: #172554;
+            text-decoration: none !important;
+        }
+
+    /* ---------------------------------------------------------
+       LARGE DISPLAY
+       --------------------------------------------------------- */
+
+    @@media screen and (min-width: 1800px) {
+
+        .service-page {
+            padding: 18px;
+        }
+
+        .service-header {
+            padding: 17px 25px;
+            margin-bottom: 18px;
+        }
+
+        .service-header-title {
+            font-size: 31px;
+        }
+
+        .service-header-subtitle {
+            font-size: 17px;
+        }
+
+        .service-grid {
+            gap: 18px;
+        }
+
+        .service-card {
+            min-height: 155px;
+            padding: 22px 24px;
+        }
+
+        .service-icon {
+            width: 58px;
+            height: 58px;
+            flex-basis: 58px;
+            margin-right: 18px;
+            font-size: 25px;
+        }
+
+        .service-title {
+            font-size: 24px;
+        }
+
+        .service-arrow {
+            font-size: 21px;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       TABLET
+       --------------------------------------------------------- */
+
+    @@media screen and (max-width: 1100px) {
+
+        .service-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .service-title {
+            font-size: 18px;
+        }
+    }
+
+    @@media screen and (max-width: 800px) {
+
+        .service-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .service-header-subtitle {
+            display: none;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       MOBILE
+       --------------------------------------------------------- */
+
+    @@media screen and (max-width: 600px) {
+
+        .service-page {
+            padding: 8px;
+        }
+
+        .service-header {
+            padding: 10px 13px;
+            margin-bottom: 10px;
+        }
+
+        .service-header-title {
+            font-size: 20px;
+        }
+
+        .service-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .service-card {
+            min-height: 90px;
+            padding: 13px 15px;
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+            margin-right: 12px;
+            font-size: 17px;
+        }
+
+        .service-title {
+            font-size: 17px;
+        }
+
+        .service-empty-title {
+            font-size: 20px;
+        }
+
+        .service-empty-text {
+            font-size: 14px;
+        }
+    }
+</style>
+
+<div class="service-page">
+
+    
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="service-header">
+
+        <div class="service-header-title">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>सेवा तथा जानकारी</span>
+        </div>
+
+        <div class="service-header-subtitle">
+            उपलब्ध सेवा तथा शाखागत जानकारी
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SERVICE LIST
+         ===================================================== -->
+
+    <div class="service-list">
+
+        @if (Model.List != null && Model.List.Count > 0)
+        {
+            <div class="service-grid">
+
+                @foreach (var item in Model.List)
+                {
+                    <a href="@Url.Action("Detail", "Home", new { id = item.Id })"
+                       class="service-card-link">
+
+                        <div class="service-card">
+
+                            <div class="service-icon">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+
+                            <div class="service-title">
+                                @item.Title
+                            </div>
+
+                            <div class="service-arrow">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </div>
+
+                        </div>
+
+                    </a>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="service-empty">
+
+                <div class="service-empty-icon">
+                    <i class="fa-regular fa-folder-open"></i>
+                </div>
+
+                <div class="service-empty-title">
+                    यस शाखाभित्र कुनै सेवा प्रविष्ट गरिएको छैन।
+                </div>
+
+                <div class="service-empty-text">
+                    कृपया सेवा प्रविष्ट गर्नुहोस्।
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER / BACK
+         ===================================================== -->
+
+    <div class="service-footer">
+
+        <a href="@Url.Action("WebIndex", "Home")"
+           class="service-back-button">
+
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>फिर्ता जानुहोस्</span>
+
+        </a>
+
+    </div>
+
+
+</div>

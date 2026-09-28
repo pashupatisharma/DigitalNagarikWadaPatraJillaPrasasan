@@ -1,0 +1,82 @@
+
+a, a:hover, a:focus{
+    background:none;
+    text-decoration:none;
+    outline:none
+}
+body{
+    line-height:1;
+}
+     /*login page css*/
+     .login-layout {
+    background-color: #1a706f;
+}
+     .login-container{
+        
+         width:600px;
+         margin-top:11%;
+     }
+     .login-layout .widget-box{
+         background:#ffffff;
+          border:6px solid #0F5D5C;
+          padding:0;
+     }
+.widget-body {
+    border-right: 2px solid #1a706f;
+}
+        .login-layout .widget-box .widget-main {
+            background:#fff;
+            padding: 15px 20px;
+        }
+        .login-bg{
+padding-top: 15px;
+text-align: center;
+        }
+         .login-bg img{
+             max-height:300px;
+
+         }
+        .header.blue {
+border-bottom: 2px solid #1A706F;
+font-weight: 600;
+ font-size:20px;
+margin-top: 0;
+}
+        .blue {
+    color: #1a706f !important;
+}
+.login-box .toolbar {
+    background: #fff;
+    border-top: 2px solid #0F5D5C;
+}
+.login-layout .widget-box .widget-body .toolbar > div > a{
+    text-shadow:none
+}
+.login-box .forgot-password-link{
+    color:#ff0000;
+    
+}
+.login-box .user-signup-link{
+    color:#199b00
+}
+.btn-primary, .btn-primary:hover, .btn-primary:focus {
+    background-color: #1a706f !important;
+    border-color: #1a706f;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.social-or-login :first-child{
+    color: #1A706F;
+}
+.social-or-login::before {
+
+    border-top: 1px dotted #1A706F;
+}
+input.ace[type="checkbox"] + .lbl::before, input.ace[type="radio"] + .lbl::before {
+    color: #1a706f;
+}
+.login-layout label {
+margin-bottom: 0;
+line-height: 2.3;
+font-weight: 600;
+}

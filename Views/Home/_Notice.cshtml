@@ -1,0 +1,565 @@
+﻿@model HelpDesk.Models.HomePageViewModel
+
+@{
+    var count = 1;
+    HelpDesk.Models.ApplicationDbContext db = new HelpDesk.Models.ApplicationDbContext();
+}
+
+<style>
+    /* =========================================================
+       NOTICE PANEL
+       ========================================================= */
+
+    .notice-panel {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", Arial, sans-serif;
+    }
+
+    /* ---------------------------------------------------------
+       HEADER
+       --------------------------------------------------------- */
+
+    .notice-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 18px;
+        margin-bottom: 10px;
+        background: #172554;
+        border-bottom: 3px solid #c9a227;
+        border-radius: 6px;
+        color: #ffffff;
+    }
+
+    .notice-header-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+        .notice-header-title i {
+            color: #f4d76a;
+        }
+
+    .notice-header-subtitle {
+        color: #dbe4f0;
+        font-size: 15px;
+    }
+
+    /* ---------------------------------------------------------
+       NOTICE LIST
+       --------------------------------------------------------- */
+
+    .notice-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 3px 5px 20px 3px;
+    }
+
+        /* Scrollbar */
+
+        .notice-list::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .notice-list::-webkit-scrollbar-track {
+            background: #eef2f7;
+            border-radius: 10px;
+        }
+
+        .notice-list::-webkit-scrollbar-thumb {
+            background: #9aa8bb;
+            border-radius: 10px;
+        }
+
+            .notice-list::-webkit-scrollbar-thumb:hover {
+                background: #172554;
+            }
+
+    /* ---------------------------------------------------------
+       NOTICE CARD
+       --------------------------------------------------------- */
+
+    .notice-card {
+        position: relative;
+        display: flex;
+        width: 100%;
+        min-height: 150px;
+        margin-bottom: 12px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid #c9a227;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(15, 31, 61, 0.08);
+        box-sizing: border-box;
+        overflow: hidden;
+        transition: all .2s ease;
+    }
+
+        .notice-card:hover {
+            border-left-color: #172554;
+            box-shadow: 0 6px 18px rgba(15, 31, 61, 0.13);
+            transform: translateY(-1px);
+        }
+
+    /* ---------------------------------------------------------
+       NUMBER
+       --------------------------------------------------------- */
+
+    .notice-number {
+        flex: 0 0 58px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 20px;
+        color: #172554;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    /* ---------------------------------------------------------
+       CONTENT
+       --------------------------------------------------------- */
+
+    .notice-content {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 17px 15px 20px 5px;
+    }
+
+    .notice-title {
+        margin: 0 0 9px 0;
+        color: #172554;
+        font-size: 23px;
+        font-weight: 700;
+        line-height: 1.45;
+    }
+
+    .notice-description {
+        margin: 0;
+        color: #475569;
+        font-size: 16px;
+        line-height: 1.7;
+        text-align: justify;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* ---------------------------------------------------------
+       READ MORE
+       --------------------------------------------------------- */
+
+    .notice-read-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 9px;
+        padding: 5px 0;
+        color: #172554;
+        text-decoration: none;
+        font-family: "Noto Sans Devanagari", "Kalimati", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all .2s ease;
+    }
+
+        .notice-read-more i {
+            color: #9b111e;
+            font-size: 17px;
+            transition: transform .2s ease;
+        }
+
+        .notice-read-more:hover {
+            color: #9b111e;
+            text-decoration: none;
+        }
+
+            .notice-read-more:hover i {
+                transform: translateX(5px);
+            }
+
+    /* ---------------------------------------------------------
+       NOTICE IMAGE
+       --------------------------------------------------------- */
+
+    .notice-image-area {
+        flex: 0 0 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        background: #f8fafc;
+        border-left: 1px solid #e2e8f0;
+    }
+
+    .notice-image {
+        width: 145px;
+        height: 120px;
+        object-fit: cover;
+        border: 2px solid #ffffff;
+        outline: 1px solid #cbd5e1;
+        border-radius: 6px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(15, 31, 61, 0.15);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .notice-image:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 15px rgba(15, 31, 61, 0.22);
+        }
+
+    /* ---------------------------------------------------------
+       DATE
+       --------------------------------------------------------- */
+
+    .notice-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 10px;
+        padding: 4px 9px;
+        color: #475569;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+        .notice-date i {
+            color: #9b111e;
+        }
+
+    /* ---------------------------------------------------------
+       EMPTY STATE
+       --------------------------------------------------------- */
+
+    .notice-empty {
+        height: 100%;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        text-align: center;
+    }
+
+        .notice-empty i {
+            margin-bottom: 12px;
+            color: #c9a227;
+            font-size: 50px;
+        }
+
+    .notice-empty-title {
+        color: #172554;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .notice-empty-text {
+        margin-top: 5px;
+        font-size: 15px;
+    }
+
+    /* ---------------------------------------------------------
+       LARGE DISPLAY
+       --------------------------------------------------------- */
+
+    @@media screen and (min-width: 1800px) {
+
+        .notice-header {
+            padding: 15px 22px;
+        }
+
+        .notice-header-title {
+            font-size: 30px;
+        }
+
+        .notice-header-subtitle {
+            font-size: 17px;
+        }
+
+        .notice-card {
+            min-height: 175px;
+            margin-bottom: 15px;
+        }
+
+        .notice-number {
+            flex-basis: 70px;
+            padding-top: 23px;
+            font-size: 25px;
+        }
+
+        .notice-content {
+            padding: 20px 18px 22px 5px;
+        }
+
+        .notice-title {
+            font-size: 27px;
+        }
+
+        .notice-description {
+            font-size: 19px;
+            line-height: 1.75;
+        }
+
+        .notice-read-more {
+            font-size: 18px;
+        }
+
+        .notice-image-area {
+            flex-basis: 220px;
+        }
+
+        .notice-image {
+            width: 175px;
+            height: 140px;
+        }
+
+        .notice-date {
+            font-size: 16px;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       TABLET
+       --------------------------------------------------------- */
+
+    @@media screen and (max-width: 900px) {
+
+        .notice-header-title {
+            font-size: 21px;
+        }
+
+        .notice-header-subtitle {
+            display: none;
+        }
+
+        .notice-image-area {
+            flex-basis: 145px;
+            padding: 10px;
+        }
+
+        .notice-image {
+            width: 115px;
+            height: 100px;
+        }
+
+        .notice-title {
+            font-size: 20px;
+        }
+
+        .notice-description {
+            font-size: 14px;
+        }
+    }
+
+    /* ---------------------------------------------------------
+       MOBILE
+       --------------------------------------------------------- */
+
+    @@media screen and (max-width: 600px) {
+
+        .notice-header {
+            padding: 9px 12px;
+        }
+
+        .notice-header-title {
+            font-size: 18px;
+        }
+
+        .notice-card {
+            display: block;
+        }
+
+        .notice-number {
+            display: none;
+        }
+
+        .notice-content {
+            padding: 14px;
+        }
+
+        .notice-title {
+            font-size: 18px;
+        }
+
+        .notice-description {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .notice-image-area {
+            width: 100%;
+            min-height: 130px;
+            border-left: none;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .notice-image {
+            width: 130px;
+            height: 100px;
+        }
+
+        .notice-date {
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="notice-panel">
+
+   
+    <!-- Header -->
+    <div class="notice-header">
+
+        <div class="notice-header-title">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>सूचना तथा जानकारी</span>
+        </div>
+
+        <div class="notice-header-subtitle">
+            महत्वपूर्ण सूचना तथा सार्वजनिक जानकारी
+        </div>
+
+    </div>
+
+
+    <!-- Notice List -->
+    <div class="notice-list">
+
+        @if (Model.notice != null &&
+             Model.notice.Lists != null &&
+             Model.notice.Lists.Any())
+        {
+            foreach (var Noticeitem in Model.notice.Lists.Take(5))
+            {
+                var filelist = db.NoticeFiles
+                    .FirstOrDefault(x => x.NoticeId == Noticeitem.NoticeId);
+
+                <div class="notice-card">
+
+                    <!-- Number -->
+                    <div class="notice-number">
+                        @count.
+                    </div>
+
+
+                    <!-- Notice Content -->
+                    <div class="notice-content">
+
+                        <div class="notice-title">
+                            @Noticeitem.Title
+                        </div>
+
+                        <p class="notice-description">
+                            @Noticeitem.Description
+                        </p>
+
+                        <a href="@Url.Action("NoticeDetail", "Home", new { id = Noticeitem.NoticeId })"
+                           class="notice-read-more">
+
+                            <span>पूरा विवरण हेर्नुहोस्</span>
+
+                            <i class="bi bi-arrow-right-circle-fill"></i>
+
+                        </a>
+
+                        <div class="notice-date">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span>मिति: @Noticeitem.CreateDate</span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Notice Image -->
+                    <div class="notice-image-area">
+
+                        @if (filelist != null &&
+                             !string.IsNullOrWhiteSpace(filelist.Image))
+                        {
+                            <img src="@Url.Content("~/Notice_Upload/" + filelist.Image)"
+                                 class="notice-image"
+                                 alt="@Noticeitem.Title"
+                                 title="तस्वीर हेर्न क्लिक गर्नुहोस्"
+                                 onclick="ShowImage(@Noticeitem.NoticeId)" />
+                        }
+                        else
+                        {
+                            <img src="@Url.Content("~/Content/images/team/team-author1.jpg")"
+                                 class="notice-image"
+                                 alt="Notice" />
+                        }
+
+                    </div>
+
+                </div>
+
+                count++;
+            }
+        }
+        else
+        {
+            <div class="notice-empty">
+
+                <i class="fa-regular fa-bell-slash"></i>
+
+                <div class="notice-empty-title">
+                    हाल कुनै सूचना उपलब्ध छैन
+                </div>
+
+                <div class="notice-empty-text">
+                    नयाँ सूचना प्रकाशित भएपछि यहाँ देखिनेछ।
+                </div>
+
+            </div>
+        }
+
+    </div>
+   
+
+</div>
+
+<script type="text/javascript">
+
+    function ShowImage(id) {
+
+        if (!id) {
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("ViewImage", "Home")',
+            type: 'GET',
+            data: { id: id },
+
+            success: function (result) {
+
+                $("#modelImage").html(result);
+
+                $("#modelImage").modal("show");
+            },
+
+            error: function () {
+
+                alert("तस्वीर प्रदर्शन गर्न समस्या भयो।");
+            }
+        });
+
+    }
+
+</script>

@@ -1,0 +1,43 @@
+﻿@model HelpDesk.Models.NoticeModel
+@{
+    int i = 1;
+}
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_WebSiteLayout.cshtml";
+}
+
+<section id="blog-singel" class="pt-20 pb-120 gray-bg">
+    <div class="container">
+        <div class="row">
+            
+
+            <div class="col-lg-8">
+                <span style="color:red; padding-left:20px"> New Update : </span><h3 style="border-left: 4px solid red; padding-left:20px">@Model.Title</h3>
+                <div class="blog-details mt-30">
+
+                    <div class="thum">
+                        <img src="@Url.Content("/Service_Upload/" + Model.FileName)" alt="@Model.Title">
+                    </div>
+
+                    <div class="cont">
+
+
+                        <p>@Model.DescriptionNotice</p>
+
+
+
+
+
+
+
+
+
+                    </div> <!-- cont -->
+                </div> <!-- blog details -->
+            </div>
+
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+

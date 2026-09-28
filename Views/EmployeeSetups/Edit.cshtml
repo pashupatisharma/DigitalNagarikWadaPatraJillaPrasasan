@@ -1,0 +1,155 @@
+﻿@model HelpDesk.Models.EmployeeSetup
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Edit", "EmployeeSetups", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.EmpId)
+    @Html.HiddenFor(m => m.Image)
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <hr />
+                <div class="card-header bg-info">
+                    <h4 class="m-b-0 text-white">कर्मचारी</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @if (Model.Image != null)
+                            {
+                                <img src="~/EmployeeImage/@Model.Image" , id="imgThumbnail" class="form-control bordered-input" style="width: 60px; height: 60px " />
+                            }
+                            else
+
+                            {
+                                <img src="~/Content/images/UserImage.png" id="imgThumbnail" class="form-control bordered-input" style="width: 70px; height: 60px " />
+                            }
+                            @Html.LabelFor(model => model.Image) <span class="text-danger">*</span>
+
+                            <input type="file" name="UploadedFile" id="fileToUpload" class="form-control bordered-input" onchange="ChangeImage(this)" />
+
+                            @*@Html.TextBoxFor(model => model.Image, new { @class = "form-control", type = "file", @onchange = "ChangeImage(this)", @id = "fileupload" })*@
+                            @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.EmpName)<span class="text-danger">*</span>
+
+                            @Html.EditorFor(model => model.EmpName, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.EmpName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.EmpNameEng)
+
+                            @Html.EditorFor(model => model.EmpNameEng, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.EmpNameEng, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.DisplayOrder)<span class="text-danger">*</span>
+
+                            @Html.EditorFor(model => model.DisplayOrder, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.DisplayOrder, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.PostId)<span class="text-danger">*</span>
+
+                            @Html.DropDownListFor(model => model.PostId, Utility.GetPostList(), new { @class = "form-control chosen-select" })
+                            @Html.ValidationMessageFor(model => model.PostId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Gender)
+
+                            @Html.DropDownListFor(model => model.Gender, Utility.GetGender(), new { @class = "form-control chosen-select" })
+                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.DateOfBirth)
+                            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control nepali-calendar bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Address)
+
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Contact)
+
+                            @Html.EditorFor(model => model.Contact, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.Contact, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.AppointmentDate)<span class="text-danger">*</span>
+
+                            @Html.EditorFor(model => model.AppointmentDate, new { htmlAttributes = new { @class = "form-control nepali-calendar bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.AppointmentDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div>
+                    </div><br />
+
+                    <div></div><br />
+                    <div class="row">
+                        <div class="form-actions text-right">
+                            <button class="btn btn-info" type="submit">
+                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                बचत
+                            </button>
+
+
+                            <button class="btn btn-reset" type="reset">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var k = jQuery.noConflict();
+
+        k(document).ready(function () {
+            k(".chosen-select").chosen({
+                no_result_text: "Oops Something went wrong !!",
+            });
+            k('.nepali-calendar').nepaliDatePicker();
+        });
+
+        function ChangeImage(input) {
+            //alert(input);
+            if (input.files && input.files[0]) {
+                var ImageDir = new FileReader();
+                ImageDir.onload = function (e) {
+                    k('#imgThumbnail').attr('src', e.target.result);
+                }
+                ImageDir.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
