@@ -1285,7 +1285,7 @@
             z-index: 99999;
             width: 42px;
             height: 42px;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255,255,255,.35);
@@ -1747,14 +1747,11 @@
 
     </script>
     <!-- =====================================================
-     WEBSITE BACKGROUND AUDIO
-
-     This audio is completely independent from the video.
-     The video remains muted.
-     ===================================================== -->
+      WEBSITE BACKGROUND AUDIO
+      ===================================================== -->
 
     <audio id="websiteBackgroundAudio"
-           loop=loop
+           loop="loop"
            preload="auto">
 
         <source src="@Url.Content("~/Content/Audio/background.mp3")"
@@ -1764,29 +1761,37 @@
 
 
     <!-- =====================================================
-         AUDIO START BUTTON
+         AUDIO TOGGLE BUTTON
 
-         Browsers may block autoplay with sound.
-         This button appears only when user interaction
-         is required.
+         Always visible.
+         🔇 = Sound OFF
+         🔊 = Sound ON
          ===================================================== -->
 
     <button type="button"
             id="enableWebsiteAudio"
             class="audio-enable-button"
-            title="संगीत सुरु गर्नुहोस्">
+            title="संगीत सुरु गर्नुहोस्"
+            aria-label="संगीत सुरु गर्नुहोस्">
 
-        <i class="fa-solid fa-volume-high"></i>
+        <i class="fa-solid fa-volume-xmark"></i>
+
     </button>
+
 
     <script>
 
         /* =====================================================
            WEBSITE BACKGROUND AUDIO
 
-           Independent from the video.
-           Video = muted
-           Website audio = separate looping audio
+           Behaviour:
+
+           1. Audio starts OFF when website loads.
+           2. Audio button is ALWAYS visible.
+           3. First user interaction can turn audio ON.
+           4. Once user manually turns audio OFF,
+              normal interactions will NOT turn it back ON.
+           5. Clicking the button again turns audio ON.
            ===================================================== */
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -1794,151 +1799,313 @@
             var audio =
                 document.getElementById("websiteBackgroundAudio");
 
-            var enableButton =
+            var audioButton =
                 document.getElementById("enableWebsiteAudio");
 
-
-            if (!audio) {
+            if (!audio || !audioButton) {
                 return;
             }
 
 
-            /*
-             * Start audio automatically.
-             *
-             * If the browser allows autoplay,
-             * the audio starts immediately.
-             */
+            /* =================================================
+               SETTINGS
+               ================================================= */
 
             audio.volume = 0.35;
 
-            var playPromise = audio.play();
+            /*
+             * Audio is OFF initially.
+             *
+             * IMPORTANT:
+             * Do NOT call audio.play() here.
+             */
+
+            var soundOn = false;
+
+            /*
+             * Becomes TRUE only when the user explicitly
+             * clicks the audio button to turn sound OFF.
+             *
+             * After this happens, normal interactions
+             * cannot automatically restart the audio.
+             */
+
+            var manuallyDisabled = false;
 
 
-            if (playPromise !== undefined) {
+            /* =================================================
+               UPDATE AUDIO ICON
+               ================================================= */
 
-                playPromise
-                    .then(function () {
+            function updateAudioButton() {
 
-                        /*
-                         * Autoplay was allowed.
-                         * No button is necessary.
-                         */
+                var icon =
+                    audioButton.querySelector("i");
 
-                        if (enableButton) {
-                            enableButton.style.display = "none";
-                        }
+                if (!icon) {
+                    return;
+                }
 
-                    })
-                    .catch(function () {
 
-                        /*
-                         * Browser blocked audible autoplay.
-                         *
-                         * Show a small button.
-                         * The first user click will start the audio.
-                         */
+                if (soundOn) {
 
-                        if (enableButton) {
-                            enableButton.style.display = "flex";
-                        }
+                    /*
+                     * SOUND ON
+                     */
 
-                    });
+                    icon.className =
+                        "fa-solid fa-volume-high";
+
+                    audioButton.title =
+                        "संगीत बन्द गर्नुहोस्";
+
+                    audioButton.setAttribute(
+                        "aria-label",
+                        "संगीत बन्द गर्नुहोस्"
+                    );
+
+                }
+                else {
+
+                    /*
+                     * SOUND OFF
+                     */
+
+                    icon.className =
+                        "fa-solid fa-volume-xmark";
+
+                    audioButton.title =
+                        "संगीत सुरु गर्नुहोस्";
+
+                    audioButton.setAttribute(
+                        "aria-label",
+                        "संगीत सुरु गर्नुहोस्"
+                    );
+
+                }
 
             }
 
 
-            /*
-             * Start audio after the user's first interaction.
-             *
-             * This handles Chrome, Edge, Firefox, etc.
-             */
+            /* =================================================
+               TURN SOUND ON
+               ================================================= */
 
-            function startWebsiteAudio() {
+            function turnSoundOn() {
+
+                /*
+                 * Do not automatically restart audio if
+                 * the user explicitly turned it OFF.
+                 */
+
+                if (manuallyDisabled) {
+                    return;
+                }
+
 
                 audio.play()
                     .then(function () {
 
-                        if (enableButton) {
-                            enableButton.style.display = "none";
-                        }
+                        soundOn = true;
+
+                        updateAudioButton();
 
                     })
                     .catch(function () {
-                        // Browser still did not allow playback.
+
+                        /*
+                         * Browser still blocked playback.
+                         * Keep icon as OFF.
+                         */
+
+                        soundOn = false;
+
+                        updateAudioButton();
+
                     });
-
-
-                /*
-                 * Once the user has interacted,
-                 * we no longer need these listeners.
-                 */
-
-                document.removeEventListener(
-                    "click",
-                    startWebsiteAudio
-                );
-
-                document.removeEventListener(
-                    "touchstart",
-                    startWebsiteAudio
-                );
-
-                document.removeEventListener(
-                    "keydown",
-                    startWebsiteAudio
-                );
 
             }
 
 
-            /*
-             * First normal user interaction.
-             */
+            /* =================================================
+               TURN SOUND OFF
+               ================================================= */
 
-            document.addEventListener(
+            function turnSoundOff() {
+
+                audio.pause();
+
+                /*
+                 * Reset position so when the user turns
+                 * sound ON again, the audio starts from
+                 * the beginning.
+                 *
+                 * Remove this line if you want it to resume
+                 * from where it stopped.
+                 */
+
+                audio.currentTime = 0;
+
+                soundOn = false;
+
+                /*
+                 * VERY IMPORTANT:
+                 *
+                 * The user explicitly turned sound OFF.
+                 * Therefore normal interactions must no
+                 * longer automatically start the audio.
+                 */
+
+                manuallyDisabled = true;
+
+                updateAudioButton();
+
+            }
+
+
+            /* =================================================
+               AUDIO BUTTON CLICK
+               ================================================= */
+
+            audioButton.addEventListener(
                 "click",
-                startWebsiteAudio,
-                { once: true }
-            );
+                function (event) {
 
-            document.addEventListener(
-                "touchstart",
-                startWebsiteAudio,
-                { once: true }
-            );
+                    /*
+                     * Prevent this click from also being
+                     * treated as a normal page interaction.
+                     */
 
-            document.addEventListener(
-                "keydown",
-                startWebsiteAudio,
-                { once: true }
-            );
+                    event.stopPropagation();
 
 
-            /*
-             * Explicit audio button.
-             */
+                    if (soundOn) {
 
-            if (enableButton) {
+                        /*
+                         * User explicitly turns sound OFF.
+                         */
 
-                enableButton.addEventListener(
-                    "click",
-                    function (event) {
+                        turnSoundOff();
 
-                        event.stopPropagation();
+                    }
+                    else {
+
+                        /*
+                         * User explicitly turns sound ON.
+                         */
+
+                        manuallyDisabled = false;
 
                         audio.play()
                             .then(function () {
 
-                                enableButton.style.display =
-                                    "none";
+                                soundOn = true;
+
+                                updateAudioButton();
+
+                            })
+                            .catch(function () {
+
+                                soundOn = false;
+
+                                updateAudioButton();
 
                             });
 
                     }
-                );
+
+                }
+            );
+
+
+            /* =================================================
+               FIRST USER INTERACTION
+               =================================================
+
+               These interactions can automatically turn
+               the sound ON.
+
+               This only works until the user explicitly
+               switches the sound OFF.
+               ================================================= */
+
+            function firstUserInteraction() {
+
+                /*
+                 * Already manually disabled?
+                 *
+                 * Then do absolutely nothing.
+                 */
+
+                if (manuallyDisabled) {
+                    return;
+                }
+
+
+                /*
+                 * If sound is already ON, nothing to do.
+                 */
+
+                if (soundOn) {
+                    return;
+                }
+
+
+                turnSoundOn();
 
             }
+
+
+            /* =================================================
+               USER INTERACTIONS
+               ================================================= */
+
+            document.addEventListener(
+                "click",
+                firstUserInteraction,
+                { passive: true }
+            );
+
+            document.addEventListener(
+                "touchstart",
+                firstUserInteraction,
+                { passive: true }
+            );
+
+            document.addEventListener(
+                "keydown",
+                firstUserInteraction,
+                { passive: true }
+            );
+
+            document.addEventListener(
+                "mousemove",
+                firstUserInteraction,
+                { passive: true }
+            );
+
+            document.addEventListener(
+                "scroll",
+                firstUserInteraction,
+                { passive: true }
+            );
+
+            document.addEventListener(
+                "wheel",
+                firstUserInteraction,
+                { passive: true }
+            );
+
+
+            /* =================================================
+               INITIAL STATE
+               ================================================= */
+
+            soundOn = false;
+
+            manuallyDisabled = false;
+
+            updateAudioButton();
 
         });
 
