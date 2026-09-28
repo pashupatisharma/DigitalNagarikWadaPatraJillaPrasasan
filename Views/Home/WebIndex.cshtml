@@ -1,1213 +1,1873 @@
-﻿
-@model HelpDesk.Models.HomePageViewModel
+﻿@model HelpDesk.Models.HomePageViewModel
 
 @{
+    ViewBag.Title = "सेवा तथा जानकारी";
     Layout = "~/Views/Shared/_WebSiteLayout.cshtml";
-
-    var ofc = Utility.officeDetail();
-
-    HelpDesk.Models.ApplicationDbContext db =
-        new HelpDesk.Models.ApplicationDbContext();
-
-    var emp = db.EmployeeSetup.FirstOrDefault();
 }
-
 
 <style>
 
-/* =========================================================
-   DIGITAL CITIZEN CHARTER DISPLAY
-   32" - 75" DISPLAY BOARD
-   HEADER IS PROVIDED BY _WebSiteLayout.cshtml
-   ========================================================= */
-
-
-/* =========================================================
-   PAGE RESET
-   ========================================================= */
-
-html,
-body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background: #eef2f7;
-    overflow-x: hidden;
-}
-
-
-/* =========================================================
-   MAIN DIGITAL DISPLAY
-   ========================================================= */
-
-.digital-display {
-
-    width: 100%;
-
-    height: calc(100vh - 120px);
-
-    min-height: 0;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    flex-direction: column;
-
-    padding: 8px;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   MAIN DISPLAY BODY
-   20% LEFT
-   60% CENTER
-   20% RIGHT
-   ========================================================= */
-
-.display-body {
-
-    flex: 1 1 auto;
-
-    min-height: 0;
-
-    display: grid;
-
-    grid-template-columns:
-        20% 60% 20%;
-
-    gap: 8px;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   LEFT MENU
-   ========================================================= */
-
-.display-menu {
-
-    min-width: 0;
-
-    min-height: 0;
-
-    background: #ffffff;
-
-    border:
-        2px solid #1e3a5f;
-
-    border-radius: 8px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 3px 10px
-        rgba(15,23,42,.15);
-}
-
-
-/* =========================================================
-   MENU TITLE
-   ========================================================= */
-
-.menu-title {
-
-    flex:
-        0 0 48px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: #1e3a5f;
-
-    color: #ffffff;
-
-    font-family:
-        Kalimati,
-        "Noto Sans Devanagari",
-        "Mangal",
-        sans-serif !important;
-
-    font-size:
-        clamp(
-            18px,
-            1.4vw,
-            30px
-        );
-
-    font-weight: 700;
-
-    text-align: center;
-
-    border-bottom:
-        3px solid #c9a227;
-}
-
-
-/* =========================================================
-   MENU BUTTONS
-   ========================================================= */
-
-.tablinks {
-
-    flex:
-        1 1 0;
-
-    min-height: 0;
-
-    width: 100%;
-
-    border: none;
-
-    border-bottom:
-        1px solid #dce2ea;
-
-    background: #f8fafc;
-
-    color: #1e3a5f;
-
-    padding:
-        5px 8px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    cursor: pointer;
-
-    font-family:
-        Kalimati,
-        "Noto Sans Devanagari",
-        "Mangal",
-        sans-serif !important;
-
-    font-size:
-        clamp(
-            17px,
-            1.35vw,
-            28px
-        );
-
-    font-weight: 700;
-
-    text-align: left;
-
-    transition:
-        background .2s ease,
-        color .2s ease,
-        border .2s ease;
-}
-
-
-.tablinks:hover {
-
-    background: #edf3f9;
-
-    color: #172554;
-}
-
-
-.tablinks.active {
-
-    background: #1e3a5f;
-
-    color: #ffffff;
-
-    border-left:
-        6px solid #c9a227;
-}
-
-
-/* =========================================================
-   MENU NUMBER
-   ========================================================= */
-
-.tab-number {
-
-    flex:
-        0 0 auto;
-
-    width: 32px;
-
-    height: 32px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin-left: 5px;
-
-    background: #9b111e;
-
-    color: #ffffff;
-
-    border-radius: 50%;
-
-    font-family:
-        Arial,
-        sans-serif !important;
-
-    font-size: 16px;
-
-    font-weight: bold;
-
-    box-shadow:
-        0 1px 3px
-        rgba(0,0,0,.15);
-}
-
-
-/* =========================================================
-   MENU HELP
-   ========================================================= */
-
-.menu-help {
-
-    flex:
-        0 0 auto;
-
-    padding: 8px;
-
-    background: #fffaf0;
-
-    border-top:
-        2px solid #c9a227;
-
-    font-family:
-        Kalimati,
-        "Noto Sans Devanagari",
-        "Mangal",
-        sans-serif !important;
-
-    font-size:
-        clamp(
-            12px,
-            .9vw,
-            18px
-        );
-
-    line-height: 1.35;
-
-    color: #7f1d1d;
-
-    text-align: center;
-}
-
-
-.menu-help i {
-
-    margin-right: 3px;
-}
-
-
-/* =========================================================
-   CENTER CONTENT
-   ========================================================= */
-
-.display-content {
-
-    min-width: 0;
-
-    min-height: 0;
-
-    background: #ffffff;
-
-    border:
-        2px solid #1e3a5f;
-
-    border-radius: 8px;
-
-    box-shadow:
-        0 3px 10px
-        rgba(15,23,42,.15);
-
-    overflow: hidden;
-
-    position: relative;
-}
-
-
-/* =========================================================
-   TAB CONTENT
-   ========================================================= */
-
-.tabcontent {
-
-    width: 100%;
-
-    height: 100%;
-
-    box-sizing: border-box;
-
-    padding: 8px;
-
-    background: #ffffff;
-
-    overflow: auto;
-
-    font-family:
-        Kalimati,
-        "Noto Sans Devanagari",
-        "Mangal",
-        sans-serif !important;
-}
-
-
-/* =========================================================
-   RIGHT SERVICES
-   ========================================================= */
-
-.display-services {
-
-    min-width: 0;
-
-    min-height: 0;
-
-    background: #ffffff;
-
-    border:
-        2px solid #1e3a5f;
-
-    border-radius: 8px;
-
-    box-shadow:
-        0 3px 10px
-        rgba(15,23,42,.15);
-
-    overflow: auto;
-}
-
-
-.display-services .card {
-
-    width: 100%;
-
-    height: 100%;
-
-    margin: 0;
-
-    padding: 0;
-
-    border: none;
-
-    border-radius: 0;
-
-    box-shadow: none;
-
-    background: #ffffff;
-}
-
-
-/* =========================================================
-   DISPLAY FOOTER
-   ========================================================= */
-
-.display-footer {
-
-    flex:
-        0 0 34px;
-
-    min-height: 34px;
-
-    margin-top: 8px;
-
-    padding:
-        0 18px;
-
-    box-sizing: border-box;
-
-    background: #172554;
-
-    color: #ffffff;
-
-    border-radius: 6px;
-
-    border-top:
-        2px solid #c9a227;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    font-family:
-        Kalimati,
-        "Noto Sans Devanagari",
-        "Mangal",
-        sans-serif !important;
-
-    font-size:
-        clamp(
-            12px,
-            .85vw,
-            18px
-        );
-
-    font-weight: 600;
-
-    overflow: hidden;
-}
-
-
-.display-footer-left,
-.display-footer-center,
-.display-footer-right {
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-
-.display-footer-center {
-
-    text-align: center;
-
-    padding:
-        0 15px;
-}
-
-
-/* =========================================================
-   LARGE DISPLAY - 1600px+
-   ========================================================= */
-
-@@media (min-width: 1600px) {
-
-    .digital-display {
-
-        height:
-            calc(100vh - 140px);
-
-        padding: 10px;
-    }
-
-
-    .menu-title {
-
-        flex-basis: 58px;
-    }
-
-
-    .tab-number {
-
-        width: 38px;
-
-        height: 38px;
-
-        font-size: 18px;
-    }
-
-
-    .display-footer {
-
-        flex-basis: 40px;
-
-        min-height: 40px;
-    }
-}
-
-
-/* =========================================================
-   VERY LARGE DISPLAY - 2500px+
-   ========================================================= */
-
-@@media (min-width: 2500px) {
-
-    .digital-display {
-
-        height:
-            calc(100vh - 165px);
-    }
-
-
-    .menu-title {
-
-        flex-basis: 75px;
-    }
-
-
-    .tab-number {
-
-        width: 48px;
-
-        height: 48px;
-
-        font-size: 22px;
-    }
-
-
-    .display-footer {
-
-        flex-basis: 50px;
-
-        min-height: 50px;
-
-        font-size: 18px;
-    }
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@@media (max-width: 1200px) {
-
-    .display-body {
-
-        grid-template-columns:
-            23% 77%;
-    }
-
-
-    .display-services {
-
-        display: none;
-    }
-
-
-    .digital-display {
-
-        height:
-            calc(100vh - 100px);
-    }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@@media (max-width: 700px) {
-
-    html,
-    body {
-
-        height: auto;
-
-        overflow: auto;
-    }
-
-
-    .digital-display {
-
-        height: auto;
-
-        min-height: 100vh;
-
-        overflow: visible;
-    }
-
-
-    .display-body {
-
-        display: grid;
-
-        grid-template-columns: 1fr;
-
-        overflow: visible;
-    }
-
-
-    .display-menu {
-
-        min-height: 500px;
-    }
-
-
-    .display-content {
-
-        min-height: 500px;
-    }
-
-
-    .display-services {
-
-        display: block;
-
-        min-height: 300px;
-    }
-
-
-    .display-footer {
-
-        min-height: 45px;
-
-        height: auto;
-
+    /* =========================================================
+       PAGE
+       ========================================================= */
+
+    .service-home {
+        width: 100%;
+        height: calc(100vh - 150px);
+        min-height: 550px;
+        padding: 15px;
+        box-sizing: border-box;
+        display: flex;
         flex-direction: column;
-
-        justify-content: center;
-
-        gap: 2px;
-
-        padding: 5px;
+        font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", Arial, sans-serif;
     }
-}
 
 
-/* =========================================================
-   HIDE SCROLLBAR FOR DISPLAY
-   ========================================================= */
+    /* =========================================================
+       HEADER
+       ========================================================= */
 
-.display-content::-webkit-scrollbar,
-.display-services::-webkit-scrollbar,
-.tabcontent::-webkit-scrollbar {
+    .service-header{
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 14px 20px;
+        margin-bottom: 12px;
+        background: #172554;
+        color: #ffffff;
+        border-radius: 8px;
+        border-bottom: 4px solid #d4af37;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+    }
 
-    width: 5px;
+    .service-header-left {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
 
-    height: 5px;
-}
+    .service-title {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .service-subtitle {
+        margin-top: 2px;
+        font-size: 14px;
+        color: #dbe4f0;
+    }
+
+    .service-header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-shrink: 0;
+    }
+
+    .service-date-time {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .service-date {
+        font-size: 14px;
+        color: #dbe4f0;
+    }
+
+    .service-time {
+        margin-top: 2px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #ffffff;
+    }
 
 
-.display-content::-webkit-scrollbar-thumb,
-.display-services::-webkit-scrollbar-thumb,
-.tabcontent::-webkit-scrollbar-thumb {
+    /* =========================================================
+       SEARCH
+       ========================================================= */
 
-    background: #9aa8ba;
+    .service-search {
+        position: relative;
+        width: 280px;
+    }
 
-    border-radius: 10px;
-}
+    .service-search input {
+        width: 100%;
+        height: 42px;
+        padding: 8px 42px 8px 14px;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 6px;
+        outline: none;
+        font-family: inherit;
+        font-size: 15px;
+        background: #ffffff;
+        color: #172554;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+    }
 
+    .service-search input::placeholder {
+        color: #7a8798;
+    }
+
+    .service-search-icon {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       MAIN CONTENT
+       LEFT = SERVICE TABLE
+       RIGHT = PEOPLE
+       ========================================================= */
+
+    .service-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        gap: 12px;
+        overflow: hidden;
+    }
+
+    .service-table-container {
+        flex: 1 1 auto;
+        min-width: 0;
+        background: #ffffff;
+        border: 1px solid #d7dee8;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(15, 31, 61, 0.08);
+        overflow: hidden;
+        position: relative;
+    }
+
+
+    /* =========================================================
+       PEOPLE / EMPLOYEE PANEL
+       ========================================================= */
+
+    .people-panel {
+        flex: 0 0 250px;
+        width: 250px;
+        background: #ffffff;
+        border: 1px solid #d7dee8;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(15, 31, 61, 0.08);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .people-header {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 12px;
+        background: #172554;
+        color: #ffffff;
+        border-bottom: 3px solid #d4af37;
+    }
+
+    .people-header-title {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .people-list-button {
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(255,255,255,.35);
+        border-radius: 5px;
+        background: rgba(255,255,255,.1);
+        color: #ffffff;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .people-list-button:hover {
+        background: #d4af37;
+        color: #172554;
+    }
+
+    .person-display {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+    }
+
+    .person-card {
+        width: 100%;
+        text-align: center;
+    }
+
+    .person-image-wrapper {
+        width: 125px;
+        height: 145px;
+        margin: 0 auto 12px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 3px solid #d4af37;
+        background: #f1f5f9;
+        box-shadow: 0 3px 10px rgba(0,0,0,.12);
+    }
+
+    .person-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .person-name {
+        margin: 0;
+        color: #172554;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.45;
+    }
+
+    .person-post {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .person-contact {
+        margin-top: 8px;
+        color: #334155;
+        font-size: 13px;
+    }
+
+    .person-contact i {
+        color: #172554;
+        margin-right: 4px;
+    }
+
+    .person-type {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: #eef4ff;
+        color: #172554;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .person-dots {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .person-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        transition: .2s ease;
+    }
+
+    .person-dot.active {
+        background: #172554;
+        transform: scale(1.25);
+    }
+
+
+    /* =========================================================
+       PEOPLE LIST MODAL
+       ========================================================= */
+
+    .people-list-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, .65);
+        padding: 30px;
+        box-sizing: border-box;
+    }
+
+    .people-list-dialog {
+        width: 100%;
+        max-width: 950px;
+        height: 85vh;
+        margin: auto;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,.3);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .people-list-header {
+        flex: 0 0 auto;
+        padding: 14px 18px;
+        background: #172554;
+        color: #ffffff;
+        border-bottom: 4px solid #d4af37;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .people-list-header h3 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .people-list-close {
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 5px;
+        background: rgba(255,255,255,.1);
+        color: #ffffff;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .people-list-close:hover {
+        background: #ef5350;
+    }
+
+    .people-list-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    .people-list-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .people-list-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid #dce2e9;
+        border-radius: 7px;
+        background: #f8fafc;
+    }
+
+    .people-list-item:hover {
+        background: #eef4ff;
+    }
+
+    .people-list-image {
+        width: 65px;
+        height: 75px;
+        flex: 0 0 65px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid #d4af37;
+    }
+
+    .people-list-name {
+        font-weight: 700;
+        color: #172554;
+        font-size: 15px;
+    }
+
+    .people-list-post {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .people-list-contact {
+        margin-top: 3px;
+        color: #475569;
+        font-size: 12px;
+    }
+
+
+    /* =========================================================
+       TABLE SCROLL
+       ========================================================= */
+
+    .service-table-scroll {
+        width: 100%;
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        scroll-behavior: auto;
+    }
+
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .service-table {
+        width: 100%;
+        min-width: 1250px;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+    }
+
+    .service-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 13px 10px;
+        background: #172554;
+        color: #ffffff;
+        border-right: 1px solid #34436d;
+        border-bottom: 2px solid #d4af37;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 1.5;
+    }
+
+    .service-table thead th:last-child {
+        border-right: none;
+    }
+
+    .service-table tbody td {
+        padding: 13px 11px;
+        background: #ffffff;
+        color: #1e293b;
+        border-right: 1px solid #dce2e9;
+        border-bottom: 1px solid #dce2e9;
+        font-size: 15px;
+        line-height: 1.65;
+        vertical-align: top;
+        word-break: break-word;
+    }
+
+    .service-table tbody tr:nth-child(even) td {
+        background: #f8fafc;
+    }
+
+    .service-table tbody tr:hover td {
+        background: #eef4ff;
+    }
+
+    .service-table tbody td:last-child {
+        border-right: none;
+    }
+
+
+    /* =========================================================
+       COLUMN WIDTHS
+       ========================================================= */
+
+    .serial-column {
+        width: 60px;
+        text-align: center !important;
+    }
+
+    .service-name-column {
+        width: 19%;
+    }
+
+    .process-column {
+        width: 31%;
+    }
+
+    .fee-column {
+        width: 14%;
+    }
+
+    .time-column {
+        width: 11%;
+    }
+
+    .officer-column {
+        width: 17%;
+    }
+
+
+    /* =========================================================
+       TABLE CONTENT
+       ========================================================= */
+
+    .serial-number {
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .service-name {
+        font-weight: 700;
+        color: #172554;
+        font-size: 16px;
+    }
+
+    .service-detail {
+        margin-bottom: 8px;
+    }
+
+    .service-detail:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-label {
+        display: block;
+        margin-bottom: 2px;
+        color: #172554;
+        font-weight: 700;
+    }
+
+    .fee-value,
+    .time-value,
+    .officer-value {
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       EMPTY RESULT
+       ========================================================= */
+
+    .no-service {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 250px;
+        color: #64748b;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .search-result-message {
+        display: none;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px 30px;
+        background: #ffffff;
+        border: 1px solid #d7dee8;
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        color: #64748b;
+        font-size: 17px;
+        text-align: center;
+        z-index: 20;
+    }
+
+
+    /* =========================================================
+       NOTICE FOOTER
+       ========================================================= */
+
+    .notice-footer {
+        flex: 0 0 auto;
+        margin-top: 12px;
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 15px;
+        background: #9b111e;
+        color: #ffffff;
+        border-radius: 7px;
+        border-left: 5px solid #d4af37;
+        box-shadow: 0 3px 10px rgba(0,0,0,.10);
+        overflow: hidden;
+    }
+
+    .notice-label {
+        flex: 0 0 auto;
+        font-weight: 700;
+        color: #d4af37;
+        white-space: nowrap;
+    }
+
+    .notice-content {
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+        background: #0f1f3d;
+        white-space: nowrap;
+    }
+
+    .notice-text {
+        display: inline-block;
+        padding-left: 100%;
+        animation: noticeScroll 25s linear infinite;
+    }
+
+    @@keyframes noticeScroll {
+        from {
+            transform: translateX(0);
+        }
+
+        to {
+            transform: translateX(-100%);
+        }
+    }
+
+
+    /* =========================================================
+       SCROLLBAR
+       ========================================================= */
+
+    .service-table-scroll::-webkit-scrollbar,
+    .people-list-body::-webkit-scrollbar {
+        width: 9px;
+        height: 9px;
+    }
+
+    .service-table-scroll::-webkit-scrollbar-track,
+    .people-list-body::-webkit-scrollbar-track {
+        background: #eef2f7;
+    }
+
+    .service-table-scroll::-webkit-scrollbar-thumb,
+    .people-list-body::-webkit-scrollbar-thumb {
+        background: #9aa8bb;
+        border-radius: 10px;
+    }
+
+    .service-table-scroll::-webkit-scrollbar-thumb:hover,
+    .people-list-body::-webkit-scrollbar-thumb:hover {
+        background: #172554;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @@media screen and (max-width: 1100px) {
+
+        .service-content {
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .service-table-container {
+            min-height: 500px;
+        }
+
+        .people-panel {
+            flex: 0 0 auto;
+            width: 100%;
+            min-height: 280px;
+        }
+
+        .person-display {
+            min-height: 230px;
+        }
+
+        .people-list-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+
+    @@media screen and (max-width: 1000px) {
+
+        .service-home {
+            height: auto;
+            min-height: calc(100vh - 100px);
+        }
+
+        .service-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .service-header-right {
+            justify-content: space-between;
+        }
+
+        .service-date-time {
+            text-align: left;
+        }
+
+        .service-search {
+            width: 100%;
+        }
+    }
+
+
+    @@media screen and (max-width: 600px) {
+
+        .service-home {
+            padding: 8px;
+        }
+
+        .service-header {
+            padding: 12px;
+        }
+
+        .service-title {
+            font-size: 20px;
+        }
+
+        .service-header-right {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .service-date-time {
+            text-align: left;
+        }
+
+        .people-list-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .people-list-modal {
+            padding: 10px;
+        }
+
+        .people-list-dialog {
+            height: 90vh;
+        }
+    }
 
 </style>
 
 
-<!-- =========================================================
-     DIGITAL CITIZEN CHARTER DISPLAY
-     ========================================================= -->
-
-<div class="digital-display">
+<div class="service-home">
 
 
     <!-- =====================================================
-         MAIN BODY
-         ===================================================== -->
+         HEADER
+         ====================================================== -->
 
-    <div class="display-body">
+    <div class="service-header">
 
+        <div class="service-header-left">
 
-        <!-- =================================================
-             LEFT MENU
-             ================================================= -->
-
-        <div class="display-menu">
-
-
-            <div class="menu-title">
-
+            <div class="service-title">
+                <i class="fa fa-building"></i>
                 सेवा तथा जानकारी
-
             </div>
 
-
-            <!-- =================================================
-                 1. VIDEO
-                 ================================================= -->
-
-            <button type="button"
-                    class="tablinks"
-                    onclick="openSpecific(event, 'Video')"
-                    id="defaultOpen">
-
-                <span>
-
-                    भिडियो
-
-                </span>
-
-
-                <span class="tab-number">
-
-                    १
-
-                </span>
-
-            </button>
-
-
-            <!-- =================================================
-                 2. CITIZEN CHARTER
-                 ================================================= -->
-
-            <button type="button"
-                    class="tablinks"
-                    onclick="openSpecific(event, 'Document')">
-
-                <span>
-
-                    नागरिक वडापत्र
-
-                </span>
-
-
-                <span class="tab-number">
-
-                    २
-
-                </span>
-
-            </button>
-
-
-            <!-- =================================================
-                 3. REPRESENTATIVES
-                 ================================================= -->
-
-            <button type="button"
-                    class="tablinks"
-                    onclick="openSpecific(event, 'PeopleRepre')">
-
-                <span>
-
-                    जनप्रतिनिधि
-
-                </span>
-
-
-                <span class="tab-number">
-
-                    ३
-
-                </span>
-
-            </button>
-
-
-            <!-- =================================================
-                 4. EMPLOYEES
-                 ================================================= -->
-
-            <button type="button"
-                    class="tablinks"
-                    onclick="openSpecific(event, 'Employee')">
-
-                <span>
-
-                    कर्मचारी
-
-                </span>
-
-
-                <span class="tab-number">
-
-                    ४
-
-                </span>
-
-            </button>
-
-
-            <!-- =================================================
-                 5. LIVE
-                 ================================================= -->
-
-            <button type="button"
-                    class="tablinks"
-                    onclick="openSpecific(event, 'Live')">
-
-                <span>
-
-                    Live
-
-                </span>
-
-
-                <span class="tab-number">
-
-                    ५
-
-                </span>
-
-            </button>
-
-
-            <!-- =================================================
-                 6. NOTICE
-                 ================================================= -->
-
-            <button type="button"
-                    class="tablinks"
-                    onclick="openSpecific(event, 'Notice')">
-
-                <span>
-
-                    सूचना
-
-                </span>
-
-
-                <span class="tab-number">
-
-                    ६
-
-                </span>
-
-            </button>
-
-
-            <!-- =================================================
-                 HELP
-                 ================================================= -->
-
-            <div class="menu-help">
-
-                <i class="fa-solid fa-circle-info"></i>
-
-                सेवा सम्बन्धी जानकारी तथा सूचना हेर्न
-                माथिका शीर्षकमा छुनुहोस्।
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =================================================
-             CENTER CONTENT
-             ================================================= -->
-
-        <div class="display-content">
-
-
-            <!-- =================================================
-                 VIDEO
-                 ================================================= -->
-
-            <div id="Video"
-                 class="tabcontent animated fadeIn">
-
-                @Html.Partial("_Video")
-
-            </div>
-
-
-            <!-- =================================================
-                 CITIZEN CHARTER
-                 ================================================= -->
-
-            <div id="Document"
-                 class="tabcontent animated fadeIn"
-                 style="display:none;">
-
-                @Html.Partial("_MainModule")
-
-            </div>
-
-
-            <!-- =================================================
-                 REPRESENTATIVES
-                 ================================================= -->
-
-            <div id="PeopleRepre"
-                 class="tabcontent animated fadeIn"
-                 style="display:none;">
-
-                @Html.Partial("_PeopleRepre")
-
-            </div>
-
-
-            <!-- =================================================
-                 EMPLOYEES
-                 ================================================= -->
-
-            <div id="Employee"
-                 class="tabcontent animated fadeIn"
-                 style="display:none;">
-
-                @Html.Partial("_Employee")
-
-            </div>
-
-
-            <!-- =================================================
-                 LIVE
-                 ================================================= -->
-
-            <div id="Live"
-                 class="tabcontent animated fadeIn"
-                 style="display:none;">
-
-                @Html.Partial("_Live")
-
-            </div>
-
-
-            <!-- =================================================
-                 NOTICE
-                 ================================================= -->
-
-            <div id="Notice"
-                 class="tabcontent animated fadeIn"
-                 style="display:none;">
-
-                @Html.Partial("_Notice")
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =================================================
-             RIGHT SERVICES
-             ================================================= -->
-
-        <div class="display-services">
-
-            <div class="card">
-
-                @Html.Partial("_Services")
-
+            <div class="service-subtitle">
+                नागरिकलाई उपलब्ध सेवा, प्रक्रिया, दस्तुर तथा जिम्मेवार पदाधिकारी
             </div>
 
         </div>
 
+
+        <div class="service-header-right">
+
+            <!-- DATE / TIME -->
+
+            <div class="service-date-time">
+
+                <div class="service-date"
+                     id="currentDate">
+                </div>
+
+                <div class="service-time"
+                     id="currentTime">
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="service-search">
+
+                <input type="text"
+                       id="serviceSearch"
+                       autocomplete="off"
+                       placeholder="सेवा खोज्नुहोस्..." />
+
+                <span class="service-search-icon">
+                    <i class="fa fa-search"></i>
+                </span>
+
+            </div>
+
+        </div>
 
     </div>
 
 
     <!-- =====================================================
-         DISPLAY FOOTER
-         ===================================================== -->
+         MAIN CONTENT
+         ====================================================== -->
 
-    <div class="display-footer">
+    <div class="service-content">
 
 
-        <div class="display-footer-left">
+        <!-- =================================================
+             LEFT SIDE - SERVICE TABLE
+             ================================================== -->
 
-            डिजिटल नागरिक वडापत्र प्रणाली
+        <div class="service-table-container">
+
+            <div class="service-table-scroll"
+                 id="serviceTableScroll">
+
+                @if (Model != null &&
+                     Model.subModule != null &&
+                     Model.subModule.List != null &&
+                     Model.subModule.List.Any())
+                {
+                    <table class="service-table"
+                           id="serviceTable">
+
+                        <thead>
+
+                            <tr>
+
+                                <th class="serial-column">
+                                    सि.न.
+                                </th>
+
+                                <th class="service-name-column">
+                                    सेवा सुबिधाको नाम
+                                </th>
+
+                                <th class="process-column">
+                                    सेवा लिने प्रक्रिया/चाहिने कागजातहर
+                                </th>
+
+                                <th class="fee-column">
+                                    लाग्ने सेवा शुल्क तथा दस्तुर
+                                </th>
+
+                                <th class="time-column">
+                                    लाग्ने समय
+                                </th>
+
+                                <th class="officer-column">
+                                    जिम्मेवार पधाधिकार
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="serviceTableBody">
+
+                            @{
+                                int serialNumber = 1;
+                            }
+
+                            @foreach (var service in Model.subModule.List)
+                            {
+                                <tr class="service-row">
+
+                                    <!-- SERIAL -->
+
+                                    <td class="serial-column">
+
+                                        <span class="serial-number">
+                                            @serialNumber
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- SERVICE NAME -->
+
+                                    <td>
+
+                                        <div class="service-name">
+                                            @service.Title
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- PROCESS / DOCUMENTS -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrWhiteSpace(service.Process))
+                                        {
+                                            <div class="service-detail">
+
+                                                <span class="detail-label">
+                                                    सेवा लिने प्रक्रिया:
+                                                </span>
+
+                                                @Html.Raw(service.Process)
+
+                                            </div>
+                                        }
+
+
+                                        @if (!string.IsNullOrWhiteSpace(service.DocumentNeeded))
+                                        {
+                                            <div class="service-detail">
+
+                                                <span class="detail-label">
+                                                    चाहिने कागजात:
+                                                </span>
+
+                                                @Html.Raw(service.DocumentNeeded)
+
+                                            </div>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- FEE -->
+
+                                    <td>
+
+                                        <div class="fee-value">
+
+                                            @if (!string.IsNullOrWhiteSpace(service.DasturNeed))
+                                            {
+                                                @service.DasturNeed
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- TIME -->
+
+                                    <td>
+
+                                        <div class="time-value">
+
+                                            @if (!string.IsNullOrWhiteSpace(service.TimeNeed))
+                                            {
+                                                @service.TimeNeed
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- RESPONSIBLE OFFICER -->
+
+                                    <td>
+
+                                        <div class="officer-value">
+
+                                            @if (!string.IsNullOrWhiteSpace(service.ResponsibleOfficer))
+                                            {
+                                                @service.ResponsibleOfficer
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                serialNumber++;
+                            }
+
+                        </tbody>
+
+                    </table>
+                }
+                else
+                {
+                    <div class="no-service">
+
+                        <div>
+
+                            <i class="fa fa-folder-open fa-2x"></i>
+
+                            <br />
+                            <br />
+
+                            हाल कुनै सेवा उपलब्ध छैन।
+
+                        </div>
+
+                    </div>
+                }
+
+
+                <!-- SEARCH RESULT MESSAGE -->
+
+                <div class="search-result-message"
+                     id="noSearchResult">
+
+                    <i class="fa fa-search"></i>
+
+                    <br />
+                    <br />
+
+                    खोजी अनुसार कुनै सेवा भेटिएन।
+
+                </div>
+
+            </div>
 
         </div>
 
 
-        <div class="display-footer-center">
+        <!-- =================================================
+             RIGHT SIDE - REPRESENTATIVES / EMPLOYEES
+             ================================================== -->
 
-            नागरिकलाई सरल, सहज र डिजिटल सेवा
+        <div class="people-panel">
+
+            <div class="people-header">
+
+                <div class="people-header-title">
+                    <i class="fa fa-users"></i>
+                    प्रतिनिधि / कर्मचारीहरु
+                </div>
+
+                <!--
+                    Opens the complete list.
+                -->
+
+                <button type="button"
+                        class="people-list-button"
+                        id="openPeopleList"
+                        title="सबै हेर्नुहोस्">
+
+                    <i class="fa fa-list"></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="person-display"
+                 id="personDisplay">
+
+                <!-- Person will be rendered by JavaScript -->
+
+            </div>
 
         </div>
-
-
-        <div class="display-footer-right"
-             id="displayClock">
-
-            --:--:--
-
-        </div>
-
 
     </div>
-
 
 </div>
 
 
 <!-- =========================================================
-     IMAGE MODAL
-     ========================================================= -->
+     PEOPLE LIST MODAL
+     ========================================================== -->
 
-<div class="modal inmodal fade"
-     id="modelImage"
-     role="dialog">
+<div class="people-list-modal"
+     id="peopleListModal">
+
+    <div class="people-list-dialog">
+
+
+        <!-- MODAL HEADER -->
+
+        <div class="people-list-header">
+
+            <div>
+                <i class="fa fa-users"></i>
+                प्रतिनिधि / कर्मचारीहरुको सूची
+            </div>
+
+            <button type="button"
+                    class="people-list-close"
+                    id="closePeopleList">
+
+                <i class="fa fa-times"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- MODAL BODY -->
+
+        <div class="people-list-body">
+
+            <div class="people-list-grid">
+
+
+                <!-- =================================================
+                     PEOPLE REPRESENTATIVES
+                     ================================================== -->
+
+                @if (Model != null &&
+                     Model.peopleRepresentative != null &&
+                     Model.peopleRepresentative.List != null)
+                {
+                    foreach (var person in Model.peopleRepresentative.List)
+                    {
+                        <div class="people-list-item">
+
+                            @{
+                                var personImage =
+                                    !string.IsNullOrWhiteSpace(person.ImageUrl)
+                                        ? person.ImageUrl
+                                        : (!string.IsNullOrWhiteSpace(person.Image)
+                                            ? Url.Content("~/JanaPratinidhiImages/" + person.Image)
+                                            : Url.Content("~/Content/images/UserImage.png"));
+                            }
+
+                            <img src="@personImage"
+                                 class="people-list-image"
+                                 alt="@person.Name" />
+
+                            <div>
+
+                                <div class="people-list-name">
+                                    @person.Name
+                                </div>
+
+                                <div class="people-list-post">
+
+                                    @if (person.PostSetup != null)
+                                    {
+                                        @person.PostSetup.PostTitle
+                                    }
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(person.Contact))
+                                {
+                                    <div class="people-list-contact">
+
+                                        <i class="fa fa-phone"></i>
+
+                                        @person.Contact
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
+                }
+
+
+                <!-- =================================================
+                     EMPLOYEES
+                     ================================================== -->
+
+                @if (Model != null &&
+                     Model.employeeSetup != null &&
+                     Model.employeeSetup.Lists != null)
+                {
+                    foreach (var employee in Model.employeeSetup.Lists)
+                    {
+                        <div class="people-list-item">
+
+                            @{
+                                var employeeImage =
+                                    !string.IsNullOrWhiteSpace(employee.ImageUrl)
+                                        ? employee.ImageUrl
+                                        : (!string.IsNullOrWhiteSpace(employee.Image)
+                                            ? Url.Content("~/EmployeeImages/" + employee.Image)
+                                            : Url.Content("~/Content/images/UserImage.png"));
+                            }
+
+                            <img src="@employeeImage"
+                                 class="people-list-image"
+                                 alt="@employee.EmpName" />
+
+                            <div>
+
+                                <div class="people-list-name">
+                                    @employee.EmpName
+                                </div>
+
+                                <div class="people-list-post">
+
+                                    @if (employee.PostSetup != null)
+                                    {
+                                        @employee.PostSetup.PostTitle
+                                    }
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(employee.Contact))
+                                {
+                                    <div class="people-list-contact">
+
+                                        <i class="fa fa-phone"></i>
+
+                                        @employee.Contact
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
+                }
+
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 
 <script>
 
-    /* =========================================================
-       OPEN TAB
-       ========================================================= */
-
-    function openSpecific(evt, cityName) {
-
-        var i;
+    document.addEventListener("DOMContentLoaded", function () {
 
 
-        /* Hide all content */
+        /* =====================================================
+           DATE AND TIME
+           ====================================================== */
 
-        var tabcontent =
-            document.getElementsByClassName(
-                "tabcontent"
-            );
+        function updateDateTime() {
 
+            var now = new Date();
 
-        for (
-            i = 0;
-            i < tabcontent.length;
-            i++
-        ) {
+            var dateText =
+                now.toLocaleDateString(
+                    "ne-NP",
+                    {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                    }
+                );
 
-            tabcontent[i].style.display =
-                "none";
-        }
-
-
-        /* Remove active */
-
-        var tablinks =
-            document.getElementsByClassName(
-                "tablinks"
-            );
-
-
-        for (
-            i = 0;
-            i < tablinks.length;
-            i++
-        ) {
-
-            tablinks[i].classList.remove(
-                "active"
-            );
-        }
-
-
-        /* Show selected */
-
-        var selected =
-            document.getElementById(
-                cityName
-            );
-
-
-        if (selected) {
-
-            selected.style.display =
-                "block";
-        }
-
-
-        /* Activate button */
-
-        if (
-            evt &&
-            evt.currentTarget
-        ) {
-
-            evt.currentTarget.classList.add(
-                "active"
-            );
-        }
-
-    }
-
-
-    /* =========================================================
-       PAGE INITIALIZATION
-       ========================================================= */
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-
-
-            /* Open first tab */
-
-            var defaultTab =
-                document.getElementById(
-                    "defaultOpen"
+            var timeText =
+                now.toLocaleTimeString(
+                    "ne-NP",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true
+                    }
                 );
 
 
-            if (defaultTab) {
+            var dateElement =
+                document.getElementById("currentDate");
 
-                defaultTab.click();
+            var timeElement =
+                document.getElementById("currentTime");
+
+
+            if (dateElement) {
+                dateElement.textContent = dateText;
+            }
+
+            if (timeElement) {
+                timeElement.textContent = timeText;
+            }
+
+        }
+
+
+        updateDateTime();
+
+        setInterval(updateDateTime, 1000);
+
+
+
+        /* =====================================================
+           SERVICE SEARCH
+           ====================================================== */
+
+        var searchInput =
+            document.getElementById("serviceSearch");
+
+        var tableBody =
+            document.getElementById("serviceTableBody");
+
+        var noSearchResult =
+            document.getElementById("noSearchResult");
+
+
+        if (searchInput && tableBody) {
+
+            searchInput.addEventListener(
+                "input",
+                function () {
+
+                    var searchText =
+                        this.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    var rows =
+                        tableBody.querySelectorAll(
+                            ".service-row"
+                        );
+
+
+                    var visibleRows = 0;
+
+
+                    rows.forEach(function (row) {
+
+                        var rowText =
+                            row.textContent
+                                .toLowerCase();
+
+
+                        if (
+                            searchText === "" ||
+                            rowText.indexOf(searchText) !== -1
+                        ) {
+
+                            row.style.display = "";
+
+                            visibleRows++;
+
+                        }
+                        else {
+
+                            row.style.display = "none";
+
+                        }
+
+                    });
+
+
+                    if (noSearchResult) {
+
+                        noSearchResult.style.display =
+                            (
+                                searchText !== "" &&
+                                visibleRows === 0
+                            )
+                                ? "block"
+                                : "none";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           SERVICE TABLE AUTO SCROLL
+           ====================================================== */
+
+        var scrollContainer =
+            document.getElementById("serviceTableScroll");
+
+
+        if (scrollContainer) {
+
+            var autoScrolling = true;
+
+            var scrollSpeed = 1;
+
+            var resumeDelay = 4000;
+
+            var resumeTimer = null;
+
+
+            function autoScroll() {
+
+                if (!autoScrolling) {
+                    return;
+                }
+
+
+                if (
+                    scrollContainer.scrollHeight <=
+                    scrollContainer.clientHeight
+                ) {
+                    return;
+                }
+
+
+                if (
+                    scrollContainer.scrollTop +
+                    scrollContainer.clientHeight >=
+                    scrollContainer.scrollHeight - 1
+                ) {
+
+                    scrollContainer.scrollTop = 0;
+
+                }
+                else {
+
+                    scrollContainer.scrollTop +=
+                        scrollSpeed;
+
+                }
 
             }
 
 
-            /* Start clock */
-
-            updateDisplayClock();
-
-
             setInterval(
-                updateDisplayClock,
-                1000
+                autoScroll,
+                40
+            );
+
+
+            function pauseAutoScroll() {
+
+                autoScrolling = false;
+
+                if (resumeTimer) {
+                    clearTimeout(resumeTimer);
+                }
+
+            }
+
+
+            function resumeAutoScrollLater() {
+
+                if (resumeTimer) {
+                    clearTimeout(resumeTimer);
+                }
+
+
+                resumeTimer =
+                    setTimeout(
+                        function () {
+
+                            if (
+                                !scrollContainer.matches(":hover")
+                            ) {
+
+                                autoScrolling = true;
+
+                            }
+
+                        },
+                        resumeDelay
+                    );
+
+            }
+
+
+            scrollContainer.addEventListener(
+                "mouseenter",
+                function () {
+
+                    pauseAutoScroll();
+
+                }
+            );
+
+
+            scrollContainer.addEventListener(
+                "mouseleave",
+                function () {
+
+                    resumeAutoScrollLater();
+
+                }
+            );
+
+
+            scrollContainer.addEventListener(
+                "wheel",
+                function () {
+
+                    pauseAutoScroll();
+
+                    resumeAutoScrollLater();
+
+                }
+            );
+
+
+            scrollContainer.addEventListener(
+                "touchstart",
+                function () {
+
+                    pauseAutoScroll();
+
+                }
+            );
+
+
+            scrollContainer.addEventListener(
+                "touchend",
+                function () {
+
+                    resumeAutoScrollLater();
+
+                }
             );
 
         }
-    );
 
 
-    /* =========================================================
-       DIGITAL CLOCK
-       ========================================================= */
 
-    function updateDisplayClock() {
+        /* =====================================================
+           PEOPLE DATA
+           
+           We combine representatives and employees into
+           one JavaScript array.
 
-        var clock =
-            document.getElementById(
-                "displayClock"
-            );
+           Only ONE person is displayed at a time.
+           ====================================================== */
+
+        var people = [];
 
 
-        if (!clock) {
+        /*
+         * Representatives
+         */
 
-            return;
+        @if (Model != null &&
+             Model.peopleRepresentative != null &&
+             Model.peopleRepresentative.List != null)
+        {
+            foreach (var person in Model.peopleRepresentative.List)
+            {
+                var image =
+                    !string.IsNullOrWhiteSpace(person.ImageUrl)
+                        ? person.ImageUrl
+                        : (!string.IsNullOrWhiteSpace(person.Image)
+                            ? Url.Content("~/JanaPratinidhiImages/" + person.Image)
+                            : Url.Content("~/Content/images/UserImage.png"));
+
+                var post =
+                    person.PostSetup != null
+                        ? person.PostSetup.PostTitle
+                        : "";
+
+                <text>
+                    people.push({
+                        name: @Html.Raw(Json.Encode(person.Name ?? "")),
+                        post: @Html.Raw(Json.Encode(post ?? "")),
+                        contact: @Html.Raw(Json.Encode(person.Contact ?? "")),
+                        image: @Html.Raw(Json.Encode(image)),
+                        type: "जनप्रतिनिधि"
+                    });
+                </text>
+            }
         }
 
 
-        var now =
-            new Date();
+        /*
+         * Employees
+         */
+
+        @if (Model != null &&
+             Model.employeeSetup != null &&
+             Model.employeeSetup.Lists != null)
+        {
+            foreach (var employee in Model.employeeSetup.Lists)
+            {
+                var image =
+                    !string.IsNullOrWhiteSpace(employee.ImageUrl)
+                        ? employee.ImageUrl
+                        : (!string.IsNullOrWhiteSpace(employee.Image)
+                            ? Url.Content("~/EmployeeImages/" + employee.Image)
+                            : Url.Content("~/Content/images/UserImage.png"));
+
+                var post =
+                    employee.PostSetup != null
+                        ? employee.PostSetup.PostTitle
+                        : "";
+
+                <text>
+                    people.push({
+                        name: @Html.Raw(Json.Encode(employee.EmpName ?? "")),
+                        post: @Html.Raw(Json.Encode(post ?? "")),
+                        contact: @Html.Raw(Json.Encode(employee.Contact ?? "")),
+                        image: @Html.Raw(Json.Encode(image)),
+                        type: "कर्मचारी"
+                    });
+                </text>
+            }
+        }
 
 
-        var hours =
-            String(
-                now.getHours()
-            ).padStart(
-                2,
-                "0"
+
+        /* =====================================================
+           PEOPLE ROTATION
+           ====================================================== */
+
+        var personDisplay =
+            document.getElementById("personDisplay");
+
+
+        var currentPersonIndex = 0;
+
+
+        function showPerson(index) {
+
+            if (!personDisplay || people.length === 0) {
+
+                if (personDisplay) {
+
+                    personDisplay.innerHTML =
+                        '<div class="no-service">' +
+                        '<div>' +
+                        '<i class="fa fa-user fa-2x"></i>' +
+                        '<br><br>' +
+                        'हाल कुनै प्रतिनिधि / कर्मचारी उपलब्ध छैन।' +
+                        '</div>' +
+                        '</div>';
+
+                }
+
+                return;
+            }
+
+
+            var person =
+                people[index];
+
+
+            var html =
+
+                '<div class="person-card">' +
+
+                    '<div class="person-image-wrapper">' +
+
+                        '<img ' +
+                            'src="' + person.image + '" ' +
+                            'class="person-image" ' +
+                            'alt="' + person.name + '">' +
+
+                    '</div>' +
+
+                    '<div class="person-name">' +
+                        person.name +
+                    '</div>' +
+
+                    '<div class="person-post">' +
+                        person.post +
+                    '</div>';
+
+
+            if (person.contact) {
+
+                html +=
+
+                    '<div class="person-contact">' +
+
+                        '<i class="fa fa-phone"></i>' +
+
+                        person.contact +
+
+                    '</div>';
+
+            }
+
+
+            html +=
+
+                    '<div class="person-type">' +
+                        person.type +
+                    '</div>' +
+
+                    '<div class="person-dots">';
+
+
+            /*
+             * Small indicators showing which person
+             * is currently being displayed.
+             */
+
+            people.forEach(function (item, dotIndex) {
+
+                html +=
+
+                    '<span class="person-dot ' +
+                    (dotIndex === index ? "active" : "") +
+                    '"></span>';
+
+            });
+
+
+            html +=
+
+                    '</div>' +
+
+                '</div>';
+
+
+            personDisplay.innerHTML = html;
+
+        }
+
+
+        /*
+         * Display the first person immediately.
+         */
+
+        if (people.length > 0) {
+
+            showPerson(0);
+
+
+            /*
+             * Change person every 6 seconds.
+             *
+             * Only the displayed person changes.
+             * The complete list is NOT displayed.
+             */
+
+            if (people.length > 1) {
+
+                setInterval(
+                    function () {
+
+                        currentPersonIndex++;
+
+                        if (
+                            currentPersonIndex >=
+                            people.length
+                        ) {
+
+                            currentPersonIndex = 0;
+
+                        }
+
+                        showPerson(
+                            currentPersonIndex
+                        );
+
+                    },
+                    6000
+                );
+
+            }
+
+        }
+        else {
+
+            showPerson(0);
+
+        }
+
+
+
+        /* =====================================================
+           PEOPLE LIST MODAL
+           ====================================================== */
+
+        var peopleListModal =
+            document.getElementById("peopleListModal");
+
+        var openPeopleList =
+            document.getElementById("openPeopleList");
+
+        var closePeopleList =
+            document.getElementById("closePeopleList");
+
+
+        if (openPeopleList) {
+
+            openPeopleList.addEventListener(
+                "click",
+                function () {
+
+                    peopleListModal.style.display =
+                        "flex";
+
+                }
             );
 
+        }
 
-        var minutes =
-            String(
-                now.getMinutes()
-            ).padStart(
-                2,
-                "0"
+
+        if (closePeopleList) {
+
+            closePeopleList.addEventListener(
+                "click",
+                function () {
+
+                    peopleListModal.style.display =
+                        "none";
+
+                }
             );
 
+        }
 
-        var seconds =
-            String(
-                now.getSeconds()
-            ).padStart(
-                2,
-                "0"
+
+        /*
+         * Close modal when clicking outside
+         * the actual dialog.
+         */
+
+        if (peopleListModal) {
+
+            peopleListModal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        peopleListModal
+                    ) {
+
+                        peopleListModal.style.display =
+                            "none";
+
+                    }
+
+                }
             );
 
+        }
 
-        clock.innerHTML =
-            hours +
-            ":" +
-            minutes +
-            ":" +
-            seconds;
 
-    }
+        /*
+         * Close modal using ESC key.
+         */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    peopleListModal
+                ) {
+
+                    peopleListModal.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    });
 
 </script>
