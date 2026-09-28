@@ -1,32 +1,20 @@
-﻿
-@model HelpDesk.Models.HomePageViewModel
+﻿@model HelpDesk.Models.HomePageViewModel
 
 <style>
+
     .video-detail {
         width: 100%;
-        height: 100%;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
+        margin: 0;
         padding: 0;
-        font-family: "Noto Sans Devanagari", "Kalimati", "Mangal", sans-serif;
-        background: #fff;
+        background: #000;
         overflow: hidden;
     }
 
-    /* =========================================================
-       FULL WIDTH VIDEO
-       ========================================================= */
-
     .video-player-wrapper {
         width: 100%;
-        flex: 1 1 auto;
-        min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
+        aspect-ratio: 16 / 9;
         margin: 0;
+        padding: 0;
         background: #000;
         overflow: hidden;
     }
@@ -35,178 +23,54 @@
         display: block;
         width: 100%;
         height: 100%;
-        max-width: 100%;
-        max-height: 100%;
-        min-width: 0;
-        min-height: 0;
         margin: 0;
         padding: 0;
-        background: #000;
         border: none;
-        border-radius: 0;
-        object-fit: contain;
         outline: none;
+        background: #000;
+        object-fit: contain;
     }
-
-    /* =========================================================
-       VIDEO INFORMATION
-       ========================================================= */
-
-    .video-information {
-        width: 100%;
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 15px;
-        padding: 8px 14px;
-        background: #fff;
-        border-top: 3px solid #c9a227;
-        box-shadow: 0 -2px 8px rgba(15,31,61,.10);
-        box-sizing: border-box;
-    }
-
-    .video-title-area {
-        min-width: 0;
-        flex: 1;
-    }
-
-    .video-title {
-        margin: 0;
-        color: #172554;
-        font-size: clamp(18px, 1.35vw, 28px);
-        font-weight: 700;
-        line-height: 1.4;
-        word-break: break-word;
-    }
-
-    .video-date {
-        margin-top: 2px;
-        color: #64748b;
-        font-size: clamp(13px, .85vw, 18px);
-    }
-
-        .video-date i {
-            margin-right: 5px;
-            color: #9b111e;
-        }
-
-    .video-status {
-        flex: 0 0 auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px;
-        color: #172554;
-        background: #f8fafc;
-        border: 1px solid #d5dce6;
-        border-radius: 20px;
-        font-size: clamp(12px, .75vw, 16px);
-        font-weight: 600;
-    }
-
-        .video-status i {
-            color: #c9a227;
-        }
-
-    /* =========================================================
-       NO VIDEO
-       ========================================================= */
 
     .video-not-available {
         width: 100%;
-        height: 100%;
+        aspect-ratio: 16 / 9;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: #94a3b8;
+        background: #000;
+        color: #cbd5e1;
         text-align: center;
-    }
-
-        .video-not-available i {
-            font-size: clamp(45px, 4vw, 75px);
-            margin-bottom: 12px;
-        }
-
-        .video-not-available strong {
-            color: #cbd5e1;
-            font-size: clamp(18px, 1.3vw, 26px);
-        }
-
-    @@media screen and (max-width: 768px) {
-
-        .video-information {
-            padding: 7px 9px;
-        }
-
-        .video-status {
-            display: none;
-        }
     }
 </style>
 
 
-<div id="@Model.video.VideoId" class="video-detail">
+<div id="@Model.video.VideoId"
+     class="video-detail">
 
     @if (Model.video.VideoData != null)
     {
         <div class="video-player-wrapper">
 
-            <video class="player"
-                   controls
-                   autoplay
-                   muted
-                   playsinline
-                   id="videoPlayer"
-                   onended="showalert(@Model.video.VideoId)">
+           <video class="player"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  id="videoPlayer">
 
-                <source src="@Url.Content("~/UploadedVideos/" + Model.video.VideoData)"
-                        type="video/mp4" />
+               <source src="@Url.Content("~/UploadedVideos/" + Model.video.VideoData)"
+                       type="video/mp4" />
 
-                तपाईंको ब्राउजरले भिडियो प्ले गर्न समर्थन गर्दैन।
+               तपाईंको ब्राउजरले भिडियो प्ले गर्न समर्थन गर्दैन।
 
-            </video>
-
-        </div>
-
-        <div class="video-information">
-
-            <div class="video-title-area">
-
-                <div class="video-title">
-                    @Model.video.VideoName
-                </div>
-
-                <div class="video-date">
-                    <i class="fa-regular fa-calendar"></i>
-                    अपलोड गरेको मिति:
-                    @Model.video.UploadedDate
-                </div>
-
-            </div>
-
-            <div class="video-status">
-                <i class="fa-solid fa-circle-play"></i>
-                भिडियो
-            </div>
+           </video>
 
         </div>
     }
     else
     {
-        <div class="video-player-wrapper">
-
-            <div class="video-not-available">
-
-                <i class="fa-solid fa-video-slash"></i>
-
-                <strong>
-                    भिडियो उपलब्ध छैन
-                </strong>
-
-            </div>
-
+        <div class="video-not-available">
+            भिडियो उपलब्ध छैन
         </div>
     }
 
@@ -231,26 +95,27 @@
     }
 
 
-    $(document).ready(function () {
+   $(document).ready(function () {
 
-        var video = document.getElementById("videoPlayer");
+    var video = document.getElementById("videoPlayer");
 
-        if (!video) {
-            return;
-        }
+    if (!video) {
+        return;
+    }
 
-        video.muted = true;
+    video.muted = true;
+    video.loop = true;
 
-        var playPromise = video.play();
+    var playPromise = video.play();
 
-        if (playPromise !== undefined) {
+    if (playPromise !== undefined) {
+        playPromise.catch(function () {
+            // Browser prevented autoplay.
+            // No controls are enabled because the video
+            // should remain a clean display-board video.
+        });
+    }
 
-            playPromise.catch(function () {
-                video.controls = true;
-            });
-
-        }
-
-    });
+});
 
 </script>
