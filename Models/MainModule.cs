@@ -46,6 +46,9 @@ namespace HelpDesk.Models
         public string DocumentNeeded { get; set; }
         [Display(Name = "प्रकृया")]
         public string Process { get; set; }
+
+        [Display(Name = "जिम्मेवार पदाधिकारी")]
+        public string ResponsibleOfficer { get; set; }
         [NotMapped]
         public List<SubModule> List { get;  set; }
         public string FileName { get; internal set; }

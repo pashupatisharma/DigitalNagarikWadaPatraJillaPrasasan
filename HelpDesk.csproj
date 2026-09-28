@@ -3559,6 +3559,7 @@
     <Content Include="Media\Login\Login.css" />
     <Content Include="Media\Login\login.js" />
     <Content Include="Media\Windows10MenuStyle.css" />
+    <Content Include="script.txt" />
     <Content Include="Scripts\bootstrap-tabs-x.js" />
     <Content Include="Scripts\bootstrap-tabs-x.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />

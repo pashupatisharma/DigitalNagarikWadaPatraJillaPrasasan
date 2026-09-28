@@ -50,7 +50,11 @@
                             @Html.EditorFor(model => model.DasturNeed, new { htmlAttributes = new { @class = "form-control bordered-input" } })
                             @Html.ValidationMessageFor(model => model.DasturNeed, "", new { @class = "text-danger" })
                         </div>
-
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.ResponsibleOfficer, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.ResponsibleOfficer, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.ResponsibleOfficer, "", new { @class = "text-danger" })
+                        </div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                             Video
                             <input type="file" id="fileupload" name="fileupload" class="custom-file-input" />
