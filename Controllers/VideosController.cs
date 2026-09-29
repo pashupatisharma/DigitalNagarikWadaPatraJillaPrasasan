@@ -74,7 +74,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Video video)
         {
             bool sts = ModelState.IsValid;
@@ -166,7 +166,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
 
         public async Task<ActionResult> Edit(Video video)
         {
@@ -246,7 +246,7 @@ namespace HelpDesk.Controllers
 
         // POST: Videos/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             string fileName = DeleteVideos(id);

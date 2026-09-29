@@ -65,7 +65,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "PostId,PostTitle,PostTitleEng")] PostSetup postSetup)
         {
             if (ModelState.IsValid)
@@ -97,7 +97,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        ///[ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "PostId,PostTitle,PostTitleEng")] PostSetup postSetup)
         {
             if (ModelState.IsValid)
@@ -126,7 +126,7 @@ namespace HelpDesk.Controllers
 
         // POST: PostSetups/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             PostSetup postSetup = await db.PostSetup.FindAsync(id);

@@ -53,7 +53,7 @@ namespace HelpDesk.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateInput(false)]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create( SubModule subModule , HttpPostedFileBase fileupload)
         {
             if (ModelState.IsValid)
@@ -128,7 +128,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+      //  [ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public async Task<ActionResult> Edit( SubModule subModule, HttpPostedFileBase fileupload)
         {

@@ -68,7 +68,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(EmployeeSetup employeeSetup)
         {
             if (ModelState.IsValid)
@@ -167,7 +167,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+      //  [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EmployeeSetup employeeSetup)
         {
             if (ModelState.IsValid)

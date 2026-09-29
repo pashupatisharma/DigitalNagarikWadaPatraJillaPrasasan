@@ -48,7 +48,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Id,Title")] MainModule mainModule)
         {
             if (ModelState.IsValid)
@@ -80,7 +80,7 @@ namespace HelpDesk.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Title")] MainModule mainModule)
         {
             if (ModelState.IsValid)
@@ -109,7 +109,7 @@ namespace HelpDesk.Controllers
 
         // POST: MainModules/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             MainModule mainModule = await db.MainModule.FindAsync(id);
