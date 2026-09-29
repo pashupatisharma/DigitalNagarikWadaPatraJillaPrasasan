@@ -460,18 +460,17 @@
              }
 
 
-             .website-content {
-                 width: 100%;
-                 /*
-          * Content takes the remaining space.
-          * Footer will always remain inside the viewport.
-          */
-                 flex: 1 1 auto;
-                 min-height: 0;
-                 background: #eef2f7;
-                 overflow: hidden;
-                 scroll-behavior: smooth;
-             }
+        .website-content {
+            width: 100%;
+            flex: 1 1 auto;
+            min-height: 0;
+            background: #eef2f7;
+            overflow: hidden;
+            scroll-behavior: smooth;
+            /* NEW */
+            display: flex;
+            flex-direction: column;
+        }
 
 
              /* =====================================================
