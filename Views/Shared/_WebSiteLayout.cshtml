@@ -121,1187 +121,943 @@
 
     <style>
 
-        /* =====================================================
-           GLOBAL
-           ===================================================== */
+             /* =====================================================
+        GLOBAL VIEWPORT LAYOUT
+        ===================================================== */
 
-        html {
-            scrollbar-width: none;
-        }
+             html {
+                 width: 100%;
+                 height: 100%;
+                 margin: 0;
+                 padding: 0;
+                 scrollbar-width: none;
+             }
 
-        html::-webkit-scrollbar {
-            display: none;
-        }
+                 html::-webkit-scrollbar {
+                     display: none;
+                 }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        body {
-            overflow: hidden !important;
-            background: #eef2f7;
-            font-family: "Segoe UI", "Noto Sans Devanagari", "Mangal", Arial, sans-serif;
-        }
-
-        /* =====================================================
-           OLD HEADER OVERRIDE
-           ===================================================== */
-
-        header.navigation1 {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
+             body {
+                 width: 100%;
+                 height: 100%;
+                 min-height: 100vh;
+                 margin: 0;
+                 padding: 0;
+                 overflow: hidden !important;
+                 background: #eef2f7;
+                 font-family: "Segoe UI", "Noto Sans Devanagari", "Mangal", Arial, sans-serif;
+                 display: flex;
+                 flex-direction: column;
+             }
 
 
-        /* =====================================================
-           MAIN OFFICE HEADER
-           ===================================================== */
+             /* =====================================================
+                          HEADER
+                  ===================================================== */
 
-        .office-header {
-            position: relative;
-            width: 100%;
-            min-height: 120px;
+             header.navigation1 {
+                 flex: 0 0 auto;
+                 width: 100%;
+                 background: transparent !important;
+                 border: none !important;
+                 box-shadow: none !important;
+                 padding: 0 !important;
+                 margin: 0 !important;
+             }
 
-            display: grid;
 
-            /*
-             * Header layout:
-             *
-             * Left   = Nepal emblem
-             * Center = Office information
-             * Right  = Flag / date / login
+             /* =====================================================
+                MAIN OFFICE HEADER
+                ===================================================== */
+
+             .office-header {
+                 position: relative;
+                 width: 100%;
+                 min-height: 120px;
+                 display: grid;
+                 /*
+                  * Header layout:
+                  *
+                  * Left   = Nepal emblem
+                  * Center = Office information
+                  * Right  = Flag / date / login
+                  */
+                 grid-template-columns: 13% 74% 13%;
+                 align-items: center;
+                 padding: 10px 50px 10px 25px;
+                 background: linear-gradient( 135deg, #0f1f3d 0%, #172554 38%, #1e3a5f 70%, #274c77 100% );
+                 border-left: 7px solid #c9a227;
+                 border-bottom: 4px solid #c9a227;
+                 box-shadow: 0 4px 15px rgba(0, 0, 0, .25);
+                 overflow: hidden;
+                 box-sizing: border-box;
+             }
+
+
+                 /* =====================================================
+                DECORATIVE HEADER EFFECTS
+                ===================================================== */
+
+                 .office-header::before {
+                     content: "";
+                     position: absolute;
+                     top: -80px;
+                     right: 12%;
+                     width: 240px;
+                     height: 240px;
+                     border-radius: 50%;
+                     background: rgba(255, 255, 255, .035);
+                     pointer-events: none;
+                 }
+
+
+                 .office-header::after {
+                     content: "";
+                     position: absolute;
+                     bottom: -100px;
+                     left: 35%;
+                     width: 300px;
+                     height: 200px;
+                     border-radius: 50%;
+                     background: rgba(201, 162, 39, .035);
+                     pointer-events: none;
+                 }
+
+
+             /* =====================================================
+                LEFT - NEPAL EMBLEM
+                ===================================================== */
+
+             .office-logo {
+                 height: 100%;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 position: relative;
+                 z-index: 2;
+                 min-width: 0;
+             }
+
+
+                 .office-logo a {
+                     width: 100%;
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     text-decoration: none;
+                 }
+
+
+             .nepal-emblem {
+                 display: block;
+                 width: auto;
+                 height: 90px;
+                 max-width: 130px;
+                 object-fit: contain;
+                 filter: drop-shadow( 0 3px 4px rgba(0, 0, 0, .35) );
+             }
+
+
+             /* =====================================================
+                CENTER - OFFICE INFORMATION
+                ===================================================== */
+
+             .office-header-content {
+                 width: 100%;
+                 min-width: 0;
+                 padding: 0 10px;
+                 text-align: center;
+                 position: relative;
+                 z-index: 2;
+                 box-sizing: border-box;
+             }
+
+
+             /* =====================================================
+                OFFICE NAME
+                ===================================================== */
+
+             .office-name {
+                 width: 100%;
+                 padding: 5px;
+                 color: #ffffff;
+                 font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
+                 font-size: clamp(28px, 2.5vw, 52px);
+                 font-weight: 800;
+                 line-height: 1.15;
+                 text-shadow: 0 2px 4px rgba(0, 0, 0, .35);
+                 white-space: nowrap;
+                 overflow: hidden;
+                 text-overflow: ellipsis;
+                 box-sizing: border-box;
+             }
+
+
+             /* =====================================================
+                OFFICE LOCATION
+                ===================================================== */
+
+             .office-address {
+                 width: 100%;
+                 margin-top: 5px;
+                 padding: 0 5px;
+                 color: #e7eef7;
+                 font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
+                 font-size: clamp(17px, 1.35vw, 30px);
+                 font-weight: 500;
+                 line-height: 1.35;
+                 /*
+                  * Keep wrapping enabled so long Nepali locations
+                  * are not clipped.
+                  */
+                 white-space: normal;
+                 overflow: visible;
+                 text-overflow: unset;
+                 text-align: center;
+                 box-sizing: border-box;
+             }
+
+
+             /* =====================================================
+                DIGITAL CITIZEN CHARTER BADGE
+                ===================================================== */
+
+             .office-welcome {
+                 display: inline-block;
+                 max-width: 100%;
+                 margin-top: 8px;
+                 padding: 5px 18px;
+                 color: #ffffff;
+                 background: rgba(201, 162, 39, .18);
+                 border: 1px solid rgba(201, 162, 39, .75);
+                 border-radius: 20px;
+                 font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
+                 font-size: clamp(15px, 1.05vw, 24px);
+                 font-weight: 700;
+                 box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+                 box-sizing: border-box;
+             }
+
+
+             /* =====================================================
+                RIGHT - FLAG / DATE / LOGIN
+                ===================================================== */
+
+             .office-right {
+                 height: 100%;
+                 display: flex;
+                 flex-direction: column;
+                 align-items: center;
+                 justify-content: center;
+                 gap: 5px;
+                 padding-right: 5px;
+                 position: relative;
+                 z-index: 2;
+                 min-width: 0;
+             }
+
+
+             /* =====================================================
+                NEPAL FLAG
+                ===================================================== */
+
+             .nepal-flag {
+                 width: auto;
+                 height: 48px;
+                 max-width: 100%;
+                 object-fit: contain;
+                 filter: drop-shadow( 0 2px 4px rgba(0, 0, 0, .35) );
+             }
+
+
+             /* =====================================================
+                DATE
+                ===================================================== */
+
+             .header-date {
+                 text-align: center;
+                 color: #ffffff;
+                 font-family: "Segoe UI", Arial, sans-serif;
+                 font-size: clamp(12px, .8vw, 18px);
+                 font-weight: 600;
+                 line-height: 1.2;
+                 white-space: nowrap;
+             }
+
+
+             /* =====================================================
+                LOGIN BUTTON
+                ===================================================== */
+
+             .login-button {
+                 display: inline-block;
+                 padding: 4px 16px;
+                 color: #ffffff !important;
+                 background: #9b111e;
+                 border: 1px solid rgba(255, 255, 255, .35);
+                 border-radius: 5px;
+                 text-decoration: none !important;
+                 font-size: 13px;
+                 font-weight: 600;
+                 transition: all .2s ease;
+             }
+
+
+                 .login-button:hover {
+                     background: #b91c2b;
+                     color: #ffffff !important;
+                     transform: translateY(-1px);
+                 }
+
+
+             /* =====================================================
+                FULLSCREEN BUTTON
+                ===================================================== */
+
+             .fullscreen-button {
+                 position: absolute;
+                 top: 50%;
+                 right: 12px;
+                 transform: translateY(-50%);
+                 width: 42px;
+                 height: 42px;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 border: 1px solid rgba(255, 255, 255, .35);
+                 border-radius: 50%;
+                 background: rgba(255, 255, 255, .12);
+                 color: #ffffff;
+                 font-size: 22px;
+                 cursor: pointer;
+                 z-index: 20;
+                 transition: all .2s ease;
+             }
+
+
+                 .fullscreen-button:hover {
+                     background: rgba(255, 255, 255, .25);
+                     transform: translateY(-50%) scale(1.05);
+                 }
+
+
+             /* =====================================================
+                MAIN PAGE AREA
+                ===================================================== */
+
+             .website-main {
+                 width: 100%;
+                 /*
+          * Take exactly whatever height remains
+          * after the header.
+          */
+                 flex: 1 1 auto;
+                 min-height: 0;
+                 display: flex;
+                 flex-direction: column;
+                 background: #eef2f7;
+                 overflow: hidden;
+             }
+
+
+             .website-content {
+                 width: 100%;
+                 /*
+          * Content takes the remaining space.
+          * Footer will always remain inside the viewport.
+          */
+                 flex: 1 1 auto;
+                 min-height: 0;
+                 background: #eef2f7;
+                 overflow: hidden;
+                 scroll-behavior: smooth;
+             }
+
+
+             /* =====================================================
+                NOTICE BAR
+                =====================================================
+
+                The notice bar is intentionally kept inside the
+                common layout so every page automatically receives
+                the same notice section.
+
+                It is ALWAYS visible:
+                  - Notices available  -> latest notices scroll
+                  - No notices         -> default message shown
              */
-            grid-template-columns: 13% 74% 13%;
 
-            align-items: center;
+             .notice-bar {
+                 width: 100%;
+                 min-height: 45px;
+                 display: flex;
+                 align-items: stretch;
+                 background: linear-gradient( 90deg, #0f1f3d, #172554, #1e3a5f ) !important;
+                 color: #ffffff;
+                 border-top: 3px solid #c9a227;
+                 overflow: hidden;
+                 box-sizing: border-box;
+             }
+
+
+             /* =====================================================
+                NOTICE TITLE
+                ===================================================== */
+
+             .notice-title {
+                 min-width: 125px;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 gap: 8px;
+                 padding: 8px 18px;
+                 background: #9b111e;
+                 color: #ffffff;
+                 font-size: 16px;
+                 font-weight: 700;
+                 line-height: 1;
+                 white-space: nowrap;
+                 z-index: 2;
+                 box-shadow: 3px 0 8px rgba(0, 0, 0, .15);
+             }
+
+
+                 .notice-title i {
+                     font-size: 15px;
+                 }
+
+
+             /* =====================================================
+                NOTICE MARQUEE CONTAINER
+                ===================================================== */
+
+             .notice-marquee {
+                 flex: 1 1 auto;
+                 min-width: 0;
+                 display: flex;
+                 align-items: center;
+                 overflow: hidden;
+             }
+
+
+                 /* =====================================================
+                MARQUEE
+                ===================================================== */
+
+                 .notice-marquee marquee {
+                     width: 100%;
+                     color: #ffffff;
+                     font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", "Segoe UI", Arial, sans-serif;
+                     font-size: 16px;
+                     font-weight: 500;
+                     line-height: 40px;
+                     vertical-align: middle;
+                 }
+
+
+             /* =====================================================
+                NOTICE ITEM
+                ===================================================== */
+
+             .notice-item {
+                 display: inline-block;
+                 margin-right: 70px;
+                 color: #ffffff;
+                 white-space: nowrap;
+             }
 
-            padding: 10px 50px 10px 25px;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    #0f1f3d 0%,
-                    #172554 38%,
-                    #1e3a5f 70%,
-                    #274c77 100%
-                );
+                 .notice-item::before {
+                     content: "•";
+                     margin-right: 10px;
+                     color: #ffe08a;
+                     font-weight: 700;
+                 }
 
-            border-left: 7px solid #c9a227;
-            border-bottom: 4px solid #c9a227;
 
-            box-shadow:
-                0 4px 15px rgba(0, 0, 0, .25);
+             /* =====================================================
+                NOTICE LINKS
+                ===================================================== */
 
-            overflow: hidden;
-            box-sizing: border-box;
-        }
+             .notice-bar a {
+                 color: #ffffff !important;
+                 text-decoration: none;
+             }
 
 
-        /* =====================================================
-           DECORATIVE HEADER EFFECTS
-           ===================================================== */
+                 .notice-bar a:hover {
+                     color: #ffe9a3 !important;
+                 }
 
-        .office-header::before {
-            content: "";
 
-            position: absolute;
+             /* =====================================================
+                FOOTER
+                ===================================================== */
 
-            top: -80px;
-            right: 12%;
+             .website-footer {
+                 width: 100%;
+                 /*
+          * Footer keeps its natural height.
+          * It will NOT be pushed outside the viewport.
+          */
+                 flex: 0 0 auto;
+                 margin: 0;
+                 padding: 0;
+                 background: #0f1f3d;
+                 color: #ffffff !important;
+                 border-top: 4px solid #c9a227;
+                 box-sizing: border-box;
+             }
 
-            width: 240px;
-            height: 240px;
 
-            border-radius: 50%;
+             /* =====================================================
+                FOOTER INFORMATION
+                ===================================================== */
 
-            background:
-                rgba(255, 255, 255, .035);
+             .footer-info {
+                 padding: 8px 15px;
+                 background: #0f1f3d;
+                 color: #ffffff;
+                 font-size: 14px;
+                 line-height: 1.5;
+             }
 
-            pointer-events: none;
-        }
 
+                 .footer-info a {
+                     color: #ffe08a !important;
+                     text-decoration: none;
+                 }
 
-        .office-header::after {
-            content: "";
 
-            position: absolute;
+                     .footer-info a:hover {
+                         color: #ffffff !important;
+                     }
 
-            bottom: -100px;
-            left: 35%;
 
-            width: 300px;
-            height: 200px;
+             .footer-office {
+                 font-weight: 700;
+                 color: #ffffff;
+             }
 
-            border-radius: 50%;
 
-            background:
-                rgba(201, 162, 39, .035);
+             .footer-developed {
+                 text-align: right;
+             }
 
-            pointer-events: none;
-        }
 
+             /* =====================================================
+                LARGE DESKTOP
+                ===================================================== */
 
-        /* =====================================================
-           LEFT - NEPAL EMBLEM
-           ===================================================== */
+             @@media (min-width: 1600px) {
 
-        .office-logo {
-            height: 100%;
+                 .office-header {
+                     min-height: 140px;
+                 }
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
 
-            position: relative;
-            z-index: 2;
+                 .nepal-emblem {
+                     height: 110px;
+                 }
 
-            min-width: 0;
-        }
 
+                 .nepal-flag {
+                     height: 58px;
+                 }
 
-        .office-logo a {
-            width: 100%;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+                 .office-welcome {
+                     padding: 7px 22px;
+                 }
 
-            text-decoration: none;
-        }
 
+                 .notice-title {
+                     min-width: 140px;
+                     font-size: 18px;
+                 }
 
-        .nepal-emblem {
-            display: block;
 
-            width: auto;
-            height: 90px;
-            max-width: 130px;
+                 .notice-marquee marquee {
+                     font-size: 18px;
+                 }
+             }
 
-            object-fit: contain;
 
-            filter:
-                drop-shadow(
-                    0 3px 4px rgba(0, 0, 0, .35)
-                );
-        }
+             /* =====================================================
+                VERY LARGE DISPLAY BOARD
+                ===================================================== */
 
+             @@media (min-width: 2500px) {
 
-        /* =====================================================
-           CENTER - OFFICE INFORMATION
-           ===================================================== */
+                 .office-header {
+                     min-height: 165px;
+                     grid-template-columns: 12% 76% 12%;
+                 }
 
-        .office-header-content {
-            width: 100%;
-            min-width: 0;
 
-            padding: 0 10px;
+                 .nepal-emblem {
+                     height: 135px;
+                     max-width: 170px;
+                 }
 
-            text-align: center;
 
-            position: relative;
-            z-index: 2;
+                 .nepal-flag {
+                     height: 70px;
+                 }
 
-            box-sizing: border-box;
-        }
 
+                 .fullscreen-button {
+                     width: 50px;
+                     height: 50px;
+                     font-size: 26px;
+                 }
 
-        /* =====================================================
-           OFFICE NAME
-           ===================================================== */
 
-        .office-name {
-            width: 100%;
+                 .notice-bar {
+                     min-height: 55px;
+                 }
 
-            padding: 5px;
 
-            color: #ffffff;
+                 .notice-title {
+                     min-width: 165px;
+                     padding: 10px 22px;
+                     font-size: 22px;
+                 }
 
-            font-family:
-                "Kalimati",
-                "Noto Sans Devanagari",
-                "Mangal",
-                sans-serif;
 
-            font-size:
-                clamp(28px, 2.5vw, 52px);
+                     .notice-title i {
+                         font-size: 20px;
+                     }
 
-            font-weight: 800;
 
-            line-height: 1.15;
+                 .notice-marquee marquee {
+                     font-size: 22px;
+                     line-height: 52px;
+                 }
 
-            text-shadow:
-                0 2px 4px rgba(0, 0, 0, .35);
 
-            white-space: nowrap;
+                 .footer-info {
+                     font-size: 18px;
+                 }
+             }
 
-            overflow: hidden;
-            text-overflow: ellipsis;
 
-            box-sizing: border-box;
-        }
+             /* =====================================================
+                TABLET / SMALL SCREEN
+                ===================================================== */
 
+             @@media (max-width: 900px) {
 
-        /* =====================================================
-           OFFICE LOCATION
-           ===================================================== */
+                 .office-header {
+                     grid-template-columns: 18% 64% 18%;
+                     padding-left: 10px;
+                     padding-right: 50px;
+                     min-height: 100px;
+                 }
 
-        .office-address {
-            width: 100%;
 
-            margin-top: 5px;
-            padding: 0 5px;
+                 .nepal-emblem {
+                     height: 70px;
+                     max-width: 90px;
+                 }
 
-            color: #e7eef7;
 
-            font-family:
-                "Kalimati",
-                "Noto Sans Devanagari",
-                "Mangal",
-                sans-serif;
+                 .nepal-flag {
+                     height: 35px;
+                 }
 
-            font-size:
-                clamp(17px, 1.35vw, 30px);
 
-            font-weight: 500;
+                 .office-header-content {
+                     padding: 0 5px;
+                 }
 
-            line-height: 1.35;
 
-            /*
-             * Keep wrapping enabled so long Nepali locations
-             * are not clipped.
-             */
-            white-space: normal;
+                 .office-name {
+                     font-size: clamp(20px, 3vw, 32px);
+                 }
 
-            overflow: visible;
-            text-overflow: unset;
 
-            text-align: center;
+                 .office-address {
+                     font-size: clamp(13px, 2vw, 20px);
+                     line-height: 1.35;
+                 }
 
-            box-sizing: border-box;
-        }
 
+                 .office-welcome {
+                     padding: 3px 10px;
+                 }
 
-        /* =====================================================
-           DIGITAL CITIZEN CHARTER BADGE
-           ===================================================== */
 
-        .office-welcome {
-            display: inline-block;
+                 .fullscreen-button {
+                     width: 35px;
+                     height: 35px;
+                     right: 7px;
+                     font-size: 18px;
+                 }
 
-            max-width: 100%;
 
-            margin-top: 8px;
-            padding: 5px 18px;
+                 .login-button {
+                     padding: 3px 9px;
+                     font-size: 11px;
+                 }
+                 /* NOTICE */
 
-            color: #ffffff;
+                 .notice-title {
+                     min-width: 95px;
+                     padding: 8px 12px;
+                     font-size: 14px;
+                 }
 
-            background:
-                rgba(201, 162, 39, .18);
 
-            border:
-                1px solid rgba(201, 162, 39, .75);
+                 .notice-marquee marquee {
+                     font-size: 14px;
+                 }
+             }
 
-            border-radius: 20px;
 
-            font-family:
-                "Kalimati",
-                "Noto Sans Devanagari",
-                "Mangal",
-                sans-serif;
+             /* =====================================================
+                MOBILE
+                ===================================================== */
 
-            font-size:
-                clamp(15px, 1.05vw, 24px);
+             @@media (max-width: 600px) {
 
-            font-weight: 700;
+                 .office-header {
+                     grid-template-columns: 20% 60% 20%;
+                     min-height: 90px;
+                     padding: 5px 42px 5px 5px;
+                 }
 
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, .15);
 
-            box-sizing: border-box;
-        }
+                 .nepal-emblem {
+                     height: 58px;
+                     max-width: 70px;
+                 }
 
 
-        /* =====================================================
-           RIGHT - FLAG / DATE / LOGIN
-           ===================================================== */
+                 .nepal-flag {
+                     height: 27px;
+                 }
 
-        .office-right {
-            height: 100%;
 
-            display: flex;
-            flex-direction: column;
+                 .office-header-content {
+                     padding: 0 3px;
+                 }
 
-            align-items: center;
-            justify-content: center;
 
-            gap: 5px;
+                 .office-name {
+                     font-size: 20px;
+                     line-height: 1.15;
+                 }
 
-            padding-right: 5px;
 
-            position: relative;
-            z-index: 2;
+                 .office-address {
+                     font-size: 12px;
+                     line-height: 1.3;
+                     margin-top: 3px;
+                     padding: 0 2px;
+                 }
 
-            min-width: 0;
-        }
 
+                 .office-welcome {
+                     margin-top: 3px;
+                     padding: 2px 7px;
+                     font-size: 10px;
+                     line-height: 1.2;
+                 }
 
-        /* =====================================================
-           NEPAL FLAG
-           ===================================================== */
 
-        .nepal-flag {
-            width: auto;
-            height: 48px;
-            max-width: 100%;
+                 .header-date {
+                     font-size: 9px;
+                 }
 
-            object-fit: contain;
 
-            filter:
-                drop-shadow(
-                    0 2px 4px rgba(0, 0, 0, .35)
-                );
-        }
+                 .login-button {
+                     padding: 2px 7px;
+                     font-size: 9px;
+                 }
 
 
-        /* =====================================================
-           DATE
-           ===================================================== */
+                 .fullscreen-button {
+                     width: 30px;
+                     height: 30px;
+                     font-size: 15px;
+                     right: 5px;
+                 }
+                 /* =================================================
+                    MOBILE NOTICE
+                    ================================================= */
 
-        .header-date {
-            text-align: center;
+                 .notice-bar {
+                     min-height: 38px;
+                 }
 
-            color: #ffffff;
 
-            font-family:
-                "Segoe UI",
-                Arial,
-                sans-serif;
+                 .notice-title {
+                     min-width: 75px;
+                     padding: 7px 9px;
+                     gap: 5px;
+                     font-size: 13px;
+                 }
 
-            font-size:
-                clamp(12px, .8vw, 18px);
 
-            font-weight: 600;
+                     .notice-title i {
+                         font-size: 12px;
+                     }
 
-            line-height: 1.2;
 
-            white-space: nowrap;
-        }
+                 .notice-marquee marquee {
+                     font-size: 13px;
+                     line-height: 36px;
+                 }
 
 
-        /* =====================================================
-           LOGIN BUTTON
-           ===================================================== */
+                 .notice-item {
+                     margin-right: 45px;
+                 }
+                 /* =================================================
+                    FOOTER
+                    ================================================= */
 
-        .login-button {
-            display: inline-block;
+                 .footer-info {
+                     font-size: 12px;
+                 }
 
-            padding: 4px 16px;
 
-            color: #ffffff !important;
+                 .footer-developed {
+                     text-align: center;
+                 }
+             }
 
-            background: #9b111e;
 
-            border:
-                1px solid rgba(255, 255, 255, .35);
+             /* =====================================================
+                EXTRA SMALL MOBILE
+                ===================================================== */
 
-            border-radius: 5px;
+             @@media (max-width: 400px) {
 
-            text-decoration: none !important;
+                 .office-header {
+                     grid-template-columns: 18% 64% 18%;
+                     padding: 4px 38px 4px 4px;
+                     min-height: 85px;
+                 }
 
-            font-size: 13px;
-            font-weight: 600;
 
-            transition:
-                all .2s ease;
-        }
+                 .nepal-emblem {
+                     height: 52px;
+                     max-width: 60px;
+                 }
 
 
-        .login-button:hover {
-            background: #b91c2b;
+                 .nepal-flag {
+                     height: 24px;
+                 }
 
-            color: #ffffff !important;
 
-            transform:
-                translateY(-1px);
-        }
+                 .office-name {
+                     font-size: 17px;
+                 }
 
 
-        /* =====================================================
-           FULLSCREEN BUTTON
-           ===================================================== */
+                 .office-address {
+                     font-size: 10px;
+                 }
 
-        .fullscreen-button {
-            position: absolute;
 
-            top: 50%;
-            right: 12px;
+                 .office-welcome {
+                     font-size: 8px;
+                     padding: 2px 5px;
+                 }
 
-            transform:
-                translateY(-50%);
 
-            width: 42px;
-            height: 42px;
+                 .header-date {
+                     font-size: 8px;
+                 }
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
 
-            border:
-                1px solid rgba(255, 255, 255, .35);
+                 .login-button {
+                     font-size: 8px;
+                     padding: 2px 5px;
+                 }
+                 /* NOTICE */
 
-            border-radius: 50%;
+                 .notice-title {
+                     min-width: 65px;
+                     padding: 6px 7px;
+                     font-size: 11px;
+                 }
 
-            background:
-                rgba(255, 255, 255, .12);
 
-            color: #ffffff;
+                     .notice-title i {
+                         font-size: 10px;
+                     }
 
-            font-size: 22px;
 
-            cursor: pointer;
+                 .notice-marquee marquee {
+                     font-size: 11px;
+                     line-height: 34px;
+                 }
 
-            z-index: 20;
 
-            transition:
-                all .2s ease;
-        }
+                 .notice-item {
+                     margin-right: 35px;
+                 }
+             }
 
 
-        .fullscreen-button:hover {
-            background:
-                rgba(255, 255, 255, .25);
+             /* =====================================================
+                PRINT
+                ===================================================== */
 
-            transform:
-                translateY(-50%) scale(1.05);
-        }
+             @@media print {
 
+                 .fullscreen-button,
+                 .login-button {
+                     display: none !important;
+                 }
 
-        /* =====================================================
-           MAIN PAGE AREA
-           ===================================================== */
 
-        .website-main {
-            width: 100%;
-            height: calc(100vh - 120px);
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            background: #eef2f7;
-            overflow: hidden;
-        }
+                 .office-header {
+                     box-shadow: none !important;
+                     -webkit-print-color-adjust: exact;
+                     print-color-adjust: exact;
+                 }
 
 
-        .website-content {
-            width: 100%;
-            flex: 1 1 auto;
-            min-height: 0;
-            background: #eef2f7;
-            overflow: hidden;
-            scroll-behavior: smooth;
-        }
+                 .notice-bar,
+                 .website-footer {
+                     -webkit-print-color-adjust: exact;
+                     print-color-adjust: exact;
+                 }
+             }
 
+             /* =====================================================
+        WEBSITE BACKGROUND AUDIO BUTTON
+        ===================================================== */
 
-        /* =====================================================
-           NOTICE BAR
-           =====================================================
+             .audio-enable-button {
+                 position: fixed;
+                 right: 15px;
+                 bottom: 15px;
+                 z-index: 99999;
+                 width: 42px;
+                 height: 42px;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 border: 1px solid rgba(255,255,255,.35);
+                 border-radius: 50%;
+                 background: #172554;
+                 color: #ffffff;
+                 font-size: 17px;
+                 cursor: pointer;
+                 box-shadow: 0 3px 12px rgba(0,0,0,.25);
+                 transition: all .2s ease;
+             }
 
-           The notice bar is intentionally kept inside the
-           common layout so every page automatically receives
-           the same notice section.
-
-           It is ALWAYS visible:
-             - Notices available  -> latest notices scroll
-             - No notices         -> default message shown
-        */
-
-        .notice-bar {
-            width: 100%;
-
-            min-height: 45px;
-
-            display: flex;
-            align-items: stretch;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #0f1f3d,
-                    #172554,
-                    #1e3a5f
-                ) !important;
-
-            color: #ffffff;
-
-            border-top:
-                3px solid #c9a227;
-
-            overflow: hidden;
-
-            box-sizing: border-box;
-        }
-
-
-        /* =====================================================
-           NOTICE TITLE
-           ===================================================== */
-
-        .notice-title {
-            min-width: 125px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            gap: 8px;
-
-            padding: 8px 18px;
-
-            background: #9b111e;
-
-            color: #ffffff;
-
-            font-size: 16px;
-
-            font-weight: 700;
-
-            line-height: 1;
-
-            white-space: nowrap;
-
-            z-index: 2;
-
-            box-shadow:
-                3px 0 8px rgba(0, 0, 0, .15);
-        }
-
-
-        .notice-title i {
-            font-size: 15px;
-        }
-
-
-        /* =====================================================
-           NOTICE MARQUEE CONTAINER
-           ===================================================== */
-
-        .notice-marquee {
-            flex: 1 1 auto;
-
-            min-width: 0;
-
-            display: flex;
-            align-items: center;
-
-            overflow: hidden;
-        }
-
-
-        /* =====================================================
-           MARQUEE
-           ===================================================== */
-
-        .notice-marquee marquee {
-            width: 100%;
-
-            color: #ffffff;
-
-            font-family:
-                "Kalimati",
-                "Noto Sans Devanagari",
-                "Mangal",
-                "Segoe UI",
-                Arial,
-                sans-serif;
-
-            font-size: 16px;
-
-            font-weight: 500;
-
-            line-height: 40px;
-
-            vertical-align: middle;
-        }
-
-
-        /* =====================================================
-           NOTICE ITEM
-           ===================================================== */
-
-        .notice-item {
-            display: inline-block;
-
-            margin-right: 70px;
-
-            color: #ffffff;
-
-            white-space: nowrap;
-        }
-
-
-        .notice-item::before {
-            content: "•";
-
-            margin-right: 10px;
-
-            color: #ffe08a;
-
-            font-weight: 700;
-        }
-
-
-        /* =====================================================
-           NOTICE LINKS
-           ===================================================== */
-
-        .notice-bar a {
-            color: #ffffff !important;
-
-            text-decoration: none;
-        }
-
-
-        .notice-bar a:hover {
-            color: #ffe9a3 !important;
-        }
-
-
-        /* =====================================================
-           FOOTER
-           ===================================================== */
-
-        .website-footer {
-            width: 100%;
-
-            margin: 0;
-            padding: 0;
-
-            background: #0f1f3d;
-
-            color: #ffffff !important;
-
-            border-top:
-                4px solid #c9a227;
-        }
-
-
-        /* =====================================================
-           FOOTER INFORMATION
-           ===================================================== */
-
-        .footer-info {
-            padding: 8px 15px;
-
-            background: #0f1f3d;
-
-            color: #ffffff;
-
-            font-size: 14px;
-
-            line-height: 1.5;
-        }
-
-
-        .footer-info a {
-            color: #ffe08a !important;
-
-            text-decoration: none;
-        }
-
-
-        .footer-info a:hover {
-            color: #ffffff !important;
-        }
-
-
-        .footer-office {
-            font-weight: 700;
-
-            color: #ffffff;
-        }
-
-
-        .footer-developed {
-            text-align: right;
-        }
-
-
-        /* =====================================================
-           LARGE DESKTOP
-           ===================================================== */
-
-        @@media (min-width: 1600px) {
-
-            .office-header {
-                min-height: 140px;
-            }
-
-
-            .nepal-emblem {
-                height: 110px;
-            }
-
-
-            .nepal-flag {
-                height: 58px;
-            }
-
-
-            .office-welcome {
-                padding: 7px 22px;
-            }
-
-
-            .notice-title {
-                min-width: 140px;
-
-                font-size: 18px;
-            }
-
-
-            .notice-marquee marquee {
-                font-size: 18px;
-            }
-        }
-
-
-        /* =====================================================
-           VERY LARGE DISPLAY BOARD
-           ===================================================== */
-
-        @@media (min-width: 2500px) {
-
-            .office-header {
-                min-height: 165px;
-
-                grid-template-columns:
-                    12% 76% 12%;
-            }
-
-
-            .nepal-emblem {
-                height: 135px;
-                max-width: 170px;
-            }
-
-
-            .nepal-flag {
-                height: 70px;
-            }
-
-
-            .fullscreen-button {
-                width: 50px;
-                height: 50px;
-
-                font-size: 26px;
-            }
-
-
-            .notice-bar {
-                min-height: 55px;
-            }
-
-
-            .notice-title {
-                min-width: 165px;
-
-                padding: 10px 22px;
-
-                font-size: 22px;
-            }
-
-
-            .notice-title i {
-                font-size: 20px;
-            }
-
-
-            .notice-marquee marquee {
-                font-size: 22px;
-
-                line-height: 52px;
-            }
-
-
-            .footer-info {
-                font-size: 18px;
-            }
-        }
-
-
-        /* =====================================================
-           TABLET / SMALL SCREEN
-           ===================================================== */
-
-        @@media (max-width: 900px) {
-
-            .office-header {
-                grid-template-columns:
-                    18% 64% 18%;
-
-                padding-left: 10px;
-                padding-right: 50px;
-
-                min-height: 100px;
-            }
-
-
-            .nepal-emblem {
-                height: 70px;
-                max-width: 90px;
-            }
-
-
-            .nepal-flag {
-                height: 35px;
-            }
-
-
-            .office-header-content {
-                padding: 0 5px;
-            }
-
-
-            .office-name {
-                font-size:
-                    clamp(20px, 3vw, 32px);
-            }
-
-
-            .office-address {
-                font-size:
-                    clamp(13px, 2vw, 20px);
-
-                line-height: 1.35;
-            }
-
-
-            .office-welcome {
-                padding: 3px 10px;
-            }
-
-
-            .fullscreen-button {
-                width: 35px;
-                height: 35px;
-
-                right: 7px;
-
-                font-size: 18px;
-            }
-
-
-            .login-button {
-                padding: 3px 9px;
-
-                font-size: 11px;
-            }
-
-
-            /* NOTICE */
-
-            .notice-title {
-                min-width: 95px;
-
-                padding: 8px 12px;
-
-                font-size: 14px;
-            }
-
-
-            .notice-marquee marquee {
-                font-size: 14px;
-            }
-        }
-
-
-        /* =====================================================
-           MOBILE
-           ===================================================== */
-
-        @@media (max-width: 600px) {
-
-            .office-header {
-                grid-template-columns:
-                    20% 60% 20%;
-
-                min-height: 90px;
-
-                padding:
-                    5px 42px 5px 5px;
-            }
-
-
-            .nepal-emblem {
-                height: 58px;
-                max-width: 70px;
-            }
-
-
-            .nepal-flag {
-                height: 27px;
-            }
-
-
-            .office-header-content {
-                padding: 0 3px;
-            }
-
-
-            .office-name {
-                font-size: 20px;
-
-                line-height: 1.15;
-            }
-
-
-            .office-address {
-                font-size: 12px;
-
-                line-height: 1.3;
-
-                margin-top: 3px;
-
-                padding: 0 2px;
-            }
-
-
-            .office-welcome {
-                margin-top: 3px;
-
-                padding: 2px 7px;
-
-                font-size: 10px;
-
-                line-height: 1.2;
-            }
-
-
-            .header-date {
-                font-size: 9px;
-            }
-
-
-            .login-button {
-                padding: 2px 7px;
-
-                font-size: 9px;
-            }
-
-
-            .fullscreen-button {
-                width: 30px;
-                height: 30px;
-
-                font-size: 15px;
-
-                right: 5px;
-            }
-
-
-            /* =================================================
-               MOBILE NOTICE
-               ================================================= */
-
-            .notice-bar {
-                min-height: 38px;
-            }
-
-
-            .notice-title {
-                min-width: 75px;
-
-                padding: 7px 9px;
-
-                gap: 5px;
-
-                font-size: 13px;
-            }
-
-
-            .notice-title i {
-                font-size: 12px;
-            }
-
-
-            .notice-marquee marquee {
-                font-size: 13px;
-
-                line-height: 36px;
-            }
-
-
-            .notice-item {
-                margin-right: 45px;
-            }
-
-
-            /* =================================================
-               FOOTER
-               ================================================= */
-
-            .footer-info {
-                font-size: 12px;
-            }
-
-
-            .footer-developed {
-                text-align: center;
-            }
-        }
-
-
-        /* =====================================================
-           EXTRA SMALL MOBILE
-           ===================================================== */
-
-        @@media (max-width: 400px) {
-
-            .office-header {
-                grid-template-columns:
-                    18% 64% 18%;
-
-                padding:
-                    4px 38px 4px 4px;
-
-                min-height: 85px;
-            }
-
-
-            .nepal-emblem {
-                height: 52px;
-                max-width: 60px;
-            }
-
-
-            .nepal-flag {
-                height: 24px;
-            }
-
-
-            .office-name {
-                font-size: 17px;
-            }
-
-
-            .office-address {
-                font-size: 10px;
-            }
-
-
-            .office-welcome {
-                font-size: 8px;
-
-                padding: 2px 5px;
-            }
-
-
-            .header-date {
-                font-size: 8px;
-            }
-
-
-            .login-button {
-                font-size: 8px;
-
-                padding: 2px 5px;
-            }
-
-
-            /* NOTICE */
-
-            .notice-title {
-                min-width: 65px;
-
-                padding:
-                    6px 7px;
-
-                font-size: 11px;
-            }
-
-
-            .notice-title i {
-                font-size: 10px;
-            }
-
-
-            .notice-marquee marquee {
-                font-size: 11px;
-
-                line-height: 34px;
-            }
-
-
-            .notice-item {
-                margin-right: 35px;
-            }
-        }
-
-
-        /* =====================================================
-           PRINT
-           ===================================================== */
-
-        @@media print {
-
-            .fullscreen-button,
-            .login-button {
-                display: none !important;
-            }
-
-
-            .office-header {
-                box-shadow: none !important;
-
-                -webkit-print-color-adjust: exact;
-
-                print-color-adjust: exact;
-            }
-
-
-            .notice-bar,
-            .website-footer {
-                -webkit-print-color-adjust: exact;
-
-                print-color-adjust: exact;
-            }
-        }
-
-        /* =====================================================
-   WEBSITE BACKGROUND AUDIO BUTTON
-   ===================================================== */
-
-        .audio-enable-button {
-            position: fixed;
-            right: 15px;
-            bottom: 15px;
-            z-index: 99999;
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,.35);
-            border-radius: 50%;
-            background: #172554;
-            color: #ffffff;
-            font-size: 17px;
-            cursor: pointer;
-            box-shadow: 0 3px 12px rgba(0,0,0,.25);
-            transition: all .2s ease;
-        }
-
-            .audio-enable-button:hover {
-                background: #9b111e;
-                transform: scale(1.05);
-            }
+                 .audio-enable-button:hover {
+                     background: #9b111e;
+                     transform: scale(1.05);
+                 }
     </style>
 
 </head>
