@@ -681,7 +681,65 @@
                  }
              }
 
+/* ===== TV / DISPLAY BOARD ===== */
 
+/* Use the real visible height (TV browsers and mobile toolbars) */
+html, body {
+    height: 100vh;
+    height: 100dvh;
+}
+
+/* 1080p-class TVs: wide but short screens. Compress header and footer. */
+@@media (min-width: 1600px) and (max-height: 1100px) {
+
+    .office-header {
+        min-height: 105px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .nepal-emblem { height: 78px; }
+    .nepal-flag   { height: 42px; }
+
+    .office-name {
+        font-size: clamp(28px, 2.1vw, 42px);
+        padding: 2px 5px;
+    }
+
+    .office-address {
+        font-size: clamp(16px, 1.1vw, 24px);
+        margin-top: 2px;
+    }
+
+    .office-welcome {
+        margin-top: 4px;
+        padding: 3px 16px;
+        font-size: clamp(14px, .95vw, 20px);
+    }
+
+    .notice-bar { min-height: 40px; }
+    .notice-title { padding: 6px 16px; font-size: 17px; }
+    .notice-marquee marquee { font-size: 18px; line-height: 36px; }
+
+    .footer-info {
+        padding: 4px 15px;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+}
+
+/* True 4K (only if the TV exposes 3840x2160 CSS pixels) */
+@@media (min-width: 2500px) and (min-height: 1400px) {
+    .office-header { min-height: 165px; }
+}
+
+/* Optional: TVs with overscan (edges cut off). Uncomment if needed. */
+/*
+body {
+    padding: 10px 14px;
+    box-sizing: border-box;
+}
+*/
              /* =====================================================
                 VERY LARGE DISPLAY BOARD
                 ===================================================== */
