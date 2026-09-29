@@ -172,7 +172,7 @@ namespace HelpDesk.Controllers
 
         // POST: SubModules/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             SubModule subModule = await db.SubModule.FindAsync(id);
