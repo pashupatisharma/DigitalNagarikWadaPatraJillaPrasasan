@@ -10,3 +10,6 @@ obj/
 bin/
 
 /Web.config
+/EmployeeImage
+/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/Properties/PublishProfiles
