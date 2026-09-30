@@ -1446,6 +1446,55 @@
     .person-post { font-size: 16px; }
     .person-contact { font-size: 15px; }
 }
+
+/* ===== MID-WIDTH SCREENS AND TVs REPORTING ~1280 WIDE ===== */
+
+/* Table never forces horizontal scroll above tablet size */
+@@media screen and (min-width: 1101px) {
+    .service-table {
+        min-width: 0;
+    }
+
+    .service-table-scroll {
+        padding-bottom: 12px;
+        box-sizing: border-box;
+    }
+}
+
+/* Right column scales with screen width (below the 1600px TV rules) */
+@@media screen and (min-width: 1101px) and (max-width: 1599px) {
+    .service-page-layout {
+        grid-template-columns: minmax(0, 1fr) clamp(260px, 22vw, 400px);
+    }
+}
+
+/* Short screens such as 1280x624 */
+@@media screen and (min-width: 1101px) and (max-height: 720px) {
+    .service-home { padding: 8px; }
+    .service-page-layout { gap: 8px; }
+
+    .service-header { padding: 6px 14px; }
+    .service-title { font-size: 22px; }
+    .service-subtitle { font-size: 13px; }
+
+    .service-table thead th {
+        padding: 7px 6px;
+        font-size: 14px;
+    }
+
+    .service-table tbody td {
+        padding: 8px 8px;
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .service-name { font-size: 16px; }
+    .serial-number { min-width: 26px; height: 26px; }
+
+    .person-image-wrapper { width: min(90px, 38%); }
+    .person-name { font-size: 15px; }
+    .person-post { font-size: 12px; }
+}
 </style>
 
 
