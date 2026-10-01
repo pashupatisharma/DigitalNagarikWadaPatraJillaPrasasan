@@ -3,1626 +3,727 @@
 @{
     ViewBag.Title = "सेवा तथा जानकारी";
     Layout = "~/Views/Shared/_WebSiteLayout.cshtml";
+
+    // ---------------------------------------------------------
+    // PEOPLE (representatives + employees) -> one JSON list
+    // ---------------------------------------------------------
+    var noImage = Url.Content("~/Content/images/no-image.png");
+    var peopleData = new List<object>();
+
+    if (Model != null && Model.peopleRepresentative != null && Model.peopleRepresentative.List != null)
+    {
+        foreach (var p in Model.peopleRepresentative.List)
+        {
+            peopleData.Add(new
+            {
+                name = p.Name ?? "",
+                post = p.PostSetup != null ? p.PostSetup.PostTitle : "",
+                contact = p.Contact ?? "",
+                image = !string.IsNullOrWhiteSpace(p.Image)
+                    ? Url.Content("~/JanaPratinidhiImages/" + p.Image)
+                    : noImage,
+                type = "जनप्रतिनिधि"
+            });
+        }
+    }
+
+    if (Model != null && Model.employeeSetup != null && Model.employeeSetup.Lists != null)
+    {
+        foreach (var e in Model.employeeSetup.Lists)
+        {
+            peopleData.Add(new
+            {
+                name = e.EmpName ?? "",
+                post = e.PostSetup != null ? e.PostSetup.PostTitle : "",
+                contact = e.Contact ?? "",
+                image = !string.IsNullOrWhiteSpace(e.Image)
+                    ? Url.Content("~/EmployeeImage/" + e.Image)
+                    : noImage,
+                type = "कर्मचारी"
+            });
+        }
+    }
 }
 
 <style>
 
-     /* =========================================================
-        GLOBAL PAGE
-        ========================================================= */
+    /* =========================================================
+       EVERYTHING IS IN rem  ->  scales with the TV size
+       (1rem = 16px on 1080p, 32px on 4K; set in the layout)
+       ========================================================= */
 
     .service-home {
-    width: 100%;
-    flex: 1 1 auto;   
-    height: auto;
-    min-height: 0;    
-    padding: 12px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", Arial, sans-serif;
-    overflow: hidden;
-}
-
-
-     /* =========================================================
-        MAIN LAYOUT
-        LEFT  = HEADER + SERVICE TABLE
-        RIGHT = VIDEO + PEOPLE
-        ========================================================= */
-
-     .service-page-layout {
-         flex: 1 1 auto;
-         min-height: 0;
-         display: grid;
-         grid-template-columns: minmax(0, 1fr) 310px;
-         gap: 12px;
-         overflow: hidden;
-     }
-
-
-     /* =========================================================
-        LEFT SECTION
-        HEADER AND TABLE ARE ONE SINGLE CARD
-        ========================================================= */
-
-     .service-left-section {
-         min-width: 0;
-         min-height: 0;
-         display: flex;
-         flex-direction: column;
-         background: #ffffff;
-         border: 1px solid #cbd5e1;
-         border-radius: 9px;
-         box-shadow: 0 3px 14px rgba(15, 31, 61, .10);
-         overflow: hidden;
-     }
-
-
-     /* =========================================================
-        SERVICE HEADER
-        SAME WIDTH AS THE TABLE
-        ========================================================= */
-
-     .service-header {
-         flex: 0 0 auto;
-         display: flex;
-         align-items: center;
-         justify-content: space-between;
-         gap: 20px;
-         padding: 11px 16px;
-         background: linear-gradient(90deg, #172554, #1e3a5f);
-         color: #ffffff;
-         border-bottom: 4px solid #d4af37;
-         box-sizing: border-box;
-     }
-
-     .service-header-left {
-         display: flex;
-         flex-direction: column;
-         min-width: 0;
-     }
-
-     .service-title {
-         margin: 0;
-         font-size: clamp(20px, 1.5vw, 28px);
-         font-weight: 700;
-         line-height: 1.35;
-         white-space: nowrap;
-     }
-
-     .service-subtitle {
-         margin-top: 2px;
-         font-size: clamp(12px, .8vw, 16px);
-         color: #dbe4f0;
-         line-height: 1.4;
-     }
-
-     .service-header-right {
-         display: flex;
-         align-items: center;
-         gap: 14px;
-         flex-shrink: 0;
-     }
-
-
-     /* =========================================================
-        DATE AND TIME
-        ========================================================= */
-
-     .service-date-time {
-         text-align: right;
-         white-space: nowrap;
-     }
-
-     .service-date {
-         font-size: clamp(11px, .75vw, 15px);
-         color: #dbe4f0;
-     }
-
-     .service-time {
-         margin-top: 2px;
-         font-size: clamp(13px, .9vw, 18px);
-         font-weight: 700;
-         color: #ffffff;
-     }
-
-
-     /* =========================================================
-        SERVICE SEARCH
-        ========================================================= */
-
-     .service-search {
-         position: relative;
-         width: clamp(190px, 18vw, 290px);
-     }
-
-         .service-search input {
-             width: 100%;
-             height: 40px;
-             padding: 7px 40px 7px 13px;
-             box-sizing: border-box;
-             border: 2px solid transparent;
-             border-radius: 6px;
-             outline: none;
-             font-family: inherit;
-             font-size: clamp(13px, .8vw, 16px);
-             background: #ffffff;
-             color: #172554;
-             box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
-             transition: .2s ease;
-         }
-
-             .service-search input:focus {
-                 border-color: #d4af37;
-                 box-shadow: 0 0 0 2px rgba(212, 175, 55, .18);
-             }
-
-             .service-search input::placeholder {
-                 color: #7a8798;
-             }
-
-     .service-search-icon {
-         position: absolute;
-         right: 13px;
-         top: 50%;
-         transform: translateY(-50%);
-         color: #64748b;
-         pointer-events: none;
-     }
-
-
-     /* =========================================================
-        SERVICE TABLE AREA
-        ========================================================= */
-
-     .service-table-container {
-         flex: 1 1 auto;
-         min-height: 0;
-         position: relative;
-         overflow: hidden;
-         background: #ffffff;
-     }
-
-     .service-table-scroll {
-         width: 100%;
-         height: 100%;
-         overflow-x: auto;
-         overflow-y: auto;
-         scroll-behavior: auto;
-     }
-
-
-     /* =========================================================
-        SERVICE TABLE
-        ========================================================= */
-
-     .service-table {
-         width: 100%;
-         min-width: 1050px;
-         border-collapse: separate;
-         border-spacing: 0;
-         table-layout: fixed;
-     }
-
-         .service-table thead th {
-             position: sticky;
-             top: 0;
-             z-index: 10;
-             padding: 11px 8px;
-             background: #172554;
-             color: #ffffff;
-             border-right: 1px solid #34436d;
-             border-bottom: 3px solid #d4af37;
-             font-size: clamp(12px, .8vw, 16px);
-             font-weight: 700;
-             text-align: center;
-             vertical-align: middle;
-             line-height: 1.45;
-         }
-
-             .service-table thead th:last-child {
-                 border-right: none;
-             }
-
-         .service-table tbody td {
-             padding: 11px 10px;
-             color: #172033;
-             border-right: 1px solid rgba(15, 23, 42, .12);
-             border-bottom: 1px solid rgba(15, 23, 42, .12);
-             font-size: clamp(12px, .78vw, 16px);
-             line-height: 1.55;
-             vertical-align: top;
-             word-break: break-word;
-         }
-
-             .service-table tbody td:last-child {
-                 border-right: none;
-             }
-
-         .service-table tbody tr {
-             transition: filter .15s ease, transform .15s ease;
-         }
-
-             .service-table tbody tr:hover td {
-                 filter: brightness(.94);
-             }
-
-
-             /* =========================================================
-        BRIGHT ALTERNATING SERVICE ROW COLORS
-        HIGH CONTRAST FOR READABILITY
-        ========================================================= */
-
-             .service-table tbody tr:nth-child(6n + 1) td {
-                 background: #fff3b8;
-             }
-
-             .service-table tbody tr:nth-child(6n + 2) td {
-                 background: #cceeff;
-             }
-
-             .service-table tbody tr:nth-child(6n + 3) td {
-                 background: #d9f7c8;
-             }
-
-             .service-table tbody tr:nth-child(6n + 4) td {
-                 background: #ffd6d6;
-             }
-
-             .service-table tbody tr:nth-child(6n + 5) td {
-                 background: #e6d7ff;
-             }
-
-             .service-table tbody tr:nth-child(6n + 6) td {
-                 background: #ffe0b2;
-             }
-
-
-     /* =========================================================
-        TABLE COLUMN WIDTHS
-        ========================================================= */
-
-     .serial-column {
-         width: 55px;
-         text-align: center !important;
-     }
-
-     .service-name-column {
-         width: 19%;
-     }
-
-     .process-column {
-         width: 31%;
-     }
-
-     .fee-column {
-         width: 14%;
-     }
-
-     .time-column {
-         width: 11%;
-     }
-
-     .officer-column {
-         width: 17%;
-     }
-
-
-     /* =========================================================
-        TABLE CONTENT
-        ========================================================= */
-
-     .serial-number {
-         display: inline-flex;
-         align-items: center;
-         justify-content: center;
-         min-width: 27px;
-         height: 27px;
-         padding: 0 5px;
-         box-sizing: border-box;
-         border-radius: 50%;
-         background: #172554;
-         color: #ffffff;
-         font-weight: 700;
-     }
-
-     .service-name {
-         color: #172554;
-         font-size: clamp(14px, .9vw, 18px);
-         font-weight: 800;
-         line-height: 1.45;
-     }
-
-     .service-detail {
-         margin-bottom: 7px;
-     }
-
-         .service-detail:last-child {
-             margin-bottom: 0;
-         }
-
-     .detail-label {
-         display: block;
-         margin-bottom: 2px;
-         color: #172554;
-         font-weight: 800;
-     }
-
-     .fee-value,
-     .time-value,
-     .officer-value {
-         color: #172033;
-         font-weight: 700;
-     }
-
-
-     /* =========================================================
-        EMPTY SERVICE MESSAGE
-        ========================================================= */
-
-     .no-service {
-         width: 100%;
-         height: 100%;
-         min-height: 250px;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         color: #64748b;
-         font-size: 18px;
-         text-align: center;
-     }
-
-
-     /* =========================================================
-        RIGHT SIDE
-        VIDEO + EMPLOYEE SECTION
-        ========================================================= */
-
-     .service-right-section {
-         min-width: 0;
-         min-height: 0;
-         display: flex;
-         flex-direction: column;
-         gap: 12px;
-         overflow: hidden;
-     }
-
-
-     /* =========================================================
-        VIDEO SECTION
-        ONLY VIDEO IS DISPLAYED
-        VIDEO KEEPS ITS NATURAL 16:9 PROPORTION
-        ========================================================= */
-
-     .video-panel {
-         flex: 0 0 auto;
-         width: 100%;
-         aspect-ratio: 16 / 9;
-         background: #000000;
-         border: 1px solid #cbd5e1;
-         border-radius: 8px;
-         overflow: hidden;
-         box-shadow: 0 3px 12px rgba(15, 31, 61, .12);
-         position: relative;
-     }
-
-         .video-panel .video-detail {
-             width: 100% !important;
-             height: 100% !important;
-             min-height: 0 !important;
-             padding: 0 !important;
-             margin: 0 !important;
-             background: #000000 !important;
-             overflow: hidden !important;
-         }
-
-         .video-panel .video-player-wrapper {
-             width: 100% !important;
-             height: 100% !important;
-             min-height: 0 !important;
-             padding: 0 !important;
-             margin: 0 !important;
-             background: #000000 !important;
-             overflow: hidden !important;
-         }
-
-         .video-panel .player {
-             display: block;
-             width: 100% !important;
-             height: 100% !important;
-             max-width: 100% !important;
-             max-height: 100% !important;
-             margin: 0 !important;
-             padding: 0 !important;
-             background: #000000 !important;
-             border: none !important;
-             border-radius: 0 !important;
-             object-fit: contain !important;
-             outline: none !important;
-         }
-
-         /* Hide all information below the video. */
-         .video-panel .video-information {
-             display: none !important;
-         }
-
-         /* Hide controls even if the partial contains them. */
-         .video-panel video {
-             pointer-events: none;
-         }
-
-         .video-panel .video-not-available {
-             width: 100%;
-             height: 100%;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             color: #cbd5e1;
-             background: #000000;
-             text-align: center;
-         }
-
-
-     /* =========================================================
-        PEOPLE / EMPLOYEE PANEL
-        ========================================================= */
-
-     .people-panel {
-         flex: 1 1 auto;
-         min-height: 0;
-         width: 100%;
-         background: #ffffff;
-         border: 1px solid #cbd5e1;
-         border-radius: 8px;
-         box-shadow: 0 3px 12px rgba(15, 31, 61, .10);
-         display: flex;
-         flex-direction: column;
-         overflow: hidden;
-     }
-
-     .people-header {
-         flex: 0 0 auto;
-         display: flex;
-         align-items: center;
-         justify-content: space-between;
-         gap: 8px;
-         padding: 9px 11px;
-         background: #172554;
-         color: #ffffff;
-         border-bottom: 3px solid #d4af37;
-     }
-
-     .people-header-title {
-         margin: 0;
-         font-size: clamp(14px, .9vw, 18px);
-         font-weight: 700;
-         white-space: nowrap;
-         overflow: hidden;
-         text-overflow: ellipsis;
-     }
-
-     .people-list-button {
-         flex: 0 0 auto;
-         width: 31px;
-         height: 31px;
-         border: 1px solid rgba(255,255,255,.35);
-         border-radius: 5px;
-         background: rgba(255,255,255,.1);
-         color: #ffffff;
-         cursor: pointer;
-         transition: .2s ease;
-     }
-
-         .people-list-button:hover {
-             background: #d4af37;
-             color: #172554;
-         }
-
-
-     /* =========================================================
-        CURRENT PERSON DISPLAY
-        ========================================================= */
-
-     .person-display {
-         flex: 1 1 auto;
-         min-height: 0;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         padding: 10px;
-         overflow: hidden;
-     }
-
-     .person-card {
-         width: 100%;
-         text-align: center;
-     }
-
-     .person-image-wrapper {
-         width: min(115px, 42%);
-         aspect-ratio: 5 / 6;
-         margin: 0 auto 9px;
-         border-radius: 8px;
-         overflow: hidden;
-         border: 3px solid #d4af37;
-         background: #f1f5f9;
-         box-shadow: 0 3px 10px rgba(0,0,0,.12);
-     }
-
-     .person-image {
-         width: 100%;
-         height: 100%;
-         object-fit: cover;
-     }
-
-     .person-name {
-         margin: 0;
-         color: #172554;
-         font-size: clamp(15px, 1vw, 19px);
-         font-weight: 800;
-         line-height: 1.4;
-         word-break: break-word;
-     }
-
-     .person-post {
-         margin-top: 4px;
-         color: #475569;
-         font-size: clamp(12px, .75vw, 15px);
-         font-weight: 600;
-         line-height: 1.4;
-     }
-
-     .person-contact {
-         margin-top: 6px;
-         color: #334155;
-         font-size: clamp(11px, .7vw, 14px);
-     }
-
-         .person-contact i {
-             color: #172554;
-             margin-right: 4px;
-         }
-
-     .person-type {
-         display: inline-block;
-         margin-top: 7px;
-         padding: 3px 9px;
-         border-radius: 20px;
-         background: #eef4ff;
-         color: #172554;
-         font-size: 11px;
-         font-weight: 700;
-     }
-
-     .person-dots {
-         margin-top: 9px;
-         display: flex;
-         justify-content: center;
-         gap: 4px;
-         max-width: 100%;
-         overflow: hidden;
-     }
-
-     .person-dot {
-         flex: 0 0 auto;
-         width: 6px;
-         height: 6px;
-         border-radius: 50%;
-         background: #cbd5e1;
-         transition: .2s ease;
-     }
-
-         .person-dot.active {
-             background: #172554;
-             transform: scale(1.25);
-         }
-
-
-     /* =========================================================
-        PEOPLE LIST MODAL
-        ========================================================= */
-
-     .people-list-modal {
-         display: none;
-         position: fixed;
-         z-index: 9999;
-         left: 0;
-         top: 0;
-         width: 100%;
-         height: 100%;
-         background: rgba(15, 23, 42, .72);
-         padding: 25px;
-         box-sizing: border-box;
-     }
-
-     .people-list-dialog {
-         width: 100%;
-         max-width: 1000px;
-         height: 88vh;
-         margin: auto;
-         background: #ffffff;
-         border-radius: 10px;
-         overflow: hidden;
-         box-shadow: 0 10px 40px rgba(0,0,0,.3);
-         display: flex;
-         flex-direction: column;
-     }
-
-     .people-list-header {
-         flex: 0 0 auto;
-         padding: 13px 17px;
-         background: #172554;
-         color: #ffffff;
-         border-bottom: 4px solid #d4af37;
-         display: flex;
-         align-items: center;
-         justify-content: space-between;
-     }
-
-         .people-list-header h3 {
-             margin: 0;
-             font-size: 20px;
-         }
-
-     .people-list-close {
-         width: 35px;
-         height: 35px;
-         border: none;
-         border-radius: 5px;
-         background: rgba(255,255,255,.1);
-         color: #ffffff;
-         font-size: 20px;
-         cursor: pointer;
-     }
-
-         .people-list-close:hover {
-             background: #ef5350;
-         }
-
-     .people-list-body {
-         flex: 1 1 auto;
-         overflow-y: auto;
-         padding: 15px;
-     }
-
-     .people-list-grid {
-         display: grid;
-         grid-template-columns: repeat(3, minmax(0, 1fr));
-         gap: 12px;
-     }
-
-     .people-list-item {
-         display: flex;
-         align-items: center;
-         gap: 12px;
-         padding: 10px;
-         border: 1px solid #dce2e9;
-         border-radius: 7px;
-         background: #f8fafc;
-         min-width: 0;
-     }
-
-         .people-list-item:hover {
-             background: #eef4ff;
-         }
-
-     .people-list-image {
-         width: 65px;
-         height: 75px;
-         flex: 0 0 65px;
-         object-fit: cover;
-         border-radius: 6px;
-         border: 2px solid #d4af37;
-     }
-
-     .people-list-name {
-         font-weight: 700;
-         color: #172554;
-         font-size: 15px;
-         word-break: break-word;
-     }
-
-     .people-list-post {
-         margin-top: 3px;
-         color: #64748b;
-         font-size: 12px;
-     }
-
-     .people-list-contact {
-         margin-top: 3px;
-         color: #475569;
-         font-size: 12px;
-     }
-
-
-     /* =========================================================
-        SERVICE SEARCH POPUP
-        SHOWS THE COMPLETE SERVICE
-        ========================================================= */
-
-     .service-detail-modal {
-         display: none;
-         position: fixed;
-         z-index: 10000;
-         inset: 0;
-         padding: 20px;
-         box-sizing: border-box;
-         background: rgba(15, 23, 42, .72);
-         overflow-y: auto;
-     }
-
-     .service-detail-dialog {
-         width: min(100%, 1050px);
-         max-height: calc(100vh - 40px);
-         margin: 0 auto;
-         background: #ffffff;
-         border-radius: 10px;
-         overflow: hidden;
-         box-shadow: 0 15px 50px rgba(0,0,0,.35);
-         display: flex;
-         flex-direction: column;
-     }
-
-     .service-detail-header {
-         flex: 0 0 auto;
-         display: flex;
-         align-items: center;
-         justify-content: space-between;
-         gap: 15px;
-         padding: 13px 17px;
-         background: #172554;
-         color: #ffffff;
-         border-bottom: 4px solid #d4af37;
-     }
-
-     .service-detail-header-title {
-         min-width: 0;
-         font-size: clamp(17px, 1.2vw, 23px);
-         font-weight: 700;
-         line-height: 1.4;
-     }
-
-     .service-detail-close {
-         flex: 0 0 auto;
-         width: 36px;
-         height: 36px;
-         border: none;
-         border-radius: 5px;
-         background: rgba(255,255,255,.12);
-         color: #ffffff;
-         font-size: 20px;
-         cursor: pointer;
-     }
-
-         .service-detail-close:hover {
-             background: #ef5350;
-         }
-
-     .service-detail-body {
-         flex: 1 1 auto;
-         min-height: 0;
-         overflow-y: auto;
-         padding: 18px;
-     }
-
-     .service-detail-table {
-         width: 100%;
-         border-collapse: separate;
-         border-spacing: 0;
-         border: 1px solid #cbd5e1;
-         border-radius: 7px;
-         overflow: hidden;
-     }
-
-         .service-detail-table th {
-             width: 24%;
-             padding: 13px;
-             background: #eef4ff;
-             color: #172554;
-             border-right: 1px solid #cbd5e1;
-             border-bottom: 1px solid #cbd5e1;
-             text-align: left;
-             vertical-align: top;
-             font-weight: 800;
-             line-height: 1.5;
-         }
-
-         .service-detail-table td {
-             padding: 13px;
-             background: #ffffff;
-             color: #172033;
-             border-bottom: 1px solid #cbd5e1;
-             vertical-align: top;
-             line-height: 1.65;
-             word-break: break-word;
-             overflow-wrap: anywhere;
-         }
-
-         .service-detail-table tr:last-child th,
-         .service-detail-table tr:last-child td {
-             border-bottom: none;
-         }
-
-
-     /* =========================================================
-        SEARCH HIGHLIGHT
-        ========================================================= */
-
-     .service-row.search-match {
-         outline: 3px solid #172554;
-         outline-offset: -3px;
-     }
-
-
-     /* =========================================================
-        SCROLLBARS
-        ========================================================= */
-
-     .service-table-scroll::-webkit-scrollbar,
-     .people-list-body::-webkit-scrollbar,
-     .service-detail-body::-webkit-scrollbar {
-         width: 9px;
-         height: 9px;
-     }
-
-     .service-table-scroll::-webkit-scrollbar-track,
-     .people-list-body::-webkit-scrollbar-track,
-     .service-detail-body::-webkit-scrollbar-track {
-         background: #eef2f7;
-     }
-
-     .service-table-scroll::-webkit-scrollbar-thumb,
-     .people-list-body::-webkit-scrollbar-thumb,
-     .service-detail-body::-webkit-scrollbar-thumb {
-         background: #9aa8bb;
-         border-radius: 10px;
-     }
-
-         .service-table-scroll::-webkit-scrollbar-thumb:hover,
-         .people-list-body::-webkit-scrollbar-thumb:hover,
-         .service-detail-body::-webkit-scrollbar-thumb:hover {
-             background: #172554;
-         }
-
-
-     /* =========================================================
-        RESPONSIVE - LARGE TV / DISPLAY BOARD
-        ========================================================= */
-
-     @@media screen and (min-width: 1600px) {
-
-         .service-home {
-             padding: 16px;
-         }
-
-         .service-page-layout {
-             grid-template-columns: minmax(0, 1fr) 380px;
-             gap: 16px;
-         }
-
-         .service-header {
-             padding: 14px 20px;
-         }
-
-         .service-table thead th {
-             padding: 14px 10px;
-         }
-
-         .service-table tbody td {
-             padding: 14px 12px;
-         }
-
-         .people-header {
-             padding: 12px 14px;
-         }
-
-         .person-image-wrapper {
-             width: 145px;
-         }
-     }
-
-
-     /* =========================================================
-        RESPONSIVE - VERY LARGE TV
-        ========================================================= */
-
-     @@media screen and (min-width: 2500px) {
-
-         .service-page-layout {
-             grid-template-columns: minmax(0, 1fr) 460px;
-             gap: 18px;
-         }
-
-         .service-header {
-             padding: 17px 24px;
-         }
-
-         .service-table thead th {
-             font-size: 20px;
-             padding: 17px 12px;
-         }
-
-         .service-table tbody td {
-             font-size: 19px;
-             padding: 17px 14px;
-             line-height: 1.65;
-         }
-
-         .service-name {
-             font-size: 21px;
-         }
-
-         .person-image-wrapper {
-             width: 175px;
-         }
-
-         .person-name {
-             font-size: 22px;
-         }
-
-         .person-post {
-             font-size: 17px;
-         }
-     }
-
-
-     /* =========================================================
-    RESPONSIVE - TABLET AND SMALLER
-    PAGE ITSELF NEVER SCROLLS.
-    ONLY TABLE CONTENT SCROLLS INTERNALLY.
-    ========================================================= */
-
-     @@media screen and (max-width: 1100px) {
-
-         .service-home {
-             width: 100%;
-             min-height: 0;
-             padding: 8px;
-             overflow: hidden;
-             box-sizing: border-box;
-         }
-         /*
-      * Keep the whole page inside the available viewport.
-      * The table and right section are allowed to shrink.
-      */
-         .service-page-layout {
-             width: 100%;
-             height: 100%;
-             min-height: 0;
-             display: grid;
-             grid-template-columns: minmax(0, 1fr);
-             grid-template-rows: minmax(0, 1fr) minmax(0, 42%);
-             gap: 8px;
-             overflow: hidden;
-         }
-         /*
-      * LEFT SERVICE CARD
-      */
-         .service-left-section {
-             width: 100%;
-             min-width: 0;
-             min-height: 0;
-             height: 100%;
-             overflow: hidden;
-         }
-         /*
-      * HEADER can become smaller on narrow screens.
-      */
-         .service-header {
-             flex: 0 0 auto;
-             padding: 9px 11px;
-             gap: 8px;
-         }
-         /*
-      * IMPORTANT:
-      * This is the ONLY main content area that scrolls.
-      */
-         .service-table-container {
-             min-width: 0;
-             min-height: 0;
-             height: 100%;
-             overflow: hidden;
-         }
-
-         .service-table-scroll {
-             width: 100%;
-             height: 100%;
-             min-width: 0;
-             overflow-x: auto;
-             overflow-y: auto;
-             -webkit-overflow-scrolling: touch;
-         }
-         /*
-      * Keep the table wide enough to remain readable.
-      * On a small screen the user can swipe/scroll horizontally.
-      */
-         .service-table {
-             min-width: 900px;
-         }
-         /*
-      * RIGHT SECTION GOES BELOW THE TABLE.
-      */
-         .service-right-section {
-             width: 100%;
-             min-width: 0;
-             min-height: 0;
-             height: 100%;
-             display: grid;
-             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-             gap: 8px;
-             overflow: hidden;
-         }
-         /*
-      * Video fits inside its grid cell.
-      */
-         .video-panel {
-             width: 100%;
-             height: 100%;
-             aspect-ratio: auto;
-             min-width: 0;
-             min-height: 0;
-         }
-         /*
-      * People panel also fits inside the available space.
-      */
-         .people-panel {
-             width: 100%;
-             height: 100%;
-             min-width: 0;
-             min-height: 0;
-         }
-
-         .person-display {
-             padding: 7px;
-         }
-
-         .person-image-wrapper {
-             width: min(100px, 35%);
-             margin-bottom: 6px;
-         }
-     }
-
-
-     /* =========================================================
-    RESPONSIVE - SMALL TABLET
-    ========================================================= */
-
-     @@media screen and (max-width: 900px) {
-
-         .service-home {
-             padding: 6px;
-         }
-         /*
-      * Give the table slightly more space.
-      * Right section remains below it.
-      */
-         .service-page-layout {
-             grid-template-rows: minmax(0, 1fr) minmax(0, 38%);
-             gap: 7px;
-         }
-
-         .service-header {
-             flex-direction: column;
-             align-items: stretch;
-             gap: 7px;
-             padding: 8px 10px;
-         }
-
-         .service-header-right {
-             width: 100%;
-             justify-content: space-between;
-             gap: 8px;
-         }
-
-         .service-date-time {
-             text-align: left;
-         }
-
-         .service-search {
-             width: min(100%, 300px);
-         }
-
-             .service-search input {
-                 height: 37px;
-             }
-
-         .service-table {
-             min-width: 850px;
-         }
-         /*
-      * Still side-by-side below the table.
-      */
-         .service-right-section {
-             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-         }
-
-         .people-list-grid {
-             grid-template-columns: repeat(2, minmax(0, 1fr));
-         }
-     }
-
-
-     /* =========================================================
-    RESPONSIVE - MOBILE
-    TABLE REMAINS INTERNALLY SCROLLABLE.
-    RIGHT SECTION REMAINS BELOW TABLE.
-    ========================================================= */
-
-     @@media screen and (max-width: 600px) {
-
-         .service-home {
-             padding: 4px;
-         }
-
-         .service-page-layout {
-             gap: 6px;
-             /*
-          * More room for table.
-          */
-             grid-template-rows: minmax(0, 1fr) minmax(0, 35%);
-         }
-
-         .service-left-section {
-             border-radius: 6px;
-         }
-
-         .service-header {
-             padding: 7px 8px;
-         }
-
-         .service-title {
-             font-size: 18px;
-         }
-
-         .service-subtitle {
-             font-size: 10px;
-         }
-
-         .service-header-right {
-             flex-direction: row;
-             align-items: center;
-             gap: 7px;
-         }
-
-         .service-date-time {
-             flex: 0 0 auto;
-             min-width: 0;
-         }
-
-         .service-date {
-             font-size: 10px;
-         }
-
-         .service-time {
-             font-size: 12px;
-         }
-
-         .service-search {
-             flex: 1 1 auto;
-             min-width: 0;
-             width: auto;
-         }
-
-             .service-search input {
-                 height: 35px;
-                 font-size: 12px;
-                 padding-left: 9px;
-                 padding-right: 34px;
-             }
-         /*
-      * Horizontal + vertical table scrolling.
-      */
-         .service-table-scroll {
-             overflow-x: auto;
-             overflow-y: auto;
-         }
-
-         .service-table {
-             min-width: 850px;
-         }
-
-             .service-table thead th {
-                 padding: 9px 7px;
-                 font-size: 12px;
-             }
-
-             .service-table tbody td {
-                 padding: 9px 8px;
-                 font-size: 12px;
-             }
-
-             .service-table tbody tr:last-child td {
-                    padding-bottom: 20px;
-                }
-         /*
-      * RIGHT SIDE BELOW TABLE.
-      */
-         .service-right-section {
-             gap: 6px;
-         }
-
-         .people-header {
-             padding: 7px 8px;
-         }
-
-         .people-header-title {
-             font-size: 13px;
-         }
-
-         .people-list-button {
-             width: 28px;
-             height: 28px;
-         }
-
-         .person-display {
-             padding: 5px;
-         }
-
-         .person-image-wrapper {
-             width: 70px;
-             margin-bottom: 4px;
-             border-width: 2px;
-         }
-
-         .person-name {
-             font-size: 13px;
-         }
-
-         .person-post {
-             font-size: 10px;
-         }
-
-         .person-contact {
-             font-size: 10px;
-             margin-top: 3px;
-         }
-
-         .person-type {
-             margin-top: 4px;
-             padding: 2px 7px;
-             font-size: 9px;
-         }
-
-         .person-dots {
-             margin-top: 4px;
-         }
-
-         .person-dot {
-             width: 5px;
-             height: 5px;
-         }
-
-         .people-list-modal {
-             padding: 6px;
-         }
-
-         .people-list-dialog {
-             height: 94vh;
-         }
-
-         .people-list-grid {
-             grid-template-columns: 1fr;
-         }
-
-         .service-detail-modal {
-             padding: 6px;
-         }
-
-         .service-detail-dialog {
-             max-height: calc(100vh - 12px);
-         }
-
-         .service-detail-body {
-             padding: 8px;
-         }
-
-         .service-detail-table th {
-             width: 30%;
-             padding: 8px;
-             font-size: 12px;
-         }
-
-         .service-detail-table td {
-             padding: 8px;
-             font-size: 12px;
-         }
-     }
-
-
-     /* =========================================================
-    RESPONSIVE - EXTRA SMALL MOBILE
-    ========================================================= */
-
-     @@media screen and (max-width: 400px) {
-
-         .service-home {
-             padding: 3px;
-         }
-
-         .service-page-layout {
-             grid-template-rows: minmax(0, 1fr) minmax(0, 33%);
-         }
-
-         .service-title {
-             font-size: 16px;
-         }
-
-         .service-subtitle {
-             font-size: 9px;
-         }
-
-         .service-header-right {
-             gap: 5px;
-         }
-
-         .service-date {
-             font-size: 9px;
-         }
-
-         .service-time {
-             font-size: 11px;
-         }
-
-         .service-search input {
-             height: 33px;
-             font-size: 11px;
-         }
-
-         .service-table {
-             min-width: 800px;
-         }
-
-             .service-table thead th {
-                 padding: 8px 6px;
-                 font-size: 11px;
-             }
-
-             .service-table tbody td {
-                 padding: 8px 7px;
-                 font-size: 11px;
-             }
-
-         .serial-number {
-             min-width: 24px;
-             height: 24px;
-         }
-
-         .service-name {
-             font-size: 13px;
-         }
-
-         .service-right-section {
-             gap: 5px;
-         }
-
-         .person-image-wrapper {
-             width: 58px;
-         }
-
-         .person-name {
-             font-size: 12px;
-         }
-
-         .person-post {
-             font-size: 9px;
-         }
-     }
-/* ===== TV / DISPLAY BOARD ===== */
-@@media (min-width: 1600px) and (max-height: 1100px) {
-
-    .service-home { padding: 10px; }
+        flex: 1 1 auto;
+        min-height: 0;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        padding: .7rem;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
 
     .service-page-layout {
-        grid-template-columns: minmax(0, 1fr) 400px;
-        gap: 12px;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: -webkit-flex;
+        display: flex;
+        overflow: hidden;
     }
 
-    .service-header { padding: 8px 18px; }
-    .service-title  { font-size: 28px; }
-    .service-subtitle { font-size: 16px; }
-    .service-date { font-size: 15px; }
-    .service-time { font-size: 18px; }
-    .service-search { width: 300px; }
-
-    /* Larger text for reading from a distance */
-    .service-table thead th {
-        padding: 10px 8px;
-        font-size: 18px;
-    }
-
-    .service-table tbody td {
-        padding: 10px 12px;
-        font-size: 18px;
-        line-height: 1.5;
-    }
-
-    .service-name { font-size: 21px; }
-    .serial-number { min-width: 32px; height: 32px; }
-
-    .people-header-title { font-size: 19px; }
-    .person-image-wrapper { width: 130px; }
-    .person-name { font-size: 21px; }
-    .person-post { font-size: 16px; }
-    .person-contact { font-size: 15px; }
-}
-
-/* ===== MID-WIDTH SCREENS AND TVs REPORTING ~1280 WIDE ===== */
-
-/* Table never forces horizontal scroll above tablet size */
-@@media screen and (min-width: 1101px) {
-    .service-table {
+    /* ---------- LEFT : header + table in one card ---------- */
+    .service-left-section {
+        flex: 1 1 auto;
         min-width: 0;
+        min-height: 0;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem;
+        box-shadow: 0 .2rem .8rem rgba(15,31,61,.10);
+        overflow: hidden;
+    }
+
+    .service-header {
+        flex: 0 0 auto;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+        padding: .6rem 1.1rem;
+        background: linear-gradient(90deg, #172554, #1e3a5f);
+        color: #fff;
+        border-bottom: .25rem solid #d4af37;
+    }
+
+    .service-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .service-subtitle {
+        font-size: 1rem;
+        color: #dbe4f0;
+        line-height: 1.4;
+    }
+
+    .service-search {
+        position: relative;
+        flex: 0 0 18rem;
+        width: 18rem;
+        margin-left: 1rem;
+    }
+
+        .service-search input {
+            width: 100%;
+            height: 2.6rem;
+            padding: .3rem 2.6rem .3rem .8rem;
+            box-sizing: border-box;
+            border: 2px solid transparent;
+            border-radius: .35rem;
+            outline: none;
+            font-family: inherit;
+            font-size: 1.05rem;
+            background: #fff;
+            color: #172554;
+        }
+
+            .service-search input:focus {
+                border-color: #d4af37;
+            }
+
+    .service-search-icon {
+        position: absolute;
+        right: .8rem;
+        top: 50%;
+        margin-top: -.55rem;
+        color: #64748b;
+        pointer-events: none;
+    }
+
+    /* ---------- TABLE AREA ---------- */
+    .service-table-container {
+        flex: 1 1 auto;
+        min-height: 0;
+        position: relative;
+        overflow: hidden;
+        background: #fff;
     }
 
     .service-table-scroll {
-        padding-bottom: 12px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+        .service-table-scroll::-webkit-scrollbar {
+            width: .6rem;
+        }
+
+        .service-table-scroll::-webkit-scrollbar-thumb {
+            background: #9aa8bb;
+            border-radius: .5rem;
+        }
+
+    .kiosk .service-table-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .service-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+    }
+
+        .service-table thead th {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: .6rem .5rem;
+            background: #172554;
+            color: #fff;
+            border-right: 1px solid #34436d;
+            border-bottom: .2rem solid #d4af37;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 1.4;
+        }
+
+            .service-table thead th:last-child {
+                border-right: none;
+            }
+
+        .service-table tbody td {
+            padding: .65rem .7rem;
+            color: #172033;
+            border-right: 1px solid rgba(15,23,42,.12);
+            border-bottom: 1px solid rgba(15,23,42,.12);
+            font-size: 1.15rem;
+            line-height: 1.5;
+            vertical-align: top;
+            word-break: break-word;
+        }
+
+            .service-table tbody td:last-child {
+                border-right: none;
+            }
+
+        /* alternating high-contrast row colours */
+        .service-table tbody tr:nth-child(6n + 1) td { background: #fff3b8; }
+        .service-table tbody tr:nth-child(6n + 2) td { background: #cceeff; }
+        .service-table tbody tr:nth-child(6n + 3) td { background: #d9f7c8; }
+        .service-table tbody tr:nth-child(6n + 4) td { background: #ffd6d6; }
+        .service-table tbody tr:nth-child(6n + 5) td { background: #e6d7ff; }
+        .service-table tbody tr:nth-child(6n + 6) td { background: #ffe0b2; }
+
+    .serial-column { width: 4rem; text-align: center !important; }
+    .service-name-column { width: 19%; }
+    .process-column { width: 31%; }
+    .fee-column { width: 14%; }
+    .time-column { width: 11%; }
+    .officer-column { width: 17%; }
+
+    .serial-number {
+        display: inline-block;
+        min-width: 2rem;
+        height: 2rem;
+        line-height: 2rem;
+        padding: 0 .2rem;
         box-sizing: border-box;
-    }
-}
-
-/* Right column scales with screen width (below the 1600px TV rules) */
-@@media screen and (min-width: 1101px) and (max-width: 1599px) {
-    .service-page-layout {
-        grid-template-columns: minmax(0, 1fr) clamp(260px, 22vw, 400px);
-    }
-}
-
-/* Short screens such as 1280x624 */
-@@media screen and (min-width: 1101px) and (max-height: 720px) {
-    .service-home { padding: 8px; }
-    .service-page-layout { gap: 8px; }
-
-    .service-header { padding: 6px 14px; }
-    .service-title { font-size: 22px; }
-    .service-subtitle { font-size: 13px; }
-
-    .service-table thead th {
-        padding: 7px 6px;
-        font-size: 14px;
+        border-radius: 1rem;
+        background: #172554;
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
     }
 
-    .service-table tbody td {
-        padding: 8px 8px;
-        font-size: 14px;
+    .service-name {
+        color: #172554;
+        font-size: 1.3rem;
+        font-weight: 700;
         line-height: 1.45;
     }
 
-    .service-name { font-size: 16px; }
-    .serial-number { min-width: 26px; height: 26px; }
+    .service-detail { margin-bottom: .45rem; }
+    .service-detail:last-child { margin-bottom: 0; }
 
-    .person-image-wrapper { width: min(90px, 38%); }
-    .person-name { font-size: 15px; }
-    .person-post { font-size: 12px; }
-}
+    .detail-label {
+        display: block;
+        margin-bottom: .1rem;
+        color: #172554;
+        font-weight: 700;
+    }
+
+    .fee-value, .time-value, .officer-value {
+        color: #172033;
+        font-weight: 700;
+    }
+
+    .service-row.search-match {
+        outline: .2rem solid #172554;
+        outline-offset: -.2rem;
+    }
+
+    .no-service {
+        width: 100%;
+        height: 100%;
+        min-height: 12rem;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    /* ---------- RIGHT : video + people ---------- */
+    .service-right-section {
+        flex: 0 0 28rem;
+        width: 28rem;
+        margin-left: .8rem;
+        min-height: 0;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* 16:9 box WITHOUT aspect-ratio (older TV browsers don't have it) */
+    .video-panel {
+        flex: 0 0 auto;
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-top: 56.25%;
+        background: #000;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+        .video-panel > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #000 !important;
+            overflow: hidden !important;
+        }
+
+        .video-panel .video-detail,
+        .video-panel .video-player-wrapper {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: #000 !important;
+            overflow: hidden !important;
+        }
+
+        .video-panel .player,
+        .video-panel video {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #000 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            -o-object-fit: contain;
+            object-fit: contain;
+            outline: none !important;
+            pointer-events: none;
+        }
+
+        .video-panel .video-information {
+            display: none !important;
+        }
+
+    .video-not-available {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        color: #cbd5e1;
+        text-align: center;
+    }
+
+    .people-panel {
+        flex: 1 1 auto;
+        min-height: 0;
+        margin-top: .8rem;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: .5rem;
+        box-shadow: 0 .2rem .8rem rgba(15,31,61,.10);
+        overflow: hidden;
+    }
+
+    .people-header {
+        flex: 0 0 auto;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+        padding: .5rem .8rem;
+        background: #172554;
+        color: #fff;
+        border-bottom: .2rem solid #d4af37;
+    }
+
+    .people-header-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .people-list-button {
+        flex: 0 0 auto;
+        width: 2.2rem;
+        height: 2.2rem;
+        border: 1px solid rgba(255,255,255,.35);
+        border-radius: .3rem;
+        background: rgba(255,255,255,.1);
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .person-display {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        padding: .7rem;
+        overflow: hidden;
+    }
+
+    .person-card {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* fixed size instead of aspect-ratio */
+    .person-image-wrapper {
+        width: 9rem;
+        height: 10.8rem;
+        margin: 0 auto .6rem;
+        border: .2rem solid #d4af37;
+        border-radius: .5rem;
+        background: #f1f5f9;
+        overflow: hidden;
+    }
+
+    .person-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        -o-object-fit: cover;
+        object-fit: cover;
+    }
+
+    .person-name {
+        color: #172554;
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .person-post {
+        margin-top: .2rem;
+        color: #475569;
+        font-size: 1.15rem;
+        font-weight: 600;
+        line-height: 1.35;
+    }
+
+    .person-contact {
+        margin-top: .3rem;
+        color: #334155;
+        font-size: 1.05rem;
+    }
+
+        .person-contact i {
+            color: #172554;
+            margin-right: .3rem;
+        }
+
+    .person-type {
+        display: inline-block;
+        margin-top: .4rem;
+        padding: .1rem .7rem;
+        border-radius: 1rem;
+        background: #eef4ff;
+        color: #172554;
+        font-size: .9rem;
+        font-weight: 700;
+    }
+
+    .person-counter {
+        margin-top: .4rem;
+        color: #64748b;
+        font-size: .9rem;
+    }
+
+    /* ---------- POPUPS ---------- */
+    .people-list-modal,
+    .service-detail-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 9999;
+        padding: 1.2rem;
+        box-sizing: border-box;
+        background: rgba(15,23,42,.72);
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+    }
+
+    .people-list-dialog,
+    .service-detail-dialog {
+        width: 100%;
+        max-width: 70rem;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        background: #fff;
+        border-radius: .6rem;
+        overflow: hidden;
+        box-shadow: 0 .8rem 2.5rem rgba(0,0,0,.35);
+    }
+
+    .people-list-dialog { height: 88vh; }
+    .service-detail-dialog { max-height: 90vh; }
+
+    .people-list-header,
+    .service-detail-header {
+        flex: 0 0 auto;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+        padding: .7rem 1rem;
+        background: #172554;
+        color: #fff;
+        border-bottom: .25rem solid #d4af37;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .people-list-close,
+    .service-detail-close {
+        flex: 0 0 auto;
+        width: 2.4rem;
+        height: 2.4rem;
+        border: none;
+        border-radius: .3rem;
+        background: rgba(255,255,255,.12);
+        color: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+
+    .people-list-body,
+    .service-detail-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .people-list-grid {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin: -.4rem;
+    }
+
+    .people-list-item {
+        width: 33.333%;
+        padding: .4rem;
+        box-sizing: border-box;
+    }
+
+    .people-list-card {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: center;
+        align-items: center;
+        padding: .6rem;
+        border: 1px solid #dce2e9;
+        border-radius: .45rem;
+        background: #f8fafc;
+    }
+
+    .people-list-image {
+        flex: 0 0 4.2rem;
+        width: 4.2rem;
+        height: 5rem;
+        margin-right: .8rem;
+        -o-object-fit: cover;
+        object-fit: cover;
+        border: 2px solid #d4af37;
+        border-radius: .35rem;
+    }
+
+    .people-list-text { min-width: 0; }
+
+    .people-list-name {
+        color: #172554;
+        font-size: 1.05rem;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .people-list-post { margin-top: .15rem; color: #64748b; font-size: .9rem; }
+    .people-list-contact { margin-top: .15rem; color: #475569; font-size: .9rem; }
+
+    .service-detail-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #cbd5e1;
+    }
+
+        .service-detail-table th {
+            width: 24%;
+            padding: .8rem;
+            background: #eef4ff;
+            color: #172554;
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+            text-align: left;
+            vertical-align: top;
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .service-detail-table td {
+            padding: .8rem;
+            background: #fff;
+            color: #172033;
+            border-bottom: 1px solid #cbd5e1;
+            vertical-align: top;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .service-detail-table tr:last-child th,
+        .service-detail-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    /* ---------- KIOSK : nothing to click or type on a TV ---------- */
+    .kiosk .service-search,
+    .kiosk .people-list-button {
+        display: none !important;
+    }
 </style>
 
 
 <div class="service-home">
 
-    <!-- =====================================================
-         MAIN TWO-COLUMN PAGE
-         LEFT  = SERVICES
-         RIGHT = VIDEO + PEOPLE
-         ===================================================== -->
-
     <div class="service-page-layout">
 
-
         <!-- =================================================
-             LEFT SECTION
-             SERVICE HEADER + SERVICE TABLE
+             LEFT : SERVICE HEADER + TABLE
              ================================================= -->
-
         <div class="service-left-section">
-
-
-            <!-- =============================================
-                 SERVICE HEADER
-                 ============================================= -->
 
             <div class="service-header">
 
-                <div class="service-header-left">
-
+                <div>
                     <div class="service-title">
                         <i class="fa fa-building"></i>
                         सेवा तथा जानकारी
                     </div>
-
                     <div class="service-subtitle">
                         नागरिकलाई उपलब्ध सेवा, प्रक्रिया, दस्तुर तथा जिम्मेवार पदाधिकारी
                     </div>
-
                 </div>
 
-
-                <!-- =========================================
-                     DATE / TIME + SEARCH
-                     ========================================= -->
-
-                <div class="service-header-right">
-
-                    <div class="service-date-time">
-
-                        <div class="service-date"
-                             id="currentDate">
-                        </div>
-
-                        <div class="service-time"
-                             id="currentTime">
-                        </div>
-
-                    </div>
-
-
-                    <div class="service-search">
-
-                        <input type="text"
-                               id="serviceSearch"
-                               autocomplete="off"
-                               placeholder="सेवा खोज्नुहोस्..." />
-
-                        <span class="service-search-icon">
-                            <i class="fa fa-search"></i>
-                        </span>
-
-                    </div>
-
+                <div class="service-search">
+                    <input type="text"
+                           id="serviceSearch"
+                           autocomplete="off"
+                           placeholder="सेवा खोज्नुहोस्..." />
+                    <span class="service-search-icon">
+                        <i class="fa fa-search"></i>
+                    </span>
                 </div>
 
             </div>
 
-
-            <!-- =============================================
-                 SERVICE TABLE
-                 ============================================= -->
-
             <div class="service-table-container">
 
-                <div class="service-table-scroll"
-                     id="serviceTableScroll">
+                <div class="service-table-scroll" id="serviceTableScroll">
 
                     @if (Model != null &&
                          Model.subModule != null &&
                          Model.subModule.List != null &&
                          Model.subModule.List.Any())
                     {
-                        <table class="service-table"
-                               id="serviceTable">
+                        <table class="service-table" id="serviceTable">
 
                             <thead>
-
                                 <tr>
-
-                                    <th class="serial-column">
-                                        सि.न.
-                                    </th>
-
-                                    <th class="service-name-column">
-                                        सेवा सुविधाको नाम
-                                    </th>
-
-                                    <th class="process-column">
-                                        सेवा लिने प्रक्रिया/चाहिने कागजातहरू
-                                    </th>
-
-                                    <th class="fee-column">
-                                        लाग्ने सेवा शुल्क तथा दस्तुर
-                                    </th>
-
-                                    <th class="time-column">
-                                        लाग्ने समय
-                                    </th>
-
-                                    <th class="officer-column">
-                                        जिम्मेवार पदाधिकारी
-                                    </th>
-
+                                    <th class="serial-column">सि.न.</th>
+                                    <th class="service-name-column">सेवा सुविधाको नाम</th>
+                                    <th class="process-column">सेवा लिने प्रक्रिया/चाहिने कागजातहरू</th>
+                                    <th class="fee-column">लाग्ने सेवा शुल्क तथा दस्तुर</th>
+                                    <th class="time-column">लाग्ने समय</th>
+                                    <th class="officer-column">जिम्मेवार पदाधिकारी</th>
                                 </tr>
-
                             </thead>
-
 
                             <tbody id="serviceTableBody">
 
@@ -1632,79 +733,37 @@
 
                                 @foreach (var service in Model.subModule.List)
                                 {
-                                    <tr class="service-row"
-                                        data-service-index="@serialNumber"
-                                        data-service-title="@service.Title">
-
-                                        <!-- =================================
-                                             SERIAL NUMBER
-                                             ================================= -->
+                                    <tr class="service-row">
 
                                         <td class="serial-column">
-
-                                            <span class="serial-number">
-                                                @serialNumber
-                                            </span>
-
+                                            <span class="serial-number">@serialNumber</span>
                                         </td>
 
-
-                                        <!-- =================================
-                                             SERVICE NAME
-                                             ================================= -->
-
                                         <td>
-
-                                            <div class="service-name">
-                                                @service.Title
-                                            </div>
-
+                                            <div class="service-name">@service.Title</div>
                                         </td>
 
-
-                                        <!-- =================================
-                                             PROCESS / DOCUMENTS
-                                             ================================= -->
-
                                         <td>
-
+                                            @* Html.Raw: only trusted admins should edit these fields *@
                                             @if (!string.IsNullOrWhiteSpace(service.Process))
                                             {
                                                 <div class="service-detail">
-
-                                                    <span class="detail-label">
-                                                        सेवा लिने प्रक्रिया:
-                                                    </span>
-
+                                                    <span class="detail-label">सेवा लिने प्रक्रिया:</span>
                                                     @Html.Raw(service.Process)
-
                                                 </div>
                                             }
 
                                             @if (!string.IsNullOrWhiteSpace(service.DocumentNeeded))
                                             {
                                                 <div class="service-detail">
-
-                                                    <span class="detail-label">
-                                                        चाहिने कागजात:
-                                                    </span>
-
+                                                    <span class="detail-label">चाहिने कागजात:</span>
                                                     @Html.Raw(service.DocumentNeeded)
-
                                                 </div>
                                             }
-
                                         </td>
 
-
-                                        <!-- =================================
-                                             SERVICE FEE
-                                             ================================= -->
-
                                         <td>
-
                                             <div class="fee-value">
-
                                                 @if (!string.IsNullOrWhiteSpace(service.DasturNeed))
                                                 {
                                                     @service.DasturNeed
@@ -1713,20 +772,11 @@
                                                 {
                                                     <span>-</span>
                                                 }
-
                                             </div>
-
                                         </td>
 
-
-                                        <!-- =================================
-                                             SERVICE TIME
-                                             ================================= -->
-
                                         <td>
-
                                             <div class="time-value">
-
                                                 @if (!string.IsNullOrWhiteSpace(service.TimeNeed))
                                                 {
                                                     @service.TimeNeed
@@ -1735,20 +785,11 @@
                                                 {
                                                     <span>-</span>
                                                 }
-
                                             </div>
-
                                         </td>
 
-
-                                        <!-- =================================
-                                             RESPONSIBLE OFFICER
-                                             ================================= -->
-
                                         <td>
-
                                             <div class="officer-value">
-
                                                 @if (!string.IsNullOrWhiteSpace(service.ResponsibleOfficer))
                                                 {
                                                     @service.ResponsibleOfficer
@@ -1757,9 +798,7 @@
                                                 {
                                                     <span>-</span>
                                                 }
-
                                             </div>
-
                                         </td>
 
                                     </tr>
@@ -1774,18 +813,11 @@
                     else
                     {
                         <div class="no-service">
-
                             <div>
-
                                 <i class="fa fa-folder-open fa-2x"></i>
-
-                                <br />
-                                <br />
-
+                                <br /><br />
                                 हाल कुनै सेवा उपलब्ध छैन।
-
                             </div>
-
                         </div>
                     }
 
@@ -1797,52 +829,28 @@
 
 
         <!-- =================================================
-             RIGHT SECTION
-             VIDEO + REPRESENTATIVES / EMPLOYEES
+             RIGHT : VIDEO + PEOPLE
              ================================================= -->
-
         <div class="service-right-section">
 
+            <div class="video-panel" id="videoPanel">
 
-            <!-- =================================================
-                 VIDEO
-                 EXISTING SHOWVIDEOS BACKEND ACTION IS USED
-                 ================================================= -->
-
-            <div class="video-panel"
-                 id="videoPanel">
-
-                @if (Model != null &&
-                     Model.video != null)
+                @if (Model != null && Model.video != null)
                 {
-                    @Html.Action(
-                        "ShowVideos",
-                        "Home",
-                        new
-                        {
-                            id = Model.video.VideoId
-                        })
+                    @Html.Action("ShowVideos", "Home", new { id = Model.video.VideoId })
                 }
                 else
                 {
                     <div class="video-not-available">
-
                         <i class="fa-solid fa-video-slash fa-2x"></i>
-
                     </div>
                 }
 
             </div>
 
-
-            <!-- =================================================
-                 PEOPLE / EMPLOYEE SECTION
-                 ================================================= -->
-
             <div class="people-panel">
 
                 <div class="people-header">
-
                     <div class="people-header-title">
                         <i class="fa fa-users"></i>
                         प्रतिनिधि / कर्मचारीहरु
@@ -1852,22 +860,11 @@
                             class="people-list-button"
                             id="openPeopleList"
                             title="सबै हेर्नुहोस्">
-
                         <i class="fa fa-list"></i>
-
                     </button>
-
                 </div>
 
-
-                <!-- =============================================
-                     CURRENT PERSON
-                     ============================================= -->
-
-                <div class="person-display"
-                     id="personDisplay">
-
-                </div>
+                <div class="person-display" id="personDisplay"></div>
 
             </div>
 
@@ -1879,298 +876,57 @@
 
 
 <!-- =========================================================
-     PEOPLE LIST MODAL
+     PEOPLE LIST POPUP (filled by JavaScript)
      ========================================================= -->
-
-<div class="people-list-modal"
-     id="peopleListModal">
-
+<div class="people-list-modal" id="peopleListModal">
     <div class="people-list-dialog">
 
-
-        <!-- =================================================
-             PEOPLE MODAL HEADER
-             ================================================= -->
-
         <div class="people-list-header">
-
             <div>
-
                 <i class="fa fa-users"></i>
-
                 प्रतिनिधि / कर्मचारीहरुको सूची
-
             </div>
-
-            <button type="button"
-                    class="people-list-close"
-                    id="closePeopleList">
-
+            <button type="button" class="people-list-close" id="closePeopleList">
                 <i class="fa fa-times"></i>
-
             </button>
-
         </div>
 
-
-        <!-- =================================================
-             PEOPLE MODAL BODY
-             ================================================= -->
-
         <div class="people-list-body">
-
-            <div class="people-list-grid">
-
-
-                <!-- =============================================
-                     REPRESENTATIVES
-                     ============================================= -->
-
-                @if (Model != null &&
-                     Model.peopleRepresentative != null &&
-                     Model.peopleRepresentative.List != null)
-                {
-                    foreach (var person in Model.peopleRepresentative.List)
-                    {
-                        <div class="people-list-item">
-                            @{
-                                var personImage =
-                                    !string.IsNullOrWhiteSpace(person.Image)
-                                        ? Url.Content("~/JanaPratinidhiImages/" + person.Image)
-                                        : Url.Content("~/Content/images/no-image.png");
-                            }
-
-                            <img src="@personImage"
-                                 class="people-list-image"
-                                 alt="@person.Name" />
-
-                            <div>
-
-                                <div class="people-list-name">
-                                    @person.Name
-                                </div>
-
-                                <div class="people-list-post">
-
-                                    @if (person.PostSetup != null)
-                                    {
-                                        @person.PostSetup.PostTitle
-                                    }
-
-                                </div>
-
-                                @if (!string.IsNullOrWhiteSpace(person.Contact))
-                                {
-                                    <div class="people-list-contact">
-
-                                        <i class="fa fa-phone"></i>
-
-                                        @person.Contact
-
-                                    </div>
-                                }
-
-                            </div>
-
-                        </div>
-                    }
-                }
-
-
-                <!-- =============================================
-                     EMPLOYEES
-                     ============================================= -->
-
-                @if (Model != null &&
-                     Model.employeeSetup != null &&
-                     Model.employeeSetup.Lists != null)
-                {
-                    foreach (var employee in Model.employeeSetup.Lists)
-                    {
-                        <div class="people-list-item">
-
-                            @{
-                                var employeeImage =
-                                    !string.IsNullOrWhiteSpace(employee.Image)
-                                        ? Url.Content("~/EmployeeImage/" + employee.Image)
-                                        : Url.Content("~/Content/images/no-image.png");
-                            }
-
-                            <img src="@employeeImage"
-                                 class="people-list-image"
-                                 alt="@employee.EmpName" />
-                            <div>
-
-                                <div class="people-list-name">
-                                    @employee.EmpName
-                                </div>
-
-                                <div class="people-list-post">
-
-                                    @if (employee.PostSetup != null)
-                                    {
-                                        @employee.PostSetup.PostTitle
-                                    }
-
-                                </div>
-
-                                @if (!string.IsNullOrWhiteSpace(employee.Contact))
-                                {
-                                    <div class="people-list-contact">
-
-                                        <i class="fa fa-phone"></i>
-
-                                        @employee.Contact
-
-                                    </div>
-                                }
-
-                            </div>
-
-                        </div>
-                    }
-                }
-
-            </div>
-
+            <div class="people-list-grid" id="peopleListGrid"></div>
         </div>
 
     </div>
-
 </div>
 
 
 <!-- =========================================================
-     SERVICE SEARCH DETAIL POPUP
-     SHOWS COMPLETE SERVICE ROW
+     SERVICE DETAIL POPUP
      ========================================================= -->
-
-<div class="service-detail-modal"
-     id="serviceDetailModal">
-
+<div class="service-detail-modal" id="serviceDetailModal">
     <div class="service-detail-dialog">
 
-
-        <!-- =================================================
-             POPUP HEADER
-             ================================================= -->
-
         <div class="service-detail-header">
-
-            <div class="service-detail-header-title"
-                 id="serviceDetailTitle">
-
-                सेवा विवरण
-
-            </div>
-
-            <button type="button"
-                    class="service-detail-close"
-                    id="closeServiceDetail">
-
+            <div id="serviceDetailTitle">सेवा विवरण</div>
+            <button type="button" class="service-detail-close" id="closeServiceDetail">
                 <i class="fa fa-times"></i>
-
             </button>
-
         </div>
 
-
-        <!-- =================================================
-             POPUP BODY
-             ALL SERVICE INFORMATION IS SHOWN HERE
-             ================================================= -->
-
         <div class="service-detail-body">
-
             <table class="service-detail-table">
-
                 <tbody>
-
-                    <tr>
-
-                        <th>
-                            सि.न.
-                        </th>
-
-                        <td id="detailSerial">
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <th>
-                            सेवा सुविधाको नाम
-                        </th>
-
-                        <td id="detailServiceName">
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <th>
-                            सेवा लिने प्रक्रिया
-                        </th>
-
-                        <td id="detailProcess">
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <th>
-                            चाहिने कागजात
-                        </th>
-
-                        <td id="detailDocuments">
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <th>
-                            लाग्ने सेवा शुल्क तथा दस्तुर
-                        </th>
-
-                        <td id="detailFee">
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <th>
-                            लाग्ने समय
-                        </th>
-
-                        <td id="detailTime">
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <th>
-                            जिम्मेवार पदाधिकारी
-                        </th>
-
-                        <td id="detailOfficer">
-                        </td>
-
-                    </tr>
-
+                    <tr><th>सि.न.</th><td id="detailSerial"></td></tr>
+                    <tr><th>सेवा सुविधाको नाम</th><td id="detailServiceName"></td></tr>
+                    <tr><th>सेवा लिने प्रक्रिया</th><td id="detailProcess"></td></tr>
+                    <tr><th>चाहिने कागजात</th><td id="detailDocuments"></td></tr>
+                    <tr><th>लाग्ने सेवा शुल्क तथा दस्तुर</th><td id="detailFee"></td></tr>
+                    <tr><th>लाग्ने समय</th><td id="detailTime"></td></tr>
+                    <tr><th>जिम्मेवार पदाधिकारी</th><td id="detailOfficer"></td></tr>
                 </tbody>
-
             </table>
-
         </div>
 
     </div>
-
 </div>
 
 
@@ -2178,1156 +934,430 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
-
         /* =====================================================
-           DATE AND TIME
-           Updates the header clock immediately and every second.
+           HELPERS (plain ES5 so older TV browsers work)
            ===================================================== */
-
-        function updateDateTime() {
-
-            var now = new Date();
-
-            var dateText =
-                now.toLocaleDateString(
-                    "ne-NP",
-                    {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric"
-                    }
-                );
-
-            var timeText =
-                now.toLocaleTimeString(
-                    "ne-NP",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: true
-                    }
-                );
-
-            var dateElement =
-                document.getElementById("currentDate");
-
-            var timeElement =
-                document.getElementById("currentTime");
-
-            if (dateElement) {
-                dateElement.textContent = dateText;
-            }
-
-            if (timeElement) {
-                timeElement.textContent = timeText;
-            }
-
+        function each(list, fn) {
+            Array.prototype.forEach.call(list, fn);
         }
 
-        updateDateTime();
-
-        setInterval(updateDateTime, 1000);
-
-
-        /* =====================================================
-           SERVICE TABLE ELEMENTS
-           ===================================================== */
-
-        var searchInput =
-            document.getElementById("serviceSearch");
-
-        var tableBody =
-            document.getElementById("serviceTableBody");
-
-        var tableScroll =
-            document.getElementById("serviceTableScroll");
-
-
-        /* =====================================================
-           SERVICE DETAIL POPUP ELEMENTS
-           ===================================================== */
-
-        var serviceDetailModal =
-            document.getElementById("serviceDetailModal");
-
-        var closeServiceDetail =
-            document.getElementById("closeServiceDetail");
-
-        var detailTitle =
-            document.getElementById("serviceDetailTitle");
-
-        var detailSerial =
-            document.getElementById("detailSerial");
-
-        var detailServiceName =
-            document.getElementById("detailServiceName");
-
-        var detailProcess =
-            document.getElementById("detailProcess");
-
-        var detailDocuments =
-            document.getElementById("detailDocuments");
-
-        var detailFee =
-            document.getElementById("detailFee");
-
-        var detailTime =
-            document.getElementById("detailTime");
-
-        var detailOfficer =
-            document.getElementById("detailOfficer");
-
-
-        /* =====================================================
-           OPEN COMPLETE SERVICE POPUP
-
-           The actual TD HTML is copied into the popup.
-           Therefore long Process / DocumentNeeded content
-           is NOT truncated.
-           ===================================================== */
-
-        function openServiceDetails(row) {
-
-            if (!row || !serviceDetailModal) {
-                return;
-            }
-
-            var cells =
-                row.querySelectorAll("td");
-
-            if (cells.length < 6) {
-                return;
-            }
-
-
-            /* ---------------------------------------------
-               SERIAL
-               --------------------------------------------- */
-
-            if (detailSerial) {
-
-                detailSerial.innerHTML =
-                    cells[0].innerHTML;
-
-            }
-
-
-            /* ---------------------------------------------
-               SERVICE NAME
-               --------------------------------------------- */
-
-            if (detailServiceName) {
-
-                detailServiceName.innerHTML =
-                    cells[1].innerHTML;
-
-            }
-
-
-            /* ---------------------------------------------
-               PROCESS
-               --------------------------------------------- */
-
-            var processCell =
-                cells[2];
-
-            var processHtml = "";
-            var documentHtml = "";
-
-
-            var processDetails =
-                processCell.querySelectorAll(
-                    ".service-detail"
-                );
-
-
-            processDetails.forEach(function (detail) {
-
-                var label =
-                    detail.querySelector(
-                        ".detail-label"
-                    );
-
-                if (!label) {
-                    return;
-                }
-
-                var labelText =
-                    label.textContent
-                        .trim()
-                        .replace(/:$/, "");
-
-
-                var content =
-                    detail.cloneNode(true);
-
-                var contentLabel =
-                    content.querySelector(
-                        ".detail-label"
-                    );
-
-                if (contentLabel) {
-                    contentLabel.remove();
-                }
-
-
-                if (
-                    labelText.indexOf("कागजात") !== -1
-                ) {
-
-                    documentHtml +=
-                        content.innerHTML;
-
-                }
-                else {
-
-                    processHtml +=
-                        content.innerHTML;
-
-                }
-
-            });
-
-
-            /*
-             * If there are no structured details,
-             * copy the complete cell.
-             */
-
-            if (!processHtml &&
-                !documentHtml) {
-
-                processHtml =
-                    processCell.innerHTML;
-
-            }
-
-
-            if (detailProcess) {
-
-                detailProcess.innerHTML =
-                    processHtml || "-";
-
-            }
-
-            if (detailDocuments) {
-
-                detailDocuments.innerHTML =
-                    documentHtml || "-";
-
-            }
-
-
-            /* ---------------------------------------------
-               FEE
-               --------------------------------------------- */
-
-            if (detailFee) {
-
-                detailFee.innerHTML =
-                    cells[3].innerHTML;
-
-            }
-
-
-            /* ---------------------------------------------
-               TIME
-               --------------------------------------------- */
-
-            if (detailTime) {
-
-                detailTime.innerHTML =
-                    cells[4].innerHTML;
-
-            }
-
-
-            /* ---------------------------------------------
-               OFFICER
-               --------------------------------------------- */
-
-            if (detailOfficer) {
-
-                detailOfficer.innerHTML =
-                    cells[5].innerHTML;
-
-            }
-
-
-            /* ---------------------------------------------
-               POPUP TITLE
-               --------------------------------------------- */
-
-            if (detailTitle) {
-
-                var serviceName =
-                    cells[1].textContent.trim();
-
-                detailTitle.textContent =
-                    serviceName ||
-                    "सेवा विवरण";
-
-            }
-
-
-            /*
-             * Show popup immediately.
-             */
-
-            serviceDetailModal.style.display =
-                "flex";
-
-            document.body.style.overflow =
-                "hidden";
-
+        function el(id) {
+            return document.getElementById(id);
         }
-
-
-        /* =====================================================
-           CLOSE SERVICE POPUP
-           ===================================================== */
-
-        function closeServiceDetails() {
-
-            if (!serviceDetailModal) {
-                return;
-            }
-
-            serviceDetailModal.style.display =
-                "none";
-
-            document.body.style.overflow =
-                "";
-
-        }
-
-
-        if (closeServiceDetail) {
-
-            closeServiceDetail.addEventListener(
-                "click",
-                closeServiceDetails
-            );
-
-        }
-
-
-        /* =====================================================
-           SERVICE SEARCH
-
-           - Searches immediately as user types.
-           - Clearing search immediately restores all rows.
-           - One exact/strong result automatically opens popup.
-           - Clicking any visible matching row opens popup.
-           ===================================================== */
-
-        if (searchInput && tableBody) {
-
-            searchInput.addEventListener(
-                "input",
-                function () {
-
-                    var searchText =
-                        this.value
-                            .toLowerCase()
-                            .trim();
-
-                    var rows =
-                        tableBody.querySelectorAll(
-                            ".service-row"
-                        );
-
-                    var matchingRows = [];
-
-
-                    /* =================================================
-                       CLEAR SEARCH
-                       ================================================= */
-
-                    if (searchText === "") {
-
-                        rows.forEach(function (row) {
-
-                            row.style.display = "";
-
-                            row.classList.remove(
-                                "search-match"
-                            );
-
-                        });
-
-                        return;
-                    }
-
-
-                    /* =================================================
-                       FIRST PRIORITY:
-                       EXACT SERIAL NUMBER MATCH
-
-                       Example:
-                       Search "1"  -> serial 1
-                       Search "10" -> serial 10
-                       Search "25" -> serial 25
-
-                       This prevents "1" from automatically opening
-                       service 10, 11, 12 etc.
-                       ================================================= */
-
-                    var exactSerialRow = null;
-
-                    rows.forEach(function (row) {
-
-                        var serialElement =
-                            row.querySelector(
-                                ".serial-number"
-                            );
-
-                        if (!serialElement) {
-                            return;
-                        }
-
-                        var serial =
-                            serialElement.textContent
-                                .trim();
-
-                        if (
-                            serial === searchText
-                        ) {
-
-                            exactSerialRow = row;
-
-                        }
-
-                    });
-
-
-                    /* =================================================
-                       EXACT SERIAL FOUND
-
-                       Hide everything else and open that service.
-                       ================================================= */
-
-                    if (exactSerialRow) {
-
-                        rows.forEach(function (row) {
-
-                            row.classList.remove(
-                                "search-match"
-                            );
-
-                            if (row === exactSerialRow) {
-
-                                row.style.display = "";
-
-                            }
-                            else {
-
-                                row.style.display = "none";
-
-                            }
-
-                        });
-
-
-                        exactSerialRow.classList.add(
-                            "search-match"
-                        );
-
-
-                        openServiceDetails(
-                            exactSerialRow
-                        );
-
-
-                        return;
-                    }
-
-
-                    /* =================================================
-                       NORMAL TEXT SEARCH
-
-                       If the search is not an exact serial number,
-                       search the complete row.
-
-                       Example:
-                       "जन्म"
-                       "नागरिकता"
-                       "पासपोर्ट"
-                       "राजस्व"
-                       ================================================= */
-
-                    rows.forEach(function (row) {
-
-                        row.classList.remove(
-                            "search-match"
-                        );
-
-
-                        var rowText =
-                            row.textContent
-                                .toLowerCase()
-                                .trim();
-
-
-                        if (
-                            rowText.indexOf(searchText) !== -1
-                        ) {
-
-                            row.style.display = "";
-
-                            matchingRows.push(row);
-
-                        }
-                        else {
-
-                            row.style.display = "none";
-
-                        }
-
-                    });
-
-
-                    /* =================================================
-                       ONE TEXT RESULT
-                       ================================================= */
-
-                    if (matchingRows.length === 1) {
-
-                        var onlyRow =
-                            matchingRows[0];
-
-                        onlyRow.classList.add(
-                            "search-match"
-                        );
-
-                        openServiceDetails(
-                            onlyRow
-                        );
-
-                    }
-
-                }
-            );
-
-
-            /* =================================================
-               CLICK MATCHING SERVICE ROW
-               ================================================= */
-
-            tableBody.addEventListener(
-                "click",
-                function (event) {
-
-                    var row =
-                        event.target.closest(
-                            ".service-row"
-                        );
-
-                    if (!row) {
-                        return;
-                    }
-
-
-                    /*
-                     * When searching, clicking the matching
-                     * service opens the complete popup.
-                     */
-
-                    if (
-                        searchInput &&
-                        searchInput.value.trim() !== ""
-                    ) {
-
-                        openServiceDetails(row);
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           CLOSE SERVICE POPUP BY CLICKING OUTSIDE
-           ===================================================== */
-
-        if (serviceDetailModal) {
-
-            serviceDetailModal.addEventListener(
-                "click",
-                function (event) {
-
-                    if (
-                        event.target ===
-                        serviceDetailModal
-                    ) {
-
-                        closeServiceDetails();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           SERVICE POPUP ESCAPE KEY
-           ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key === "Escape") {
-
-                    closeServiceDetails();
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           SERVICE TABLE AUTO SCROLL
-
-           Slightly faster than the previous version.
-           Still slow enough for comfortable reading.
-           Automatically pauses while user interacts.
-           ===================================================== */
-
-        if (tableScroll) {
-
-            var autoScrolling = true;
-
-            var scrollSpeed = 1.35;
-
-            var resumeDelay = 3000;
-
-            var resumeTimer = null;
-
-
-            function autoScroll() {
-
-                if (!autoScrolling) {
-                    return;
-                }
-
-                if (
-                    tableScroll.scrollHeight <=
-                    tableScroll.clientHeight
-                ) {
-                    return;
-                }
-
-
-                if (
-                    tableScroll.scrollTop +
-                    tableScroll.clientHeight >=
-                    tableScroll.scrollHeight - 1
-                ) {
-
-                    tableScroll.scrollTop = 0;
-
-                }
-                else {
-
-                    tableScroll.scrollTop +=
-                        scrollSpeed;
-
-                }
-
-            }
-
-
-            /*
-             * Approximately 25% faster than the
-             * previous 1px / 40ms configuration.
-             */
-
-            setInterval(
-                autoScroll,
-                40
-            );
-
-
-            function pauseAutoScroll() {
-
-                autoScrolling = false;
-
-                if (resumeTimer) {
-
-                    clearTimeout(
-                        resumeTimer
-                    );
-
-                }
-
-            }
-
-
-            function resumeAutoScrollLater() {
-
-                if (resumeTimer) {
-
-                    clearTimeout(
-                        resumeTimer
-                    );
-
-                }
-
-                resumeTimer =
-                    setTimeout(
-                        function () {
-
-                            if (
-                                !tableScroll.matches(
-                                    ":hover"
-                                )
-                            ) {
-
-                                autoScrolling = true;
-
-                            }
-
-                        },
-                        resumeDelay
-                    );
-
-            }
-
-
-            tableScroll.addEventListener(
-                "mouseenter",
-                function () {
-
-                    pauseAutoScroll();
-
-                }
-            );
-
-
-            tableScroll.addEventListener(
-                "mouseleave",
-                function () {
-
-                    resumeAutoScrollLater();
-
-                }
-            );
-
-
-            tableScroll.addEventListener(
-                "wheel",
-                function () {
-
-                    pauseAutoScroll();
-
-                    resumeAutoScrollLater();
-
-                }
-            );
-
-
-            tableScroll.addEventListener(
-                "touchstart",
-                function () {
-
-                    pauseAutoScroll();
-
-                }
-            );
-
-
-            tableScroll.addEventListener(
-                "touchend",
-                function () {
-
-                    resumeAutoScrollLater();
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           PEOPLE DATA
-
-           Representatives and employees are combined into
-           one array so the right-side display rotates through
-           everyone.
-           ===================================================== */
-
-        var people = [];
-
-
-        /* =====================================================
-           REPRESENTATIVES
-           ===================================================== */
-
-        @if (Model != null &&
-             Model.peopleRepresentative != null &&
-             Model.peopleRepresentative.List != null)
-        {
-            foreach (var person in Model.peopleRepresentative.List)
-            {
-                var image = !string.IsNullOrWhiteSpace(person.Image)
-        ? Url.Content("~/JanaPratinidhiImages/" + person.Image)
-        : Url.Content("~/Content/images/no-image.png");
-
-                var post =
-                person.PostSetup != null
-                    ? person.PostSetup.PostTitle
-                    : "";
-
-                <text>
-                    people.push({
-                        name: @Html.Raw(Json.Encode(person.Name ?? "")),
-                        post: @Html.Raw(Json.Encode(post ?? "")),
-                        contact: @Html.Raw(Json.Encode(person.Contact ?? "")),
-                        image: @Html.Raw(Json.Encode(image)),
-                        type: "जनप्रतिनिधि"
-                    });
-                </text>
-            }
-        }
-
-
-        /* =====================================================
-           EMPLOYEES
-           ===================================================== */
-
-        @if (Model != null &&
-             Model.employeeSetup != null &&
-             Model.employeeSetup.Lists != null)
-        {
-            foreach (var employee in Model.employeeSetup.Lists)
-            {
-                var image =
-                    !string.IsNullOrWhiteSpace(employee.Image)
-                        ? Url.Content("~/EmployeeImage/" + employee.Image)
-                        : Url.Content("~/Content/images/no-image.png");
-
-                var post =
-                employee.PostSetup != null
-                    ? employee.PostSetup.PostTitle
-                    : "";
-
-                <text>
-                    people.push({
-                        name: @Html.Raw(Json.Encode(employee.EmpName ?? "")),
-                        post: @Html.Raw(Json.Encode(post ?? "")),
-                        contact: @Html.Raw(Json.Encode(employee.Contact ?? "")),
-                        image: @Html.Raw(Json.Encode(image)),
-                        type: "कर्मचारी"
-                    });
-                </text>
-            }
-        }
-
-
-        /* =====================================================
-           PEOPLE ROTATION
-           ===================================================== */
-
-        var personDisplay =
-            document.getElementById("personDisplay");
-
-        var currentPersonIndex = 0;
-
-
-        function showPerson(index) {
-
-            if (
-                !personDisplay ||
-                people.length === 0
-            ) {
-
-                if (personDisplay) {
-
-                    personDisplay.innerHTML =
-                        '<div class="no-service">' +
-                        '<div>' +
-                        '<i class="fa fa-user fa-2x"></i>' +
-                        '<br><br>' +
-                        'हाल कुनै प्रतिनिधि / कर्मचारी उपलब्ध छैन।' +
-                        '</div>' +
-                        '</div>';
-
-                }
-
-                return;
-
-            }
-
-
-            var person =
-                people[index];
-
-
-            var html =
-
-                '<div class="person-card">' +
-
-                    '<div class="person-image-wrapper">' +
-
-                        '<img ' +
-                            'src="' +
-                            escapeHtmlAttribute(person.image) +
-                            '" ' +
-                            'class="person-image" ' +
-                            'alt="' +
-                            escapeHtmlAttribute(person.name) +
-                            '">' +
-
-                    '</div>' +
-
-                    '<div class="person-name">' +
-                        escapeHtml(person.name) +
-                    '</div>' +
-
-                    '<div class="person-post">' +
-                        escapeHtml(person.post) +
-                    '</div>';
-
-
-            if (person.contact) {
-
-                html +=
-
-                    '<div class="person-contact">' +
-
-                        '<i class="fa fa-phone"></i>' +
-
-                        escapeHtml(person.contact) +
-
-                    '</div>';
-
-            }
-
-
-            html +=
-
-                    '<div class="person-type">' +
-                        escapeHtml(person.type) +
-                    '</div>' +
-
-                    '<div class="person-dots">';
-
-
-            /*
-             * Display indicators for the current person.
-             */
-
-            people.forEach(function (item, dotIndex) {
-
-                html +=
-
-                    '<span class="person-dot ' +
-                    (
-                        dotIndex === index
-                            ? "active"
-                            : ""
-                    ) +
-                    '"></span>';
-
-            });
-
-
-            html +=
-
-                    '</div>' +
-
-                '</div>';
-
-
-            personDisplay.innerHTML =
-                html;
-
-        }
-
-
-        /* =====================================================
-           SMALL HTML ESCAPING HELPERS
-           Prevents person data from breaking generated HTML.
-           ===================================================== */
 
         function escapeHtml(value) {
-
-            if (value === null ||
-                value === undefined) {
-
-                return "";
-
-            }
-
+            if (value === null || value === undefined) { return ""; }
             return String(value)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
-
         }
 
+        var NO_IMAGE = @Html.Raw(Json.Encode(noImage));
 
-        function escapeHtmlAttribute(value) {
-
-            return escapeHtml(value);
-
+        function fixImages(container) {
+            each(container.querySelectorAll("img"), function (img) {
+                img.onerror = function () {
+                    this.onerror = null;
+                    this.src = NO_IMAGE;
+                };
+            });
         }
 
 
         /* =====================================================
-           DISPLAY FIRST PERSON IMMEDIATELY
+           ELEMENTS
            ===================================================== */
+        var searchInput = el("serviceSearch");
+        var tableBody = el("serviceTableBody");
+        var tableScroll = el("serviceTableScroll");
 
-        if (people.length > 0) {
+        var serviceDetailModal = el("serviceDetailModal");
+        var closeServiceDetail = el("closeServiceDetail");
+        var peopleListModal = el("peopleListModal");
+        var openPeopleList = el("openPeopleList");
+        var closePeopleList = el("closePeopleList");
 
-            showPerson(0);
+        /* Tells the layout NOT to auto-reload while a popup is open. */
+        function updateBusy() {
+            window.__charterBusy =
+                serviceDetailModal.style.display === "flex" ||
+                peopleListModal.style.display === "flex";
+        }
 
 
-            /*
-             * Rotate every six seconds.
-             */
+        /* =====================================================
+           SERVICE DETAIL POPUP
+           ===================================================== */
+        function openServiceDetails(row) {
 
-            if (people.length > 1) {
+            var cells = row ? row.querySelectorAll("td") : [];
 
-                setInterval(
-                    function () {
+            if (cells.length < 6) { return; }
 
-                        currentPersonIndex++;
+            el("detailSerial").innerHTML = cells[0].innerHTML;
+            el("detailServiceName").innerHTML = cells[1].innerHTML;
 
-                        if (
-                            currentPersonIndex >=
-                            people.length
-                        ) {
+            var processHtml = "";
+            var documentHtml = "";
 
-                            currentPersonIndex = 0;
+            each(cells[2].querySelectorAll(".service-detail"), function (detail) {
 
-                        }
+                var label = detail.querySelector(".detail-label");
+                if (!label) { return; }
 
-                        showPerson(
-                            currentPersonIndex
-                        );
+                var labelText = label.textContent.trim();
+                var copy = detail.cloneNode(true);
+                var copyLabel = copy.querySelector(".detail-label");
 
-                    },
-                    6000
-                );
+                if (copyLabel) { copyLabel.parentNode.removeChild(copyLabel); }
 
+                if (labelText.indexOf("कागजात") !== -1) {
+                    documentHtml += copy.innerHTML;
+                }
+                else {
+                    processHtml += copy.innerHTML;
+                }
+            });
+
+            if (!processHtml && !documentHtml) {
+                processHtml = cells[2].innerHTML;
             }
 
+            el("detailProcess").innerHTML = processHtml || "-";
+            el("detailDocuments").innerHTML = documentHtml || "-";
+            el("detailFee").innerHTML = cells[3].innerHTML;
+            el("detailTime").innerHTML = cells[4].innerHTML;
+            el("detailOfficer").innerHTML = cells[5].innerHTML;
+
+            el("serviceDetailTitle").textContent =
+                cells[1].textContent.trim() || "सेवा विवरण";
+
+            serviceDetailModal.style.display = "flex";
+            updateBusy();
         }
-        else {
 
-            showPerson(0);
+        function showAllRows() {
+            if (!tableBody) { return; }
+            each(tableBody.querySelectorAll(".service-row"), function (row) {
+                row.style.display = "";
+                row.className = row.className.replace(" search-match", "");
+            });
+            tableScroll.scrollTop = 0;
+        }
 
+        function clearSearch() {
+            if (searchInput) { searchInput.value = ""; }
+            showAllRows();
+        }
+
+        function closeServiceDetails() {
+            serviceDetailModal.style.display = "none";
+            clearSearch();            // restore the full table
+            updateBusy();
+        }
+
+        if (closeServiceDetail) {
+            closeServiceDetail.addEventListener("click", closeServiceDetails);
+        }
+
+        serviceDetailModal.addEventListener("click", function (event) {
+            if (event.target === serviceDetailModal) { closeServiceDetails(); }
+        });
+
+
+        /* =====================================================
+           SERVICE SEARCH
+           - Filters the table.
+           - If exactly one service matches (or the text is an
+             exact serial number) its popup opens.
+           - Waits 0.7 s after typing stops, so typing "10" does
+             not open service 1 first.
+           ===================================================== */
+        function runSearch() {
+
+            var q = searchInput.value.toLowerCase().trim();
+
+            if (q === "") { showAllRows(); return; }
+
+            var rows = tableBody.querySelectorAll(".service-row");
+            var exact = null;
+            var matches = [];
+
+            each(rows, function (row) {
+                var s = row.querySelector(".serial-number");
+                if (s && s.textContent.trim() === q) { exact = row; }
+            });
+
+            each(rows, function (row) {
+
+                row.className = row.className.replace(" search-match", "");
+
+                var hit = exact
+                    ? row === exact
+                    : row.textContent.toLowerCase().indexOf(q) !== -1;
+
+                row.style.display = hit ? "" : "none";
+
+                if (hit) { matches.push(row); }
+            });
+
+            tableScroll.scrollTop = 0;
+
+            if (matches.length === 1) {
+                matches[0].className += " search-match";
+                openServiceDetails(matches[0]);
+            }
+        }
+
+        if (searchInput && tableBody) {
+
+            var searchTimer = null;
+
+            searchInput.addEventListener("input", function () {
+
+                clearTimeout(searchTimer);
+
+                if (this.value.trim() === "") {
+                    showAllRows();
+                    return;
+                }
+
+                searchTimer = setTimeout(runSearch, 700);
+            });
+
+            searchInput.addEventListener("keydown", function (event) {
+                if (event.keyCode === 13) {      // Enter = search now
+                    clearTimeout(searchTimer);
+                    runSearch();
+                }
+            });
+
+            tableBody.addEventListener("click", function (event) {
+
+                var node = event.target;
+
+                while (node && node !== tableBody) {
+                    if (node.className && String(node.className).indexOf("service-row") !== -1) {
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+
+                if (node && node !== tableBody && searchInput.value.trim() !== "") {
+                    openServiceDetails(node);
+                }
+            });
         }
 
 
         /* =====================================================
-           PEOPLE LIST MODAL
+           TABLE AUTO SCROLL
+           - Frame based, speed measured in rem per second, so it
+             looks the same on 1080p and 4K.
+           - Holds 4 seconds at the bottom and at the top.
+           - Does NOT stop on mouse hover (a TV pointer could
+             freeze it). Touch / wheel pause it for 8 seconds.
            ===================================================== */
+        if (tableScroll) {
 
-        var peopleListModal =
-            document.getElementById(
-                "peopleListModal"
-            );
+            var SPEED_REM = 2.2;           // rem per second
+            var HOLD_MS = 4000;
+            var USER_PAUSE_MS = 8000;
 
-        var openPeopleList =
-            document.getElementById(
-                "openPeopleList"
-            );
+            var pos = 0;
+            var lastTime = 0;
+            var pauseUntil = 0;
 
-        var closePeopleList =
-            document.getElementById(
-                "closePeopleList"
-            );
+            function userTouched() {
+                pauseUntil = Date.now() + USER_PAUSE_MS;
+            }
 
+            tableScroll.addEventListener("wheel", userTouched);
+            tableScroll.addEventListener("touchstart", userTouched);
+            tableScroll.addEventListener("mousedown", userTouched);
 
-        /* =====================================================
-           OPEN PEOPLE LIST
-           ===================================================== */
+            function step() {
 
-        if (openPeopleList) {
+                var now = Date.now();
+                var dt = lastTime ? (now - lastTime) / 1000 : 0;
+                lastTime = now;
 
-            openPeopleList.addEventListener(
-                "click",
-                function () {
+                var max = tableScroll.scrollHeight - tableScroll.clientHeight;
 
-                    if (!peopleListModal) {
-                        return;
+                if (max > 0 && now > pauseUntil && !window.__charterBusy) {
+
+                    // somebody scrolled manually -> continue from there
+                    if (Math.abs(tableScroll.scrollTop - pos) > 3) {
+                        pos = tableScroll.scrollTop;
                     }
 
-                    peopleListModal.style.display =
-                        "flex";
+                    var rem = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
 
-                    document.body.style.overflow =
-                        "hidden";
+                    if (pos >= max - 1) {
+                        pos = 0;                         // back to top, hold
+                        pauseUntil = now + HOLD_MS;
+                    }
+                    else {
+                        pos = Math.min(max, pos + SPEED_REM * rem * dt);
+                        if (pos >= max - 1) { pauseUntil = now + HOLD_MS; }   // reached bottom, hold
+                    }
 
+                    tableScroll.scrollTop = pos;
                 }
-            );
 
+                window.requestAnimationFrame(step);
+            }
+
+            window.requestAnimationFrame(step);
         }
 
 
         /* =====================================================
-           CLOSE PEOPLE LIST
+           PEOPLE (representatives + employees)
            ===================================================== */
+        var people = @Html.Raw(Json.Encode(peopleData));
 
-        function closePeopleModal() {
+        var personDisplay = el("personDisplay");
+        var currentPersonIndex = 0;
 
-            if (!peopleListModal) {
+        function showPerson(index) {
+
+            if (!personDisplay) { return; }
+
+            if (people.length === 0) {
+                personDisplay.innerHTML =
+                    '<div class="no-service"><div>' +
+                    '<i class="fa fa-user fa-2x"></i><br><br>' +
+                    'हाल कुनै प्रतिनिधि / कर्मचारी उपलब्ध छैन।' +
+                    '</div></div>';
                 return;
             }
 
-            peopleListModal.style.display =
-                "none";
+            var p = people[index];
 
-            document.body.style.overflow =
-                "";
+            var html =
+                '<div class="person-card">' +
+                    '<div class="person-image-wrapper">' +
+                        '<img class="person-image" src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.name) + '">' +
+                    '</div>' +
+                    '<div class="person-name">' + escapeHtml(p.name) + '</div>' +
+                    '<div class="person-post">' + escapeHtml(p.post) + '</div>';
 
+            if (p.contact) {
+                html += '<div class="person-contact"><i class="fa fa-phone"></i>' + escapeHtml(p.contact) + '</div>';
+            }
+
+            html +=
+                    '<div class="person-type">' + escapeHtml(p.type) + '</div>' +
+                    '<div class="person-counter">' + (index + 1) + ' / ' + people.length + '</div>' +
+                '</div>';
+
+            personDisplay.innerHTML = html;
+            fixImages(personDisplay);
         }
 
+        showPerson(0);
 
-        if (closePeopleList) {
-
-            closePeopleList.addEventListener(
-                "click",
-                closePeopleModal
-            );
-
+        if (people.length > 1) {
+            setInterval(function () {
+                currentPersonIndex = (currentPersonIndex + 1) % people.length;
+                showPerson(currentPersonIndex);
+            }, 6000);
         }
 
 
         /* =====================================================
-           CLOSE PEOPLE MODAL OUTSIDE DIALOG
+           PEOPLE LIST POPUP
            ===================================================== */
+        function buildPeopleList() {
 
-        if (peopleListModal) {
+            var grid = el("peopleListGrid");
 
-            peopleListModal.addEventListener(
-                "click",
-                function (event) {
+            if (!grid || grid.getAttribute("data-built")) { return; }
 
-                    if (
-                        event.target ===
-                        peopleListModal
-                    ) {
+            var html = "";
 
-                        closePeopleModal();
+            people.forEach(function (p) {
+                html +=
+                    '<div class="people-list-item"><div class="people-list-card">' +
+                        '<img class="people-list-image" src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.name) + '">' +
+                        '<div class="people-list-text">' +
+                            '<div class="people-list-name">' + escapeHtml(p.name) + '</div>' +
+                            '<div class="people-list-post">' + escapeHtml(p.post) + '</div>' +
+                            (p.contact
+                                ? '<div class="people-list-contact"><i class="fa fa-phone"></i> ' + escapeHtml(p.contact) + '</div>'
+                                : '') +
+                        '</div>' +
+                    '</div></div>';
+            });
 
-                    }
-
-                }
-            );
-
+            grid.innerHTML = html;
+            fixImages(grid);
+            grid.setAttribute("data-built", "1");
         }
+
+        function closePeopleModal() {
+            peopleListModal.style.display = "none";
+            updateBusy();
+        }
+
+        if (openPeopleList) {
+            openPeopleList.addEventListener("click", function () {
+                buildPeopleList();
+                peopleListModal.style.display = "flex";
+                updateBusy();
+            });
+        }
+
+        if (closePeopleList) {
+            closePeopleList.addEventListener("click", closePeopleModal);
+        }
+
+        peopleListModal.addEventListener("click", function (event) {
+            if (event.target === peopleListModal) { closePeopleModal(); }
+        });
+
+
+        /* =====================================================
+           CLOSE KEYS
+           Escape (keyboard), 461 (LG webOS Back), 10009 (Samsung
+           Tizen Back).
+           ===================================================== */
+        document.addEventListener("keydown", function (event) {
+
+            var k = event.keyCode;
+
+            if (event.key === "Escape" || k === 27 || k === 461 || k === 10009) {
+                closeServiceDetails();
+                closePeopleModal();
+            }
+        });
+
+
+        /* =====================================================
+           IDLE RESET
+           If nobody touches the screen for 60 seconds: clear the
+           search and close any popup, so the board always returns
+           to the normal scrolling display.
+           ===================================================== */
+        var idleTimer = null;
+
+        function resetIdle() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(function () {
+                closeServiceDetails();
+                closePeopleModal();
+            }, 60000);
+        }
+
+        ["keydown", "click", "touchstart", "wheel"].forEach(function (name) {
+            document.addEventListener(name, resetIdle);
+        });
+
+        resetIdle();
 
     });
 

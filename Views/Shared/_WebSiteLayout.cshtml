@@ -1,70 +1,36 @@
 ﻿@{
     Layout = null;
 
-    // =========================================================
-    // OFFICE INFORMATION
-    // =========================================================
+    // Always send UTF-8 so Nepali (Devanagari) text is never garbled
+    Response.Charset = "utf-8";
 
+    // ---------------------------------------------------------
+    // KIOSK MODE
+    // Open the display as  http://yoursite/Home/WebIndex?kiosk=1
+    // Kiosk mode hides Login, Fullscreen and Audio buttons and
+    // disables the emblem link (nothing to click on a TV).
+    // ---------------------------------------------------------
+    bool kiosk = Request.QueryString["kiosk"] == "1";
+
+    // ---------------------------------------------------------
+    // OFFICE + NOTICES (context is disposed straight away)
+    // ---------------------------------------------------------
     var ofc = Utility.officeDetail();
 
-
-    // =========================================================
-    // DATABASE
-    // =========================================================
-
-    HelpDesk.Models.ApplicationDbContext db =
-        new HelpDesk.Models.ApplicationDbContext();
-
-
-    // =========================================================
-    // NOTICES
-    //
-    // The notice bar belongs to the common layout so that it
-    // appears consistently on every page using this layout.
-    //
-    // Latest 5 notices are displayed.
-    // If there are no notices, a default message is displayed.
-    // =========================================================
-
+    var db = new HelpDesk.Models.ApplicationDbContext();
     var notice = db.Notice
         .OrderByDescending(x => x.NoticeId)
         .Take(5)
         .ToList();
-
-
-    // =========================================================
-    // DATE
-    // =========================================================
-
-    var date = DateTime.Now;
-    var month_name = date.ToString("MMMM");
+    db.Dispose();
 }
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<!DOCTYPE html>
+<html lang="ne">
 <head>
-
-    <!-- =====================================================
-         META
-         ===================================================== -->
-
-    <meta http-equiv="Content-Type"
-          content="text/html; charset=utf-8" />
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
-
-
-    <!-- =====================================================
-         PAGE TITLE
-         ===================================================== -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>
-
         @if (ofc != null)
         {
             @ofc.Office_Name
@@ -73,1470 +39,525 @@
         {
             <text>डिजिटल नागरिक वडापत्र प्रणाली</text>
         }
-
     </title>
 
-
-    <!-- =====================================================
-         CSS FILES
-         ===================================================== -->
-
-    <link href="~/Content/fontawesome-all.css"
-          rel="stylesheet" />
-
-    <link href="~/Content/bootstrap.css"
-          rel="stylesheet" />
-
-    <link href="~/Content/fontawesome.css"
-          rel="stylesheet" />
-
-    <link href="~/Styles/style.css"
-          rel="stylesheet" />
-
-    <link href="~/css/asstes/css/styles.css"
-          rel="stylesheet" />
-
-    <link href="~/Content/chosen.css"
-          rel="stylesheet" />
-
-    <link href="~/Content/PagedList.css"
-          rel="stylesheet" />
-
-    <link href="~/fontawesome-free-6.7.2-web/css/all.css"
-          rel="stylesheet" />
-
-
-    <!-- =====================================================
-         JAVASCRIPT
-         ===================================================== -->
+    <!-- Only the CSS the display really needs.
+         Removed: duplicate Font Awesome copies, Chosen, PagedList.
+         If the video partial looks broken, re-add what it needs. -->
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/fontawesome-free-6.7.2-web/css/all.css" rel="stylesheet" />
+    <link href="~/Styles/style.css" rel="stylesheet" />
+    <link href="~/css/asstes/css/styles.css" rel="stylesheet" />
 
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
-
     <script src="~/Scripts/bootstrap.min.js"></script>
-
-
-    <!-- =====================================================
-         DIGITAL CITIZEN CHARTER STYLE
-         ===================================================== -->
 
     <style>
 
-             /* =====================================================
-        GLOBAL VIEWPORT LAYOUT
-        ===================================================== */
-
-             html {
-                 width: 100%;
-                 height: 100%;
-                 margin: 0;
-                 padding: 0;
-                 scrollbar-width: none;
-             }
-
-                 html::-webkit-scrollbar {
-                     display: none;
-                 }
-
-             body {
-                 width: 100%;
-                 height: 100%;
-                 min-height: 100vh;
-                 margin: 0;
-                 padding: 0;
-                 overflow: hidden !important;
-                 background: #eef2f7;
-                 font-family: "Segoe UI", "Noto Sans Devanagari", "Mangal", Arial, sans-serif;
-                 display: flex;
-                 flex-direction: column;
-             }
-
-
-             /* =====================================================
-                          HEADER
-                  ===================================================== */
-
-             header.navigation1 {
-                 flex: 0 0 auto;
-                 width: 100%;
-                 background: transparent !important;
-                 border: none !important;
-                 box-shadow: none !important;
-                 padding: 0 !important;
-                 margin: 0 !important;
-             }
-
-
-             /* =====================================================
-                MAIN OFFICE HEADER
-                ===================================================== */
-
-             .office-header {
-                 position: relative;
-                 width: 100%;
-                 min-height: 120px;
-                 display: grid;
-                 /*
-                  * Header layout:
-                  *
-                  * Left   = Nepal emblem
-                  * Center = Office information
-                  * Right  = Flag / date / login
-                  */
-                 grid-template-columns: 13% 74% 13%;
-                 align-items: center;
-                 padding: 10px 50px 10px 25px;
-                 background: linear-gradient( 135deg, #0f1f3d 0%, #172554 38%, #1e3a5f 70%, #274c77 100% );
-                 border-left: 7px solid #c9a227;
-                 border-bottom: 4px solid #c9a227;
-                 box-shadow: 0 4px 15px rgba(0, 0, 0, .25);
-                 overflow: hidden;
-                 box-sizing: border-box;
-             }
-
-
-                 /* =====================================================
-                DECORATIVE HEADER EFFECTS
-                ===================================================== */
-
-                 .office-header::before {
-                     content: "";
-                     position: absolute;
-                     top: -80px;
-                     right: 12%;
-                     width: 240px;
-                     height: 240px;
-                     border-radius: 50%;
-                     background: rgba(255, 255, 255, .035);
-                     pointer-events: none;
-                 }
-
-
-                 .office-header::after {
-                     content: "";
-                     position: absolute;
-                     bottom: -100px;
-                     left: 35%;
-                     width: 300px;
-                     height: 200px;
-                     border-radius: 50%;
-                     background: rgba(201, 162, 39, .035);
-                     pointer-events: none;
-                 }
-
-
-             /* =====================================================
-                LEFT - NEPAL EMBLEM
-                ===================================================== */
-
-             .office-logo {
-                 height: 100%;
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 position: relative;
-                 z-index: 2;
-                 min-width: 0;
-             }
-
-
-                 .office-logo a {
-                     width: 100%;
-                     display: flex;
-                     align-items: center;
-                     justify-content: center;
-                     text-decoration: none;
-                 }
-
-
-             .nepal-emblem {
-                 display: block;
-                 width: auto;
-                 height: 90px;
-                 max-width: 130px;
-                 object-fit: contain;
-                 filter: drop-shadow( 0 3px 4px rgba(0, 0, 0, .35) );
-             }
-
-
-             /* =====================================================
-                CENTER - OFFICE INFORMATION
-                ===================================================== */
-
-             .office-header-content {
-                 width: 100%;
-                 min-width: 0;
-                 padding: 0 10px;
-                 text-align: center;
-                 position: relative;
-                 z-index: 2;
-                 box-sizing: border-box;
-             }
-
-
-             /* =====================================================
-                OFFICE NAME
-                ===================================================== */
-
-             .office-name {
-                 width: 100%;
-                 padding: 5px;
-                 color: #ffffff;
-                 font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
-                 font-size: clamp(28px, 2.5vw, 52px);
-                 font-weight: 800;
-                 line-height: 1.15;
-                 text-shadow: 0 2px 4px rgba(0, 0, 0, .35);
-                 white-space: nowrap;
-                 overflow: hidden;
-                 text-overflow: ellipsis;
-                 box-sizing: border-box;
-             }
-
-
-             /* =====================================================
-                OFFICE LOCATION
-                ===================================================== */
-
-             .office-address {
-                 width: 100%;
-                 margin-top: 5px;
-                 padding: 0 5px;
-                 color: #e7eef7;
-                 font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
-                 font-size: clamp(17px, 1.35vw, 30px);
-                 font-weight: 500;
-                 line-height: 1.35;
-                 /*
-                  * Keep wrapping enabled so long Nepali locations
-                  * are not clipped.
-                  */
-                 white-space: normal;
-                 overflow: visible;
-                 text-overflow: unset;
-                 text-align: center;
-                 box-sizing: border-box;
-             }
-
-
-             /* =====================================================
-                DIGITAL CITIZEN CHARTER BADGE
-                ===================================================== */
-
-             .office-welcome {
-                 display: inline-block;
-                 max-width: 100%;
-                 margin-top: 8px;
-                 padding: 5px 18px;
-                 color: #ffffff;
-                 background: rgba(201, 162, 39, .18);
-                 border: 1px solid rgba(201, 162, 39, .75);
-                 border-radius: 20px;
-                 font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", sans-serif;
-                 font-size: clamp(15px, 1.05vw, 24px);
-                 font-weight: 700;
-                 box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
-                 box-sizing: border-box;
-             }
-
-
-             /* =====================================================
-                RIGHT - FLAG / DATE / LOGIN
-                ===================================================== */
-
-             .office-right {
-                 height: 100%;
-                 display: flex;
-                 flex-direction: column;
-                 align-items: center;
-                 justify-content: center;
-                 gap: 5px;
-                 padding-right: 5px;
-                 position: relative;
-                 z-index: 2;
-                 min-width: 0;
-             }
-
-
-             /* =====================================================
-                NEPAL FLAG
-                ===================================================== */
-
-             .nepal-flag {
-                 width: auto;
-                 height: 48px;
-                 max-width: 100%;
-                 object-fit: contain;
-                 filter: drop-shadow( 0 2px 4px rgba(0, 0, 0, .35) );
-             }
-
-
-             /* =====================================================
-                DATE
-                ===================================================== */
-
-             .header-date {
-                 text-align: center;
-                 color: #ffffff;
-                 font-family: "Segoe UI", Arial, sans-serif;
-                 font-size: clamp(12px, .8vw, 18px);
-                 font-weight: 600;
-                 line-height: 1.2;
-                 white-space: nowrap;
-             }
-
-
-             /* =====================================================
-                LOGIN BUTTON
-                ===================================================== */
-
-             .login-button {
-                 display: inline-block;
-                 padding: 4px 16px;
-                 color: #ffffff !important;
-                 background: #9b111e;
-                 border: 1px solid rgba(255, 255, 255, .35);
-                 border-radius: 5px;
-                 text-decoration: none !important;
-                 font-size: 13px;
-                 font-weight: 600;
-                 transition: all .2s ease;
-             }
-
-
-                 .login-button:hover {
-                     background: #b91c2b;
-                     color: #ffffff !important;
-                     transform: translateY(-1px);
-                 }
-
-
-             /* =====================================================
-                FULLSCREEN BUTTON
-                ===================================================== */
-
-             .fullscreen-button {
-                 position: absolute;
-                 top: 50%;
-                 right: 12px;
-                 transform: translateY(-50%);
-                 width: 42px;
-                 height: 42px;
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 border: 1px solid rgba(255, 255, 255, .35);
-                 border-radius: 50%;
-                 background: rgba(255, 255, 255, .12);
-                 color: #ffffff;
-                 font-size: 22px;
-                 cursor: pointer;
-                 z-index: 20;
-                 transition: all .2s ease;
-             }
-
-
-                 .fullscreen-button:hover {
-                     background: rgba(255, 255, 255, .25);
-                     transform: translateY(-50%) scale(1.05);
-                 }
-
-
-             /* =====================================================
-                MAIN PAGE AREA
-                ===================================================== */
-
-             .website-main {
-                 width: 100%;
-                 /*
-          * Take exactly whatever height remains
-          * after the header.
-          */
-                 flex: 1 1 auto;
-                 min-height: 0;
-                 display: flex;
-                 flex-direction: column;
-                 background: #eef2f7;
-                 overflow: hidden;
-             }
-
-
-        .website-content {
-            width: 100%;
-            flex: 1 1 auto;
-            min-height: 0;
-            background: #eef2f7;
-            overflow: hidden;
-            scroll-behavior: smooth;
-            /* NEW */
-            display: flex;
-            flex-direction: column;
+        /* =====================================================
+           DEVANAGARI FONT (self-hosted, TVs rarely have one)
+           Put these files in  /Content/fonts/
+             NotoSansDevanagari-Regular.woff2
+             NotoSansDevanagari-Bold.woff2
+           ===================================================== */
+        @@font-face {
+            font-family: "CharterDev";
+            font-weight: 400;
+            src: local("Noto Sans Devanagari"), url('@Url.Content("~/Content/fonts/NotoSansDevanagari-Regular.woff2")') format("woff2");
         }
 
-
-             /* =====================================================
-                NOTICE BAR
-                =====================================================
-
-                The notice bar is intentionally kept inside the
-                common layout so every page automatically receives
-                the same notice section.
-
-                It is ALWAYS visible:
-                  - Notices available  -> latest notices scroll
-                  - No notices         -> default message shown
-             */
-
-             .notice-bar {
-                 width: 100%;
-                 min-height: 45px;
-                 display: flex;
-                 align-items: stretch;
-                 background: linear-gradient( 90deg, #0f1f3d, #172554, #1e3a5f ) !important;
-                 color: #ffffff;
-                 border-top: 3px solid #c9a227;
-                 overflow: hidden;
-                 box-sizing: border-box;
-             }
-
-
-             /* =====================================================
-                NOTICE TITLE
-                ===================================================== */
-
-             .notice-title {
-                 min-width: 125px;
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 gap: 8px;
-                 padding: 8px 18px;
-                 background: #9b111e;
-                 color: #ffffff;
-                 font-size: 16px;
-                 font-weight: 700;
-                 line-height: 1;
-                 white-space: nowrap;
-                 z-index: 2;
-                 box-shadow: 3px 0 8px rgba(0, 0, 0, .15);
-             }
-
-
-                 .notice-title i {
-                     font-size: 15px;
-                 }
-
-
-             /* =====================================================
-                NOTICE MARQUEE CONTAINER
-                ===================================================== */
-
-             .notice-marquee {
-                 flex: 1 1 auto;
-                 min-width: 0;
-                 display: flex;
-                 align-items: center;
-                 overflow: hidden;
-             }
-
-
-                 /* =====================================================
-                MARQUEE
-                ===================================================== */
-
-                 .notice-marquee marquee {
-                     width: 100%;
-                     color: #ffffff;
-                     font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", "Segoe UI", Arial, sans-serif;
-                     font-size: 16px;
-                     font-weight: 500;
-                     line-height: 40px;
-                     vertical-align: middle;
-                 }
-
-
-             /* =====================================================
-                NOTICE ITEM
-                ===================================================== */
-
-             .notice-item {
-                 display: inline-block;
-                 margin-right: 70px;
-                 color: #ffffff;
-                 white-space: nowrap;
-             }
-
-
-                 .notice-item::before {
-                     content: "•";
-                     margin-right: 10px;
-                     color: #ffe08a;
-                     font-weight: 700;
-                 }
-
-
-             /* =====================================================
-                NOTICE LINKS
-                ===================================================== */
-
-             .notice-bar a {
-                 color: #ffffff !important;
-                 text-decoration: none;
-             }
-
-
-                 .notice-bar a:hover {
-                     color: #ffe9a3 !important;
-                 }
-
-
-             /* =====================================================
-                FOOTER
-                ===================================================== */
-
-             .website-footer {
-                 width: 100%;
-                 /*
-          * Footer keeps its natural height.
-          * It will NOT be pushed outside the viewport.
-          */
-                 flex: 0 0 auto;
-                 margin: 0;
-                 padding: 0;
-                 background: #0f1f3d;
-                 color: #ffffff !important;
-                 border-top: 4px solid #c9a227;
-                 box-sizing: border-box;
-             }
-
-
-             /* =====================================================
-                FOOTER INFORMATION
-                ===================================================== */
-
-             .footer-info {
-                 padding: 8px 15px;
-                 background: #0f1f3d;
-                 color: #ffffff;
-                 font-size: 14px;
-                 line-height: 1.5;
-             }
-
-
-                 .footer-info a {
-                     color: #ffe08a !important;
-                     text-decoration: none;
-                 }
-
-
-                     .footer-info a:hover {
-                         color: #ffffff !important;
-                     }
-
-
-             .footer-office {
-                 font-weight: 700;
-                 color: #ffffff;
-             }
-
-
-             .footer-developed {
-                 text-align: right;
-             }
-
-
-             /* =====================================================
-                LARGE DESKTOP
-                ===================================================== */
-
-             @@media (min-width: 1600px) {
-
-                 .office-header {
-                     min-height: 140px;
-                 }
-
-
-                 .nepal-emblem {
-                     height: 110px;
-                 }
-
-
-                 .nepal-flag {
-                     height: 58px;
-                 }
-
-
-                 .office-welcome {
-                     padding: 7px 22px;
-                 }
-
-
-                 .notice-title {
-                     min-width: 140px;
-                     font-size: 18px;
-                 }
-
-
-                 .notice-marquee marquee {
-                     font-size: 18px;
-                 }
-             }
-
-/* ===== TV / DISPLAY BOARD ===== */
-
-/* Pin the page to the real visible viewport (works in fullscreen on TVs) */
-html {
-    background: #0f1f3d;   /* footer colour, so any leftover gap is not white */
-}
-
-body {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    height: auto;
-    min-height: 0;
-}
-
-
-/* 1080p-class TVs: wide but short screens. Compress header and footer. */
-@@media (min-width: 1600px) and (max-height: 1100px) {
-
-    .office-header {
-        min-height: 105px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-    }
-
-    .nepal-emblem { height: 78px; }
-    .nepal-flag   { height: 42px; }
-
-    .office-name {
-        font-size: clamp(28px, 2.1vw, 42px);
-        padding: 2px 5px;
-    }
-
-    .office-address {
-        font-size: clamp(16px, 1.1vw, 24px);
-        margin-top: 2px;
-    }
-
-    .office-welcome {
-        margin-top: 4px;
-        padding: 3px 16px;
-        font-size: clamp(14px, .95vw, 20px);
-    }
-
-    .notice-bar { min-height: 40px; }
-    .notice-title { padding: 6px 16px; font-size: 17px; }
-    .notice-marquee marquee { font-size: 18px; line-height: 36px; }
-
-    .footer-info {
-        padding: 4px 15px;
-        font-size: 13px;
-        line-height: 1.35;
-    }
-}
-
-/* True 4K (only if the TV exposes 3840x2160 CSS pixels) */
-@@media (min-width: 2500px) and (min-height: 1400px) {
-    .office-header { min-height: 165px; }
-}
-
-/* Optional: TVs with overscan (edges cut off). Uncomment if needed. */
-/*
-body {
-    padding: 10px 14px;
-    box-sizing: border-box;
-}
-*/
-             /* =====================================================
-                VERY LARGE DISPLAY BOARD
-                ===================================================== */
-
-             @@media (min-width: 2500px) {
-
-                 .office-header {
-                     min-height: 165px;
-                     grid-template-columns: 12% 76% 12%;
-                 }
-
-
-                 .nepal-emblem {
-                     height: 135px;
-                     max-width: 170px;
-                 }
-
-
-                 .nepal-flag {
-                     height: 70px;
-                 }
-
-
-                 .fullscreen-button {
-                     width: 50px;
-                     height: 50px;
-                     font-size: 26px;
-                 }
-
-
-                 .notice-bar {
-                     min-height: 55px;
-                 }
-
-
-                 .notice-title {
-                     min-width: 165px;
-                     padding: 10px 22px;
-                     font-size: 22px;
-                 }
-
-
-                     .notice-title i {
-                         font-size: 20px;
-                     }
-
-
-                 .notice-marquee marquee {
-                     font-size: 22px;
-                     line-height: 52px;
-                 }
-
-
-                 .footer-info {
-                     font-size: 18px;
-                 }
-             }
-
-
-             /* =====================================================
-                TABLET / SMALL SCREEN
-                ===================================================== */
-
-             @@media (max-width: 900px) {
-
-                 .office-header {
-                     grid-template-columns: 18% 64% 18%;
-                     padding-left: 10px;
-                     padding-right: 50px;
-                     min-height: 100px;
-                 }
-
-
-                 .nepal-emblem {
-                     height: 70px;
-                     max-width: 90px;
-                 }
-
-
-                 .nepal-flag {
-                     height: 35px;
-                 }
-
-
-                 .office-header-content {
-                     padding: 0 5px;
-                 }
-
-
-                 .office-name {
-                     font-size: clamp(20px, 3vw, 32px);
-                 }
-
-
-                 .office-address {
-                     font-size: clamp(13px, 2vw, 20px);
-                     line-height: 1.35;
-                 }
-
-
-                 .office-welcome {
-                     padding: 3px 10px;
-                 }
-
-
-                 .fullscreen-button {
-                     width: 35px;
-                     height: 35px;
-                     right: 7px;
-                     font-size: 18px;
-                 }
-
-
-                 .login-button {
-                     padding: 3px 9px;
-                     font-size: 11px;
-                 }
-                 /* NOTICE */
-
-                 .notice-title {
-                     min-width: 95px;
-                     padding: 8px 12px;
-                     font-size: 14px;
-                 }
-
-
-                 .notice-marquee marquee {
-                     font-size: 14px;
-                 }
-             }
-
-
-             /* =====================================================
-                MOBILE
-                ===================================================== */
-
-             @@media (max-width: 600px) {
-
-                 .office-header {
-                     grid-template-columns: 20% 60% 20%;
-                     min-height: 90px;
-                     padding: 5px 42px 5px 5px;
-                 }
-
-
-                 .nepal-emblem {
-                     height: 58px;
-                     max-width: 70px;
-                 }
-
-
-                 .nepal-flag {
-                     height: 27px;
-                 }
-
-
-                 .office-header-content {
-                     padding: 0 3px;
-                 }
-
-
-                 .office-name {
-                     font-size: 20px;
-                     line-height: 1.15;
-                 }
-
-
-                 .office-address {
-                     font-size: 12px;
-                     line-height: 1.3;
-                     margin-top: 3px;
-                     padding: 0 2px;
-                 }
-
-
-                 .office-welcome {
-                     margin-top: 3px;
-                     padding: 2px 7px;
-                     font-size: 10px;
-                     line-height: 1.2;
-                 }
-
-
-                 .header-date {
-                     font-size: 9px;
-                 }
-
-
-                 .login-button {
-                     padding: 2px 7px;
-                     font-size: 9px;
-                 }
-
-
-                 .fullscreen-button {
-                     width: 30px;
-                     height: 30px;
-                     font-size: 15px;
-                     right: 5px;
-                 }
-                 /* =================================================
-                    MOBILE NOTICE
-                    ================================================= */
-
-                 .notice-bar {
-                     min-height: 38px;
-                 }
-
-
-                 .notice-title {
-                     min-width: 75px;
-                     padding: 7px 9px;
-                     gap: 5px;
-                     font-size: 13px;
-                 }
-
-
-                     .notice-title i {
-                         font-size: 12px;
-                     }
-
-
-                 .notice-marquee marquee {
-                     font-size: 13px;
-                     line-height: 36px;
-                 }
-
-
-                 .notice-item {
-                     margin-right: 45px;
-                 }
-                 /* =================================================
-                    FOOTER
-                    ================================================= */
-
-                 .footer-info {
-                     font-size: 12px;
-                 }
-
-
-                 .footer-developed {
-                     text-align: center;
-                 }
-             }
-
-
-             /* =====================================================
-                EXTRA SMALL MOBILE
-                ===================================================== */
-
-             @@media (max-width: 400px) {
-
-                 .office-header {
-                     grid-template-columns: 18% 64% 18%;
-                     padding: 4px 38px 4px 4px;
-                     min-height: 85px;
-                 }
-
-
-                 .nepal-emblem {
-                     height: 52px;
-                     max-width: 60px;
-                 }
-
-
-                 .nepal-flag {
-                     height: 24px;
-                 }
-
-
-                 .office-name {
-                     font-size: 17px;
-                 }
-
-
-                 .office-address {
-                     font-size: 10px;
-                 }
-
-
-                 .office-welcome {
-                     font-size: 8px;
-                     padding: 2px 5px;
-                 }
-
-
-                 .header-date {
-                     font-size: 8px;
-                 }
-
-
-                 .login-button {
-                     font-size: 8px;
-                     padding: 2px 5px;
-                 }
-                 /* NOTICE */
-
-                 .notice-title {
-                     min-width: 65px;
-                     padding: 6px 7px;
-                     font-size: 11px;
-                 }
-
-
-                     .notice-title i {
-                         font-size: 10px;
-                     }
-
-
-                 .notice-marquee marquee {
-                     font-size: 11px;
-                     line-height: 34px;
-                 }
-
-
-                 .notice-item {
-                     margin-right: 35px;
-                 }
-             }
-
-
-             /* =====================================================
-                PRINT
-                ===================================================== */
-
-             @@media print {
-
-                 .fullscreen-button,
-                 .login-button {
-                     display: none !important;
-                 }
-
-
-                 .office-header {
-                     box-shadow: none !important;
-                     -webkit-print-color-adjust: exact;
-                     print-color-adjust: exact;
-                 }
-
-
-                 .notice-bar,
-                 .website-footer {
-                     -webkit-print-color-adjust: exact;
-                     print-color-adjust: exact;
-                 }
-             }
-
-             /* =====================================================
-        WEBSITE BACKGROUND AUDIO BUTTON
-        ===================================================== */
-
-             .audio-enable-button {
-                 position: fixed;
-                 right: 15px;
-                 bottom: 15px;
-                 z-index: 99999;
-                 width: 42px;
-                 height: 42px;
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 border: 1px solid rgba(255,255,255,.35);
-                 border-radius: 50%;
-                 background: #172554;
-                 color: #ffffff;
-                 font-size: 17px;
-                 cursor: pointer;
-                 box-shadow: 0 3px 12px rgba(0,0,0,.25);
-                 transition: all .2s ease;
-             }
-
-                 .audio-enable-button:hover {
-                     background: #9b111e;
-                     transform: scale(1.05);
-                 }
-
-/* ===== SHORT SCREENS SUCH AS 1280x624 (TVs with high dpr) ===== */
-@@media (min-width: 1101px) and (max-height: 720px) {
-
-    .office-header {
-        min-height: 84px;
-        padding-top: 4px;
-        padding-bottom: 4px;
-    }
-
-    .nepal-emblem { height: 62px; }
-    .nepal-flag   { height: 32px; }
-
-    .office-name {
-        font-size: 26px;
-        padding: 0 5px;
-    }
-
-    .office-address {
-        font-size: 14px;
-        margin-top: 0;
-    }
-
-    .office-welcome {
-        margin-top: 2px;
-        padding: 2px 14px;
-        font-size: 13px;
-    }
-
-    .notice-bar { min-height: 34px; }
-    .notice-title { padding: 4px 12px; font-size: 14px; }
-    .notice-marquee marquee { font-size: 15px; line-height: 30px; }
-
-    .footer-info {
-        padding: 3px 12px;
-        font-size: 12px;
-        line-height: 1.3;
-    }
-}
+        @@font-face {
+            font-family: "CharterDev";
+            font-weight: 700;
+            src: local("Noto Sans Devanagari Bold"), url('@Url.Content("~/Content/fonts/NotoSansDevanagari-Bold.woff2")') format("woff2");
+        }
+
+        /* =====================================================
+           SCALING
+           1rem = 16px on 1920x1080, 32px on 3840x2160.
+           Everything below is written in rem, so the whole board
+           scales to any TV size (32" to 75"+).
+           ===================================================== */
+        html {
+            font-size: .8333vw !important;
+        }
+
+        @@supports (font-size: min(1vw, 1vh)) {
+            html {
+                font-size: min(.8333vw, 1.4815vh) !important;
+            }
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            box-sizing: border-box;
+            /* thin frame = safe margin against TV overscan */
+            padding: .3rem .5rem;
+            overflow: hidden !important;
+            background: #0f1f3d;
+            font-family: "CharterDev", "Kalimati", "Noto Sans Devanagari", "Mangal", "Segoe UI", Arial, sans-serif;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* =====================================================
+           HEADER
+           ===================================================== */
+        .tv-header {
+            position: relative;
+            flex: 0 0 auto;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            min-height: 7rem;
+            padding: .4rem 3.4rem .4rem .6rem;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #0f1f3d 0%, #172554 38%, #1e3a5f 70%, #274c77 100%);
+            border-left: .4rem solid #c9a227;
+            border-bottom: .25rem solid #c9a227;
+            box-shadow: 0 .25rem 1rem rgba(0,0,0,.25);
+            overflow: hidden;
+        }
+
+        .office-logo {
+            flex: 0 0 14rem;
+            width: 14rem;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+        }
+
+        .nepal-emblem {
+            display: block;
+            height: 5.2rem;
+            width: auto;
+            max-width: 9rem;
+            -o-object-fit: contain;
+            object-fit: contain;
+        }
+
+        .office-header-content {
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 0 .6rem;
+            text-align: center;
+        }
+
+        .office-name {
+            color: #fff;
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            text-shadow: 0 .1rem .25rem rgba(0,0,0,.35);
+        }
+
+        .office-address {
+            margin-top: .15rem;
+            color: #e7eef7;
+            font-size: 1.25rem;
+            line-height: 1.3;
+        }
+
+        .office-welcome {
+            display: inline-block;
+            margin-top: .3rem;
+            padding: .15rem 1.1rem;
+            color: #fff;
+            background: rgba(201,162,39,.18);
+            border: 1px solid rgba(201,162,39,.75);
+            border-radius: 1.5rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .office-right {
+            flex: 0 0 14rem;
+            width: 14rem;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        .nepal-flag {
+            height: 2.8rem;
+            width: auto;
+        }
+
+        .header-date {
+            margin-top: .2rem;
+            font-size: .95rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .header-time {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .login-button {
+            display: inline-block;
+            margin-top: .25rem;
+            padding: .15rem 1rem;
+            color: #fff !important;
+            background: #9b111e;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: .3rem;
+            text-decoration: none !important;
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .fullscreen-button {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            width: 2.4rem;
+            height: 2.4rem;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 50%;
+            background: rgba(255,255,255,.12);
+            color: #fff;
+            font-size: 1.3rem;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        /* =====================================================
+           MAIN AREA
+           ===================================================== */
+        .website-main {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            background: #eef2f7;
+            overflow: hidden;
+        }
+
+        .website-content {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            overflow: hidden;
+            background: #eef2f7;
+        }
+
+        /* =====================================================
+           FOOTER + NOTICE BAR
+           ===================================================== */
+        .website-footer {
+            flex: 0 0 auto;
+            background: #0f1f3d;
+            color: #fff;
+            border-top: .2rem solid #c9a227;
+        }
+
+        .notice-bar {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: stretch;
+            align-items: stretch;
+            min-height: 2.6rem;
+            background: linear-gradient(90deg, #0f1f3d, #172554, #1e3a5f);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .notice-title {
+            flex: 0 0 auto;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            padding: 0 1.2rem;
+            background: #9b111e;
+            font-size: 1.2rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+            .notice-title i {
+                margin-right: .5rem;
+            }
+
+        .notice-marquee {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Smooth CSS ticker (replaces <marquee>). Duration is
+           calculated in JavaScript so speed is the same on any TV. */
+        .notice-track {
+            flex: 0 0 auto;
+            display: inline-block;
+            padding-left: 100%;
+            white-space: nowrap;
+            font-size: 1.25rem;
+            -webkit-animation: ticker 40s linear infinite;
+            animation: ticker 40s linear infinite;
+        }
+
+        @@-webkit-keyframes ticker {
+            0% {
+                -webkit-transform: translateX(0);
+            }
+
+            100% {
+                -webkit-transform: translateX(-100%);
+            }
+        }
+
+        @@keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .notice-item {
+            display: inline-block;
+            margin-right: 4rem;
+            color: #fff;
+        }
+
+            .notice-item::before {
+                content: "\2022";
+                margin-right: .6rem;
+                color: #ffe08a;
+                font-weight: 700;
+            }
+
+        .notice-audio {
+            flex: 0 0 auto;
+            width: 2.6rem;
+            border: 0;
+            background: #172554;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .footer-info {
+            display: -webkit-flex;
+            display: flex;
+            padding: .35rem 1rem;
+            font-size: 1rem;
+            line-height: 1.35;
+            color: #fff;
+        }
+
+            .footer-info > div {
+                -webkit-flex: 1 1 0;
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
+        .footer-office {
+            font-weight: 700;
+        }
+
+        .footer-center {
+            text-align: center;
+        }
+
+        .footer-developed {
+            text-align: right;
+        }
+
+        /* =====================================================
+           KIOSK MODE (?kiosk=1) - nothing clickable on a TV
+           ===================================================== */
+        .kiosk .login-button,
+        .kiosk .fullscreen-button,
+        .kiosk .notice-audio {
+            display: none !important;
+        }
+
+        .kiosk .tv-header {
+            padding-right: 1rem;
+        }
+
+        .kiosk .office-logo a {
+            pointer-events: none;
+        }
+
+        .kiosk, .kiosk * {
+            cursor: none;
+        }
     </style>
-
 </head>
 
-
-<body>
-
+<body class="@(kiosk ? "kiosk" : "")">
 
     <!-- =====================================================
-         MAIN HEADER
+         HEADER
          ===================================================== -->
+    <header class="tv-header">
 
-    <header class="sticky-top navbar navbar-default navigation1"
-            role="navigation">
+        <div class="office-logo">
+            <a href="@Url.Action("Index", "Home")">
+                <img src="~/Content/Image/Emblem_of_Nepal.png"
+                     class="nepal-emblem"
+                     alt="नेपाल सरकारको प्रतीक" />
+            </a>
+        </div>
 
-        <div class="office-header">
+        <div class="office-header-content">
 
-
-            <!-- =================================================
-                 LEFT : NEPAL EMBLEM
-                 ================================================= -->
-
-            <div class="office-logo">
-
-                <a href="@Url.Action("Index", "Home")">
-
-                    <img src="~/Content/Image/Emblem_of_Nepal.png"
-                         class="nepal-emblem"
-                         alt="नेपाल सरकारको प्रतीक" />
-
-                </a>
-
+            <div class="office-name">
+                @if (ofc != null)
+                {
+                    @ofc.Office_Name
+                }
+                else
+                {
+                    <text>स्थानीय तहको कार्यालय</text>
+                }
             </div>
 
-
-            <!-- =================================================
-                 CENTER : OFFICE INFORMATION
-                 ================================================= -->
-
-            <div class="office-header-content">
-
-
-                <!-- OFFICE NAME -->
-
-                <div class="office-name">
-
-                    @if (ofc != null)
-                    {
-                        @ofc.Office_Name
-                    }
-                    else
-                    {
-                        <text>
-                            स्थानीय तहको कार्यालय
-                        </text>
-                    }
-
-                </div>
-
-
-                <!-- OFFICE LOCATION -->
-
-                <div class="office-address">
-
-                    @if (ofc != null)
-                    {
-                        @ofc.Office_Location
-                    }
-
-                </div>
-
-
-                <!-- DIGITAL CITIZEN CHARTER -->
-
-                <div class="office-welcome">
-
-                    डिजिटल नागरिक वडापत्र प्रणाली
-
-                </div>
-
+            <div class="office-address">
+                @if (ofc != null)
+                {
+                    @ofc.Office_Location
+                }
             </div>
 
-
-            <!-- =================================================
-                 RIGHT : NEPAL FLAG + DATE + LOGIN
-                 ================================================= -->
-
-            <div class="office-right">
-
-
-                <!-- NEPAL FLAG -->
-
-                <img src="~/Content/Image/animated-nepal-flag-image-0004.gif"
-                     class="nepal-flag"
-                     alt="नेपालको राष्ट्रिय झण्डा" />
-
-
-                <!-- DATE -->
-
-                <div class="header-date">
-
-                    <div>
-
-                        @DateTime.Now.DayOfWeek -
-                        @DateTime.Now.Day
-
-                        @{
-                            int day = DateTime.Now.Day;
-
-                            string suffix = "th";
-
-                            if (day % 100 < 11 ||
-                                day % 100 > 13)
-                            {
-                                switch (day % 10)
-                                {
-                                    case 1:
-                                        suffix = "st";
-                                        break;
-
-                                    case 2:
-                                        suffix = "nd";
-                                        break;
-
-                                    case 3:
-                                        suffix = "rd";
-                                        break;
-                                }
-                            }
-                        }
-
-                        @suffix
-
-                    </div>
-
-
-                    <div>
-
-                        @month_name
-                        @DateTime.Now.Year
-
-                    </div>
-
-                </div>
-
-
-                <!-- LOGIN -->
-
-                <a href="@Url.Action("Login", "Account")"
-                   class="login-button"
-                   target="_blank">
-
-                    Login
-
-                </a>
-
-            </div>
-
-
-            <!-- =================================================
-                 FULL SCREEN BUTTON
-                 ================================================= -->
-
-            <button type="button"
-                    class="fullscreen-button"
-                    onclick="toggleFullscreen()"
-                    title="Full Screen">
-
-                ⛶
-
-            </button>
+            <div class="office-welcome">डिजिटल नागरिक वडापत्र प्रणाली</div>
 
         </div>
+
+        <div class="office-right">
+
+            <img src="~/Content/Image/animated-nepal-flag-image-0004.gif"
+                 class="nepal-flag"
+                 alt="नेपालको राष्ट्रिय झण्डा" />
+
+            <!-- Live date and time (updated by JavaScript, so it never goes stale) -->
+            <div class="header-date" id="hdrDate"></div>
+            <div class="header-time" id="hdrTime"></div>
+
+            <a href="@Url.Action("Login", "Account")"
+               class="login-button"
+               target="_blank">Login</a>
+
+        </div>
+
+        <button type="button"
+                class="fullscreen-button"
+                onclick="toggleFullscreen()"
+                title="Full Screen">
+            &#x26F6;
+        </button>
 
     </header>
 
 
     <!-- =====================================================
-         MAIN WEBSITE CONTENT
+         PAGE CONTENT + FOOTER
          ===================================================== -->
-
     <section class="website-main">
 
-
-        <div class="clearfix"
-             id="clearfixMaster"
-             style="clear:both;">
-        </div>
-
-
-        <!-- =================================================
-             PAGE CONTENT
-
-             Individual pages render here.
-
-             IMPORTANT:
-             The notice bar is NOT part of RenderBody().
-             It is managed centrally by this layout.
-             ================================================= -->
-
         <div class="website-content">
-
             @RenderBody()
-
         </div>
-
-
-        <!-- =================================================
-             FOOTER
-             ================================================= -->
 
         <footer class="website-footer">
 
-
-            <!-- =================================================
-                 NOTICE BAR
-
-                 Always displayed.
-
-                 If database contains notices:
-                     Latest 5 notices are displayed.
-
-                 If database contains no notices:
-                     "हाल कुनै सूचना उपलब्ध छैन।"
-                     is displayed.
-
-                 Because this is in the layout, individual
-                 pages do not need their own notice section.
-                 ================================================= -->
-
+            <!-- NOTICE BAR (always visible) -->
             <div class="notice-bar">
 
-
-                <!-- NOTICE TITLE -->
-
                 <div class="notice-title">
-
-                    <i class="fa fa-bullhorn"
-                       aria-hidden="true">
-                    </i>
-
-                    <span>
-                        सूचना
-                    </span>
-
+                    <i class="fa fa-bullhorn" aria-hidden="true"></i>
+                    <span>सूचना</span>
                 </div>
 
-
-                <!-- NOTICE CONTENT -->
-
                 <div class="notice-marquee">
-
-                    <marquee behavior="scroll"
-                             direction="left"
-                             scrollamount="6"
-                             onmouseover="this.stop();"
-                             onmouseout="this.start();">
-
-                        @if (notice != null &&
-                             notice.Count > 0)
+                    <div class="notice-track" id="noticeTrack">
+                        @if (notice != null && notice.Count > 0)
                         {
                             foreach (var item in notice)
                             {
-                                <span class="notice-item">
-
-                                    @item.Title
-
-                                </span>
+                                <span class="notice-item">@item.Title</span>
                             }
                         }
                         else
                         {
-                            <span class="notice-item">
-
-                                हाल कुनै सूचना उपलब्ध छैन।
-
-                            </span>
+                            <span class="notice-item">हाल कुनै सूचना उपलब्ध छैन।</span>
                         }
-
-                    </marquee>
-
+                    </div>
                 </div>
+
+                <button type="button"
+                        id="enableWebsiteAudio"
+                        class="notice-audio"
+                        title="संगीत सुरु गर्नुहोस्"
+                        aria-label="संगीत सुरु गर्नुहोस्">
+                    <i class="fa-solid fa-volume-xmark"></i>
+                </button>
 
             </div>
 
-
-            <!-- =================================================
-                 FOOTER INFORMATION
-                 ================================================= -->
-
+            <!-- FOOTER INFORMATION -->
             <div class="footer-info">
 
-                <div class="row"
-                     style="margin:0;">
-
-
-                    <!-- =========================================
-                         OFFICE INFORMATION
-                         ========================================= -->
-
-                    <div class="col-md-4 col-sm-4">
-
-                        <div class="footer-office">
-
-                            @if (ofc != null)
-                            {
-                                @ofc.Office_Name
-                            }
-
-                        </div>
-
-
+                <div>
+                    <div class="footer-office">
                         @if (ofc != null)
                         {
-                            <div>
-
-                                @ofc.Office_Location
-
-                            </div>
+                            @ofc.Office_Name
                         }
-
                     </div>
+                    @if (ofc != null)
+                    {
+                        <div>@ofc.Office_Location</div>
+                    }
+                </div>
 
+                <div class="footer-center">
+                    <div>डिजिटल नागरिक वडापत्र प्रणाली</div>
+                    <div>&copy; @DateTime.Now.Year All Rights Reserved.</div>
+                </div>
 
-                    <!-- =========================================
-                         SYSTEM INFORMATION
-                         ========================================= -->
-
-                    <div class="col-md-4 col-sm-4 text-center">
-
-                        <div>
-
-                            डिजिटल नागरिक वडापत्र प्रणाली
-
-                        </div>
-
-
-                        <div>
-
-                            © @DateTime.Now.Year
-                            All Rights Reserved.
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =========================================
-                         DEVELOPER INFORMATION
-                         ========================================= -->
-
-                    <div class="col-md-4 col-sm-4 footer-developed">
-
-                        <div>
-
-                            Developed By
-
-                            <strong>
-                                APOGEE
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            Think Digital. Think Apogee.
-
-                        </div>
-
-                    </div>
-
+                <div class="footer-developed">
+                    <div>Developed By <strong>APOGEE</strong></div>
+                    <div>Think Digital. Think Apogee.</div>
                 </div>
 
             </div>
@@ -1547,432 +568,177 @@ body {
 
 
     <!-- =====================================================
-         FULLSCREEN SCRIPT
+         BACKGROUND AUDIO
+         NOTE: if the video in WebIndex also has sound, mute one
+         of them, otherwise both will play together.
          ===================================================== -->
-
-    <script>
-
-        function toggleFullscreen() {
-
-            var element =
-                document.documentElement;
-
-
-            /*
-             * Enter fullscreen.
-             */
-
-            if (!document.fullscreenElement) {
-
-                if (element.requestFullscreen) {
-
-                    element.requestFullscreen();
-
-                }
-                else if (element.webkitRequestFullscreen) {
-
-                    element.webkitRequestFullscreen();
-
-                }
-                else if (element.msRequestFullscreen) {
-
-                    element.msRequestFullscreen();
-
-                }
-
-            }
-
-            /*
-             * Exit fullscreen.
-             */
-
-            else {
-
-                if (document.exitFullscreen) {
-
-                    document.exitFullscreen();
-
-                }
-                else if (document.webkitExitFullscreen) {
-
-                    document.webkitExitFullscreen();
-
-                }
-                else if (document.msExitFullscreen) {
-
-                    document.msExitFullscreen();
-
-                }
-
-            }
-
-        }
-
-    </script>
-    <!-- =====================================================
-      WEBSITE BACKGROUND AUDIO
-      ===================================================== -->
-
-    <audio id="websiteBackgroundAudio"
-           loop="loop"
-           preload="auto">
-
-        <source src="@Url.Content("~/Content/Audio/background.mp3")"
-                type="audio/mpeg" />
-
+    <audio id="websiteBackgroundAudio" loop="loop" preload="auto">
+        <source src="@Url.Content("~/Content/Audio/background.mp3")" type="audio/mpeg" />
     </audio>
 
 
-    <!-- =====================================================
-         AUDIO TOGGLE BUTTON
-
-         Always visible.
-         🔇 = Sound OFF
-         🔊 = Sound ON
-         ===================================================== -->
-
-    <button type="button"
-            id="enableWebsiteAudio"
-            class="audio-enable-button"
-            title="संगीत सुरु गर्नुहोस्"
-            aria-label="संगीत सुरु गर्नुहोस्">
-
-        <i class="fa-solid fa-volume-xmark"></i>
-
-    </button>
-
-
     <script>
 
-        /* =====================================================
-           WEBSITE BACKGROUND AUDIO
+        var isKiosk = @(kiosk ? "true" : "false");
 
-           Behaviour:
+        /* ---------------------------------------------------
+           FULLSCREEN (normal browser use)
+           --------------------------------------------------- */
+        function toggleFullscreen() {
+            var el = document.documentElement;
+            var isFull = document.fullscreenElement || document.webkitFullscreenElement;
 
-           1. Audio starts OFF when website loads.
-           2. Audio button is ALWAYS visible.
-           3. First user interaction can turn audio ON.
-           4. Once user manually turns audio OFF,
-              normal interactions will NOT turn it back ON.
-           5. Clicking the button again turns audio ON.
-           ===================================================== */
+            if (!isFull) {
+                if (el.requestFullscreen) { el.requestFullscreen(); }
+                else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+                else if (el.msRequestFullscreen) { el.msRequestFullscreen(); }
+            }
+            else {
+                if (document.exitFullscreen) { document.exitFullscreen(); }
+                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                else if (document.msExitFullscreen) { document.msExitFullscreen(); }
+            }
+        }
 
-        document.addEventListener("DOMContentLoaded", function () {
 
-            var audio =
-                document.getElementById("websiteBackgroundAudio");
+        /* ---------------------------------------------------
+           LIVE DATE + TIME
+           --------------------------------------------------- */
+        (function () {
 
-            var audioButton =
-                document.getElementById("enableWebsiteAudio");
+            var DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var MONTHS = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"];
 
-            if (!audio || !audioButton) {
-                return;
+            function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+            function tick() {
+                var n = new Date();
+                var h = n.getHours();
+                var ap = h >= 12 ? "PM" : "AM";
+                h = h % 12; if (h === 0) { h = 12; }
+
+                var d = document.getElementById("hdrDate");
+                var t = document.getElementById("hdrTime");
+
+                if (d) { d.textContent = DAYS[n.getDay()] + ", " + n.getDate() + " " + MONTHS[n.getMonth()] + " " + n.getFullYear(); }
+                if (t) { t.textContent = pad(h) + ":" + pad(n.getMinutes()) + ":" + pad(n.getSeconds()) + " " + ap; }
             }
 
+            tick();
+            setInterval(tick, 1000);
 
-            /* =================================================
-               SETTINGS
-               ================================================= */
+        })();
+
+
+        /* ---------------------------------------------------
+           NOTICE TICKER SPEED
+           Constant speed (8 rem per second) on every screen size.
+           --------------------------------------------------- */
+        (function () {
+
+            function setTicker() {
+                var track = document.getElementById("noticeTrack");
+                if (!track) { return; }
+
+                var rem = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+                var secs = Math.max(15, track.scrollWidth / (rem * 8));
+
+                track.style.webkitAnimationDuration = secs + "s";
+                track.style.animationDuration = secs + "s";
+            }
+
+            window.addEventListener("load", setTicker);
+            window.addEventListener("resize", setTicker);
+
+        })();
+
+
+        /* ---------------------------------------------------
+           SCHEDULED REFRESH
+           Reloads the page every 30 minutes so new notices,
+           services, people and videos appear on the TV.
+           Skipped while a popup is open (set by WebIndex).
+           --------------------------------------------------- */
+        setInterval(function () {
+            if (!window.__charterBusy) {
+                window.location.reload();
+            }
+        }, 30 * 60 * 1000);
+
+
+        /* ---------------------------------------------------
+           BACKGROUND AUDIO
+           - Kiosk: tries to start automatically (works when the
+             TV browser allows autoplay).
+           - Normal: first click / key press starts it, until the
+             user turns it off with the button.
+           --------------------------------------------------- */
+        (function () {
+
+            var audio = document.getElementById("websiteBackgroundAudio");
+            var btn = document.getElementById("enableWebsiteAudio");
+
+            if (!audio) { return; }
 
             audio.volume = 0.35;
 
-            /*
-             * Audio is OFF initially.
-             *
-             * IMPORTANT:
-             * Do NOT call audio.play() here.
-             */
+            var on = false;
+            var manualOff = false;
 
-            var soundOn = false;
+            function paint() {
+                if (!btn) { return; }
+                var icon = btn.querySelector("i");
+                var text = on ? "संगीत बन्द गर्नुहोस्" : "संगीत सुरु गर्नुहोस्";
+                if (icon) { icon.className = on ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark"; }
+                btn.title = text;
+                btn.setAttribute("aria-label", text);
+            }
 
-            /*
-             * Becomes TRUE only when the user explicitly
-             * clicks the audio button to turn sound OFF.
-             *
-             * After this happens, normal interactions
-             * cannot automatically restart the audio.
-             */
-
-            var manuallyDisabled = false;
-
-
-            /* =================================================
-               UPDATE AUDIO ICON
-               ================================================= */
-
-            function updateAudioButton() {
-
-                var icon =
-                    audioButton.querySelector("i");
-
-                if (!icon) {
-                    return;
-                }
-
-
-                if (soundOn) {
-
-                    /*
-                     * SOUND ON
-                     */
-
-                    icon.className =
-                        "fa-solid fa-volume-high";
-
-                    audioButton.title =
-                        "संगीत बन्द गर्नुहोस्";
-
-                    audioButton.setAttribute(
-                        "aria-label",
-                        "संगीत बन्द गर्नुहोस्"
-                    );
-
+            function play() {
+                var p = audio.play();
+                if (p && p.then) {
+                    p.then(function () { on = true; paint(); })
+                     .catch(function () { on = false; paint(); });
                 }
                 else {
-
-                    /*
-                     * SOUND OFF
-                     */
-
-                    icon.className =
-                        "fa-solid fa-volume-xmark";
-
-                    audioButton.title =
-                        "संगीत सुरु गर्नुहोस्";
-
-                    audioButton.setAttribute(
-                        "aria-label",
-                        "संगीत सुरु गर्नुहोस्"
-                    );
-
+                    on = !audio.paused;
+                    paint();
                 }
-
             }
 
-
-            /* =================================================
-               TURN SOUND ON
-               ================================================= */
-
-            function turnSoundOn() {
-
-                /*
-                 * Do not automatically restart audio if
-                 * the user explicitly turned it OFF.
-                 */
-
-                if (manuallyDisabled) {
-                    return;
-                }
-
-
-                audio.play()
-                    .then(function () {
-
-                        soundOn = true;
-
-                        updateAudioButton();
-
-                    })
-                    .catch(function () {
-
-                        /*
-                         * Browser still blocked playback.
-                         * Keep icon as OFF.
-                         */
-
-                        soundOn = false;
-
-                        updateAudioButton();
-
-                    });
-
+            function firstInteraction() {
+                if (!on && !manualOff) { play(); }
             }
 
-
-            /* =================================================
-               TURN SOUND OFF
-               ================================================= */
-
-            function turnSoundOff() {
-
-                audio.pause();
-
-                /*
-                 * Reset position so when the user turns
-                 * sound ON again, the audio starts from
-                 * the beginning.
-                 *
-                 * Remove this line if you want it to resume
-                 * from where it stopped.
-                 */
-
-                audio.currentTime = 0;
-
-                soundOn = false;
-
-                /*
-                 * VERY IMPORTANT:
-                 *
-                 * The user explicitly turned sound OFF.
-                 * Therefore normal interactions must no
-                 * longer automatically start the audio.
-                 */
-
-                manuallyDisabled = true;
-
-                updateAudioButton();
-
-            }
-
-
-            /* =================================================
-               AUDIO BUTTON CLICK
-               ================================================= */
-
-            audioButton.addEventListener(
-                "click",
-                function (event) {
-
-                    /*
-                     * Prevent this click from also being
-                     * treated as a normal page interaction.
-                     */
-
-                    event.stopPropagation();
-
-
-                    if (soundOn) {
-
-                        /*
-                         * User explicitly turns sound OFF.
-                         */
-
-                        turnSoundOff();
-
+            if (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    if (on) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        on = false;
+                        manualOff = true;
+                        paint();
                     }
                     else {
-
-                        /*
-                         * User explicitly turns sound ON.
-                         */
-
-                        manuallyDisabled = false;
-
-                        audio.play()
-                            .then(function () {
-
-                                soundOn = true;
-
-                                updateAudioButton();
-
-                            })
-                            .catch(function () {
-
-                                soundOn = false;
-
-                                updateAudioButton();
-
-                            });
-
+                        manualOff = false;
+                        play();
                     }
-
-                }
-            );
-
-
-            /* =================================================
-               FIRST USER INTERACTION
-               =================================================
-
-               These interactions can automatically turn
-               the sound ON.
-
-               This only works until the user explicitly
-               switches the sound OFF.
-               ================================================= */
-
-            function firstUserInteraction() {
-
-                /*
-                 * Already manually disabled?
-                 *
-                 * Then do absolutely nothing.
-                 */
-
-                if (manuallyDisabled) {
-                    return;
-                }
-
-
-                /*
-                 * If sound is already ON, nothing to do.
-                 */
-
-                if (soundOn) {
-                    return;
-                }
-
-
-                turnSoundOn();
-
+                });
             }
 
+            document.addEventListener("click", firstInteraction);
+            document.addEventListener("touchstart", firstInteraction);
+            document.addEventListener("keydown", firstInteraction);
 
-            /* =================================================
-               USER INTERACTIONS
-               ================================================= */
+            paint();
 
-            document.addEventListener(
-                "click",
-                firstUserInteraction,
-                { passive: true }
-            );
+            if (isKiosk) { play(); }
 
-            document.addEventListener(
-                "touchstart",
-                firstUserInteraction,
-                { passive: true }
-            );
-
-            document.addEventListener(
-                "keydown",
-                firstUserInteraction,
-                { passive: true }
-            );
-
-            document.addEventListener(
-                "mousemove",
-                firstUserInteraction,
-                { passive: true }
-            );
-
-            document.addEventListener(
-                "scroll",
-                firstUserInteraction,
-                { passive: true }
-            );
-
-            document.addEventListener(
-                "wheel",
-                firstUserInteraction,
-                { passive: true }
-            );
-
-
-            /* =================================================
-               INITIAL STATE
-               ================================================= */
-
-            soundOn = false;
-
-            manuallyDisabled = false;
-
-            updateAudioButton();
-
-        });
+        })();
 
     </script>
-</body>
 
+</body>
 </html>
