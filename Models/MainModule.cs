@@ -47,6 +47,9 @@ namespace HelpDesk.Models
         [Display(Name = "प्रकृया")]
         public string Process { get; set; }
 
+        [Display(Name = "कोठा नं")]
+        public string RoomNo { get; set; }
+
         [Display(Name = "जिम्मेवार पदाधिकारी")]
         public string ResponsibleOfficer { get; set; }
         [NotMapped]

@@ -1,2 +1,5 @@
 ALTER TABLE [dbo].[SubModules]
 ADD [ResponsibleOfficer] NVARCHAR(500) NULL;
+
+ALTER TABLE [dbo].[SubModules]
+ADD [RoomNo] NVARCHAR(500) NULL;

@@ -236,6 +236,9 @@
     .process-column { width: 31%; }
     .fee-column { width: 14%; }
     .time-column { width: 11%; }
+    .room-column {
+        width: 8%;
+    }
     .officer-column { width: 17%; }
 
     .serial-number {
@@ -269,7 +272,7 @@
         font-weight: 700;
     }
 
-    .fee-value, .time-value, .officer-value {
+    .fee-value, .time-value, .room-value, .officer-value {
         color: #172033;
         font-weight: 700;
     }
@@ -721,6 +724,7 @@
                                     <th class="process-column">सेवा लिने प्रक्रिया/चाहिने कागजातहरू</th>
                                     <th class="fee-column">लाग्ने सेवा शुल्क तथा दस्तुर</th>
                                     <th class="time-column">लाग्ने समय</th>
+                                    <th class="room-column">कोठा नं</th>
                                     <th class="officer-column">जिम्मेवार पदाधिकारी</th>
                                 </tr>
                             </thead>
@@ -780,6 +784,18 @@
                                                 @if (!string.IsNullOrWhiteSpace(service.TimeNeed))
                                                 {
                                                     @service.TimeNeed
+                                                }
+                                                else
+                                                {
+                                                    <span>-</span>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="room-value">
+                                                @if (!string.IsNullOrWhiteSpace(service.RoomNo))
+                                                {
+                                                    @service.RoomNo
                                                 }
                                                 else
                                                 {
