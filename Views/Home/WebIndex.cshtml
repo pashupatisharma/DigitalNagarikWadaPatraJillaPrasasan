@@ -50,6 +50,9 @@
     /* =========================================================
        EVERYTHING IS IN rem  ->  scales with the TV size
        (1rem = 16px on 1080p, 32px on 4K; set in the layout)
+       Font: Kalimati is applied by the layout to every element.
+       TOUCH: tap a service row to open its details, tap the
+       person card to open the full list, drag to scroll.
        ========================================================= */
 
     .service-home {
@@ -114,6 +117,16 @@
         line-height: 1.4;
     }
 
+    .service-hint {
+        display: inline-block;
+        margin-left: .8rem;
+        padding: 0 .7rem;
+        border: 1px solid rgba(212,175,55,.8);
+        border-radius: 1rem;
+        color: #ffe08a;
+        font-size: .9rem;
+    }
+
     .service-search {
         position: relative;
         flex: 0 0 18rem;
@@ -123,14 +136,14 @@
 
         .service-search input {
             width: 100%;
-            height: 2.6rem;
+            height: 3rem;
             padding: .3rem 2.6rem .3rem .8rem;
             box-sizing: border-box;
             border: 2px solid transparent;
             border-radius: .35rem;
             outline: none;
             font-family: inherit;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             background: #fff;
             color: #172554;
         }
@@ -165,6 +178,9 @@
         left: 0;
         overflow-x: hidden;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* smooth finger scrolling */
+        -ms-touch-action: pan-y;
+        touch-action: pan-y; /* drag up / down with a finger */
     }
 
         .service-table-scroll::-webkit-scrollbar {
@@ -224,22 +240,68 @@
             }
 
         /* alternating high-contrast row colours */
-        .service-table tbody tr:nth-child(6n + 1) td { background: #fff3b8; }
-        .service-table tbody tr:nth-child(6n + 2) td { background: #cceeff; }
-        .service-table tbody tr:nth-child(6n + 3) td { background: #d9f7c8; }
-        .service-table tbody tr:nth-child(6n + 4) td { background: #ffd6d6; }
-        .service-table tbody tr:nth-child(6n + 5) td { background: #e6d7ff; }
-        .service-table tbody tr:nth-child(6n + 6) td { background: #ffe0b2; }
+        .service-table tbody tr:nth-child(6n + 1) td {
+            background: #fff3b8;
+        }
 
-    .serial-column { width: 4rem; text-align: center !important; }
-    .service-name-column { width: 19%; }
-    .process-column { width: 31%; }
-    .fee-column { width: 14%; }
-    .time-column { width: 11%; }
+        .service-table tbody tr:nth-child(6n + 2) td {
+            background: #cceeff;
+        }
+
+        .service-table tbody tr:nth-child(6n + 3) td {
+            background: #d9f7c8;
+        }
+
+        .service-table tbody tr:nth-child(6n + 4) td {
+            background: #ffd6d6;
+        }
+
+        .service-table tbody tr:nth-child(6n + 5) td {
+            background: #e6d7ff;
+        }
+
+        .service-table tbody tr:nth-child(6n + 6) td {
+            background: #ffe0b2;
+        }
+
+    /* rows are tappable */
+    .service-row {
+        cursor: pointer;
+    }
+
+        .service-row:active td {
+            -webkit-filter: brightness(.9);
+            filter: brightness(.9);
+        }
+
+    .serial-column {
+        width: 4rem;
+        text-align: center !important;
+    }
+
+    .service-name-column {
+        width: 19%;
+    }
+
+    .process-column {
+        width: 31%;
+    }
+
+    .fee-column {
+        width: 14%;
+    }
+
+    .time-column {
+        width: 11%;
+    }
+
     .room-column {
         width: 8%;
     }
-    .officer-column { width: 17%; }
+
+    .officer-column {
+        width: 17%;
+    }
 
     .serial-number {
         display: inline-block;
@@ -262,8 +324,13 @@
         line-height: 1.45;
     }
 
-    .service-detail { margin-bottom: .45rem; }
-    .service-detail:last-child { margin-bottom: 0; }
+    .service-detail {
+        margin-bottom: .45rem;
+    }
+
+        .service-detail:last-child {
+            margin-bottom: 0;
+        }
 
     .detail-label {
         display: block;
@@ -414,16 +481,22 @@
         font-weight: 700;
     }
 
+    /* finger-sized button */
     .people-list-button {
         flex: 0 0 auto;
-        width: 2.2rem;
-        height: 2.2rem;
+        width: 3rem;
+        height: 3rem;
         border: 1px solid rgba(255,255,255,.35);
         border-radius: .3rem;
         background: rgba(255,255,255,.1);
         color: #fff;
+        font-size: 1.2rem;
         cursor: pointer;
     }
+
+        .people-list-button:active {
+            background: rgba(255,255,255,.3);
+        }
 
     .person-display {
         flex: 1 1 auto;
@@ -436,6 +509,7 @@
         justify-content: center;
         padding: .7rem;
         overflow: hidden;
+        cursor: pointer; /* tap = open full people list */
     }
 
     .person-card {
@@ -539,8 +613,13 @@
         box-shadow: 0 .8rem 2.5rem rgba(0,0,0,.35);
     }
 
-    .people-list-dialog { height: 88vh; }
-    .service-detail-dialog { max-height: 90vh; }
+    .people-list-dialog {
+        height: 88vh;
+    }
+
+    .service-detail-dialog {
+        max-height: 90vh;
+    }
 
     .people-list-header,
     .service-detail-header {
@@ -559,24 +638,31 @@
         font-weight: 700;
     }
 
+    /* finger-sized close buttons */
     .people-list-close,
     .service-detail-close {
         flex: 0 0 auto;
-        width: 2.4rem;
-        height: 2.4rem;
+        width: 3.2rem;
+        height: 3.2rem;
         border: none;
         border-radius: .3rem;
-        background: rgba(255,255,255,.12);
+        background: rgba(255,255,255,.15);
         color: #fff;
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         cursor: pointer;
     }
+
+        .people-list-close:active,
+        .service-detail-close:active {
+            background: rgba(255,255,255,.35);
+        }
 
     .people-list-body,
     .service-detail-body {
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         padding: 1rem;
     }
 
@@ -616,7 +702,9 @@
         border-radius: .35rem;
     }
 
-    .people-list-text { min-width: 0; }
+    .people-list-text {
+        min-width: 0;
+    }
 
     .people-list-name {
         color: #172554;
@@ -625,8 +713,17 @@
         word-break: break-word;
     }
 
-    .people-list-post { margin-top: .15rem; color: #64748b; font-size: .9rem; }
-    .people-list-contact { margin-top: .15rem; color: #475569; font-size: .9rem; }
+    .people-list-post {
+        margin-top: .15rem;
+        color: #64748b;
+        font-size: .9rem;
+    }
+
+    .people-list-contact {
+        margin-top: .15rem;
+        color: #475569;
+        font-size: .9rem;
+    }
 
     .service-detail-table {
         width: 100%;
@@ -665,11 +762,15 @@
             border-bottom: none;
         }
 
-    /* ---------- KIOSK : nothing to click or type on a TV ---------- */
-    .kiosk .service-search,
-    .kiosk .people-list-button {
-        display: none !important;
-    }
+    /* ---------- KIOSK (TV) ----------
+       Search, people list, service rows and popups all stay
+       enabled for TOUCH. The layout already hides the mouse
+       pointer, Login and Fullscreen in kiosk mode.
+       If the TV has no on-screen keyboard and you want to hide
+       the search box, remove the comment marks below:
+
+    .kiosk .service-search { display: none !important; }
+    */
 </style>
 
 
@@ -691,6 +792,7 @@
                     </div>
                     <div class="service-subtitle">
                         नागरिकलाई उपलब्ध सेवा, प्रक्रिया, दस्तुर तथा जिम्मेवार पदाधिकारी
+                        <span class="service-hint"><i class="fa fa-hand-pointer"></i> विवरण हेर्न सेवामा थिच्नुहोस्</span>
                     </div>
                 </div>
 
@@ -698,6 +800,7 @@
                     <input type="text"
                            id="serviceSearch"
                            autocomplete="off"
+                           enterkeyhint="search"
                            placeholder="सेवा खोज्नुहोस्..." />
                     <span class="service-search-icon">
                         <i class="fa fa-search"></i>
@@ -751,14 +854,14 @@
                                             @* Html.Raw: only trusted admins should edit these fields *@
                                             @if (!string.IsNullOrWhiteSpace(service.Process))
                                             {
-                                                <div class="service-detail">
+                                                <div class="service-detail" data-kind="process">
                                                     @Html.Raw(service.Process)
                                                 </div>
                                             }
 
                                             @if (!string.IsNullOrWhiteSpace(service.DocumentNeeded))
                                             {
-                                                <div class="service-detail">
+                                                <div class="service-detail" data-kind="documents">
                                                     @Html.Raw(service.DocumentNeeded)
                                                 </div>
                                             }
@@ -935,6 +1038,7 @@
                     <tr><th>चाहिने कागजात</th><td id="detailDocuments"></td></tr>
                     <tr><th>लाग्ने सेवा शुल्क तथा दस्तुर</th><td id="detailFee"></td></tr>
                     <tr><th>लाग्ने समय</th><td id="detailTime"></td></tr>
+                    <tr><th>कोठा नं</th><td id="detailRoom"></td></tr>
                     <tr><th>जिम्मेवार पदाधिकारी</th><td id="detailOfficer"></td></tr>
                 </tbody>
             </table>
@@ -1004,12 +1108,14 @@
 
         /* =====================================================
            SERVICE DETAIL POPUP
+           Cells: 0 serial, 1 name, 2 process+documents, 3 fee,
+                  4 time, 5 room, 6 officer
            ===================================================== */
         function openServiceDetails(row) {
 
             var cells = row ? row.querySelectorAll("td") : [];
 
-            if (cells.length < 6) { return; }
+            if (cells.length < 7) { return; }
 
             el("detailSerial").innerHTML = cells[0].innerHTML;
             el("detailServiceName").innerHTML = cells[1].innerHTML;
@@ -1018,21 +1124,11 @@
             var documentHtml = "";
 
             each(cells[2].querySelectorAll(".service-detail"), function (detail) {
-
-                var label = detail.querySelector(".detail-label");
-                if (!label) { return; }
-
-                var labelText = label.textContent.trim();
-                var copy = detail.cloneNode(true);
-                var copyLabel = copy.querySelector(".detail-label");
-
-                if (copyLabel) { copyLabel.parentNode.removeChild(copyLabel); }
-
-                if (labelText.indexOf("कागजात") !== -1) {
-                    documentHtml += copy.innerHTML;
+                if (detail.getAttribute("data-kind") === "documents") {
+                    documentHtml += detail.innerHTML;
                 }
                 else {
-                    processHtml += copy.innerHTML;
+                    processHtml += detail.innerHTML;
                 }
             });
 
@@ -1044,7 +1140,8 @@
             el("detailDocuments").innerHTML = documentHtml || "-";
             el("detailFee").innerHTML = cells[3].innerHTML;
             el("detailTime").innerHTML = cells[4].innerHTML;
-            el("detailOfficer").innerHTML = cells[5].innerHTML;
+            el("detailRoom").innerHTML = cells[5].innerHTML;
+            el("detailOfficer").innerHTML = cells[6].innerHTML;
 
             el("serviceDetailTitle").textContent =
                 cells[1].textContent.trim() || "सेवा विवरण";
@@ -1083,12 +1180,37 @@
 
 
         /* =====================================================
+           TAP / CLICK A SERVICE ROW  ->  open its details
+           (works with finger, mouse and TV remote pointer)
+           ===================================================== */
+        if (tableBody) {
+            tableBody.addEventListener("click", function (event) {
+
+                var node = event.target;
+
+                while (node && node !== tableBody) {
+                    if (node.className && String(node.className).indexOf("service-row") !== -1) {
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+
+                if (node && node !== tableBody) {
+                    openServiceDetails(node);
+                }
+            });
+        }
+
+
+        /* =====================================================
            SERVICE SEARCH
            - Filters the table.
            - If exactly one service matches (or the text is an
              exact serial number) its popup opens.
            - Waits 0.7 s after typing stops, so typing "10" does
              not open service 1 first.
+           - Touch: tapping the box opens the TV's on-screen
+             keyboard (if the TV / browser has one).
            ===================================================== */
         function runSearch() {
 
@@ -1143,27 +1265,16 @@
             });
 
             searchInput.addEventListener("keydown", function (event) {
-                if (event.keyCode === 13) {      // Enter = search now
+                if (event.keyCode === 13) {      // Enter / Go = search now
                     clearTimeout(searchTimer);
                     runSearch();
+                    searchInput.blur();          // hides the on-screen keyboard
                 }
             });
 
-            tableBody.addEventListener("click", function (event) {
-
-                var node = event.target;
-
-                while (node && node !== tableBody) {
-                    if (node.className && String(node.className).indexOf("service-row") !== -1) {
-                        break;
-                    }
-                    node = node.parentNode;
-                }
-
-                if (node && node !== tableBody && searchInput.value.trim() !== "") {
-                    openServiceDetails(node);
-                }
-            });
+            /* while typing, keep the table still (no auto-scroll) */
+            searchInput.addEventListener("focus", function () { window.__charterTyping = true; });
+            searchInput.addEventListener("blur", function () { window.__charterTyping = false; });
         }
 
 
@@ -1173,7 +1284,9 @@
              looks the same on 1080p and 4K.
            - Holds 4 seconds at the bottom and at the top.
            - Does NOT stop on mouse hover (a TV pointer could
-             freeze it). Touch / wheel pause it for 8 seconds.
+             freeze it).
+           - TOUCH: touching / dragging / flicking the table pauses
+             the auto scroll for 8 seconds after the last touch.
            ===================================================== */
         if (tableScroll) {
 
@@ -1189,9 +1302,9 @@
                 pauseUntil = Date.now() + USER_PAUSE_MS;
             }
 
-            tableScroll.addEventListener("wheel", userTouched);
-            tableScroll.addEventListener("touchstart", userTouched);
-            tableScroll.addEventListener("mousedown", userTouched);
+            ["wheel", "touchstart", "touchmove", "touchend", "touchcancel", "mousedown"].forEach(function (name) {
+                tableScroll.addEventListener(name, userTouched);
+            });
 
             function step() {
 
@@ -1201,7 +1314,7 @@
 
                 var max = tableScroll.scrollHeight - tableScroll.clientHeight;
 
-                if (max > 0 && now > pauseUntil && !window.__charterBusy) {
+                if (max > 0 && now > pauseUntil && !window.__charterBusy && !window.__charterTyping) {
 
                     // somebody scrolled manually -> continue from there
                     if (Math.abs(tableScroll.scrollTop - pos) > 3) {
@@ -1285,6 +1398,7 @@
 
         /* =====================================================
            PEOPLE LIST POPUP
+           Opened by the list button OR by tapping the person card.
            ===================================================== */
         function buildPeopleList() {
 
@@ -1313,17 +1427,24 @@
             grid.setAttribute("data-built", "1");
         }
 
+        function openPeopleModal() {
+            if (people.length === 0) { return; }
+            buildPeopleList();
+            peopleListModal.style.display = "flex";
+            updateBusy();
+        }
+
         function closePeopleModal() {
             peopleListModal.style.display = "none";
             updateBusy();
         }
 
         if (openPeopleList) {
-            openPeopleList.addEventListener("click", function () {
-                buildPeopleList();
-                peopleListModal.style.display = "flex";
-                updateBusy();
-            });
+            openPeopleList.addEventListener("click", openPeopleModal);
+        }
+
+        if (personDisplay) {
+            personDisplay.addEventListener("click", openPeopleModal);
         }
 
         if (closePeopleList) {
@@ -1362,12 +1483,13 @@
         function resetIdle() {
             clearTimeout(idleTimer);
             idleTimer = setTimeout(function () {
+                if (searchInput) { searchInput.blur(); }
                 closeServiceDetails();
                 closePeopleModal();
             }, 60000);
         }
 
-        ["keydown", "click", "touchstart", "wheel"].forEach(function (name) {
+        ["keydown", "click", "touchstart", "touchmove", "touchend", "wheel"].forEach(function (name) {
             document.addEventListener(name, resetIdle);
         });
 

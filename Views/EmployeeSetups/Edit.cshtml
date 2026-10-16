@@ -69,10 +69,10 @@
                             @Html.ValidationMessageFor(model => model.PostId, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.DepartmnentId)<span class="text-danger">*</span>
+                            @Html.LabelFor(model => model.DepartmentId)<span class="text-danger">*</span>
 
-                            @Html.DropDownListFor(model => model.DepartmnentId, Utility.GetDepartmentList(), new { @class = "form-control chosen-select" })
-                            @Html.ValidationMessageFor(model => model.DepartmnentId, "", new { @class = "text-danger" })
+                            @Html.DropDownListFor(model => model.DepartmentId, Utility.GetDepartmentList(), new { @class = "form-control chosen-select" })
+                            @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                             @Html.LabelFor(model => model.Gender)

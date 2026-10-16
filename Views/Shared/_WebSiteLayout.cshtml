@@ -5,10 +5,12 @@
     Response.Charset = "utf-8";
 
     // ---------------------------------------------------------
-    // KIOSK MODE
+    // KIOSK MODE (TV)
     // Open the display as  http://yoursite/Home/WebIndex?kiosk=1
-    // Kiosk mode hides Login, Fullscreen and Audio buttons and
-    // disables the emblem link (nothing to click on a TV).
+    // Kiosk mode hides Login and Fullscreen buttons, hides the
+    // mouse pointer and disables the emblem link.
+    // TOUCH STAYS ENABLED: the TV screen can be touched to
+    // scroll, open service details, search and open the people list.
     // ---------------------------------------------------------
     bool kiosk = Request.QueryString["kiosk"] == "1";
 
@@ -21,12 +23,22 @@
     var adress = string.Empty;
 
     var ofc = Utility.officeDetail();
-    if (ofc != null) {
-         ofcname = ofc.Office_Name;
-         pradesh = ofc.Pradesh;
-         minsitry = ofc.Ministry;
-
+    if (ofc != null)
+    {
+        ofcname = ofc.Office_Name ?? string.Empty;
+        pradesh = ofc.Pradesh ?? string.Empty;
+        minsitry = ofc.Ministry ?? string.Empty;
+        adress = ofc.Office_Location ?? string.Empty;
     }
+
+    // Header line 1 must read "कर्णाली प्रदेश सरकार"
+    // (adds "सरकार" if the database only stores "कर्णाली प्रदेश")
+    var pradeshLine = pradesh.Trim();
+    if (pradeshLine.Length > 0 && !pradeshLine.Contains("सरकार"))
+    {
+        pradeshLine = pradeshLine + " सरकार";
+    }
+
     var db = new HelpDesk.Models.ApplicationDbContext();
     var notice = db.Notice
         .OrderByDescending(x => x.NoticeId)
@@ -38,7 +50,8 @@
 <html lang="ne">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- zoom is blocked so a finger pinch / double tap can't break the TV layout -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
     <title>
         @if (ofc != null)
@@ -51,9 +64,6 @@
         }
     </title>
 
-    <!-- Only the CSS the display really needs.
-         Removed: duplicate Font Awesome copies, Chosen, PagedList.
-         If the video partial looks broken, re-add what it needs. -->
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/fontawesome-free-6.7.2-web/css/all.css" rel="stylesheet" />
     <link href="~/Styles/style.css" rel="stylesheet" />
@@ -65,27 +75,48 @@
     <style>
 
         /* =====================================================
-           DEVANAGARI FONT (self-hosted, TVs rarely have one)
-           Put these files in  /Content/fonts/
-             NotoSansDevanagari-Regular.woff2
-             NotoSansDevanagari-Bold.woff2
+           KALIMATI FONT (self-hosted, served to every browser/TV)
+           Files in  /Content/fonts/
+               Kalimati.woff2
+               Kalimati.woff
+               Kalimati.otf      <- if your file is .ttf, change the
+                                    last line of src to .ttf + format("truetype")
+           Kalimati has only ONE weight. It is declared for 400 and
+           700 with the same file so the browser never fakes a
+           second (blurry) bold.
            ===================================================== */
         @@font-face {
-            font-family: "CharterDev";
+            font-family: "Kalimati";
+            font-style: normal;
             font-weight: 400;
-            src: local("Noto Sans Devanagari"), url('@Url.Content("~/Content/fonts/NotoSansDevanagari-Regular.woff2")') format("woff2");
+            font-display: swap;
+            src: url('@Url.Content("~/Content/fonts/Kalimati.woff2")') format("woff2"),
+                 url('@Url.Content("~/Content/fonts/Kalimati.woff")') format("woff"),
+                 url('@Url.Content("~/Content/fonts/Kalimati.otf")') format("opentype");
         }
 
         @@font-face {
-            font-family: "CharterDev";
+            font-family: "Kalimati";
+            font-style: normal;
             font-weight: 700;
-            src: local("Noto Sans Devanagari Bold"), url('@Url.Content("~/Content/fonts/NotoSansDevanagari-Bold.woff2")') format("woff2");
+            font-display: swap;
+            src: url('@Url.Content("~/Content/fonts/Kalimati.woff2")') format("woff2"),
+                 url('@Url.Content("~/Content/fonts/Kalimati.woff")') format("woff"),
+                 url('@Url.Content("~/Content/fonts/Kalimati.otf")') format("opentype");
+        }
+
+        /* Force Kalimati everywhere (bootstrap / style.css / styles.css
+           set their own font-family). Font Awesome <i> icons are not
+           in this list, so icons keep working. */
+        body, div, span, p, a, strong, b, label, th, td, button,
+        input, select, textarea, h1, h2, h3, h4, h5, h6 {
+            font-family: "Kalimati", "Noto Sans Devanagari", "Mangal", "Segoe UI", Arial, sans-serif !important;
         }
 
         /* =====================================================
            SCALING
            1rem = 16px on 1920x1080, 32px on 3840x2160.
-           Everything below is written in rem, so the whole board
+           Everything is written in rem, so the whole board
            scales to any TV size (32" to 75"+).
            ===================================================== */
         html {
@@ -105,6 +136,10 @@
             padding: 0;
         }
 
+        html {
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             display: -webkit-flex;
             display: flex;
@@ -115,13 +150,19 @@
             padding: .3rem .5rem;
             overflow: hidden !important;
             background: #0f1f3d;
-            font-family: "CharterDev", "Kalimati", "Noto Sans Devanagari", "Mangal", "Segoe UI", Arial, sans-serif;
             font-size: 1rem;
             line-height: 1.4;
+            /* touch: allow finger scrolling, block pinch-zoom / double-tap zoom */
+            -ms-touch-action: pan-x pan-y;
+            touch-action: pan-x pan-y;
         }
 
         /* =====================================================
-           HEADER
+           HEADER  (white board, red Kalimati text - as in header_format)
+             Line 1  Pradesh Sarkar
+             Line 2  Ministry
+             Line 3  Office name (largest)
+             Line 4  Address
            ===================================================== */
         .tv-header {
             position: relative;
@@ -130,19 +171,19 @@
             display: flex;
             -webkit-align-items: center;
             align-items: center;
-            min-height: 7rem;
-            padding: .4rem 3.4rem .4rem .6rem;
+            min-height: 8.6rem;
+            padding: .35rem 3.6rem .35rem .8rem;
             box-sizing: border-box;
-            background: linear-gradient(135deg, #0f1f3d 0%, #172554 38%, #1e3a5f 70%, #274c77 100%);
+            background: #ffffff;
             border-left: .4rem solid #c9a227;
-            border-bottom: .25rem solid #c9a227;
+            border-bottom: .3rem solid #c9a227;
             box-shadow: 0 .25rem 1rem rgba(0,0,0,.25);
             overflow: hidden;
         }
 
         .office-logo {
-            flex: 0 0 14rem;
-            width: 14rem;
+            flex: 0 0 13rem;
+            width: 13rem;
             display: -webkit-flex;
             display: flex;
             -webkit-align-items: center;
@@ -153,7 +194,7 @@
 
         .nepal-emblem {
             display: block;
-            height: 5.2rem;
+            height: 6rem;
             width: auto;
             max-width: 9rem;
             -o-object-fit: contain;
@@ -165,38 +206,36 @@
             min-width: 0;
             padding: 0 .6rem;
             text-align: center;
+            color: #e30000;
         }
 
-        .office-name {
-            color: #fff;
-            font-size: 2.4rem;
-            font-weight: 700;
-            line-height: 1.2;
-            text-shadow: 0 .1rem .25rem rgba(0,0,0,.35);
-        }
-
-        .office-address {
-            margin-top: .15rem;
-            color: #e7eef7;
-            font-size: 1.25rem;
+        .office-pradesh {
+            font-size: 1.5rem;
+            font-weight: 400;
             line-height: 1.3;
         }
 
-        .office-welcome {
-            display: inline-block;
-            margin-top: .3rem;
-            padding: .15rem 1.1rem;
-            color: #fff;
-            background: rgba(201,162,39,.18);
-            border: 1px solid rgba(201,162,39,.75);
-            border-radius: 1.5rem;
-            font-size: 1.05rem;
+        .office-ministry {
+            font-size: 1.8rem;
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
+        .office-name {
+            font-size: 3.4rem;
             font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .office-address {
+            font-size: 1.55rem;
+            font-weight: 400;
+            line-height: 1.3;
         }
 
         .office-right {
-            flex: 0 0 14rem;
-            width: 14rem;
+            flex: 0 0 13rem;
+            width: 13rem;
             display: -webkit-flex;
             display: flex;
             -webkit-flex-direction: column;
@@ -206,11 +245,11 @@
             -webkit-justify-content: center;
             justify-content: center;
             text-align: center;
-            color: #fff;
+            color: #172554;
         }
 
         .nepal-flag {
-            height: 2.8rem;
+            height: 3rem;
             width: auto;
         }
 
@@ -222,7 +261,7 @@
         }
 
         .header-time {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 700;
             line-height: 1.2;
         }
@@ -233,7 +272,7 @@
             padding: .15rem 1rem;
             color: #fff !important;
             background: #9b111e;
-            border: 1px solid rgba(255,255,255,.35);
+            border: 1px solid #9b111e;
             border-radius: .3rem;
             text-decoration: none !important;
             font-size: .9rem;
@@ -244,13 +283,13 @@
             position: absolute;
             top: .5rem;
             right: .5rem;
-            width: 2.4rem;
-            height: 2.4rem;
-            border: 1px solid rgba(255,255,255,.35);
+            width: 2.6rem;
+            height: 2.6rem;
+            border: 1px solid #cbd5e1;
             border-radius: 50%;
-            background: rgba(255,255,255,.12);
-            color: #fff;
-            font-size: 1.3rem;
+            background: #f1f5f9;
+            color: #172554;
+            font-size: 1.4rem;
             line-height: 1;
             cursor: pointer;
             z-index: 5;
@@ -374,14 +413,19 @@
                 font-weight: 700;
             }
 
+        /* big enough for a finger */
         .notice-audio {
             flex: 0 0 auto;
-            width: 2.6rem;
+            width: 3.4rem;
             border: 0;
             background: #172554;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             cursor: pointer;
+        }
+
+        .notice-audio:active {
+            background: #1e3a5f;
         }
 
         .footer-info {
@@ -412,11 +456,15 @@
         }
 
         /* =====================================================
-           KIOSK MODE (?kiosk=1) - nothing clickable on a TV
+           KIOSK MODE (?kiosk=1)
+           - Login + Fullscreen hidden (public must not reach them)
+           - Mouse pointer hidden
+           - Touch is ENABLED: search, people list, audio button and
+             service rows all stay tappable.
+           - Long-press text selection / callout disabled.
            ===================================================== */
         .kiosk .login-button,
-        .kiosk .fullscreen-button,
-        .kiosk .notice-audio {
+        .kiosk .fullscreen-button {
             display: none !important;
         }
 
@@ -430,6 +478,19 @@
 
         .kiosk, .kiosk * {
             cursor: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* the search box must still accept typing */
+        .kiosk input {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
     </style>
 </head>
@@ -451,20 +512,25 @@
 
         <div class="office-header-content">
 
-            <div class="office-name">
-              
-                   @ofcname
-                
-               
-            </div>
+            @if (!string.IsNullOrWhiteSpace(pradeshLine))
+            {
+                <div class="office-pradesh">@pradeshLine</div>
+            }
 
-            <div class="office-address">
-              
-                    @adress
-                
-            </div>
+            @if (!string.IsNullOrWhiteSpace(minsitry))
+            {
+                <div class="office-ministry">@minsitry</div>
+            }
 
-            <div class="office-welcome">डिजिटल नागरिक वडापत्र प्रणाली</div>
+            @if (!string.IsNullOrWhiteSpace(ofcname))
+            {
+                <div class="office-name">@ofcname</div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(adress))
+            {
+                <div class="office-address">@adress</div>
+            }
 
         </div>
 
@@ -587,6 +653,16 @@
         var isKiosk = @(kiosk ? "true" : "false");
 
         /* ---------------------------------------------------
+           KIOSK + TOUCH: a long press on a touch TV opens the
+           browser's context menu - block it.
+           --------------------------------------------------- */
+        if (isKiosk) {
+            document.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+            });
+        }
+
+        /* ---------------------------------------------------
            FULLSCREEN (normal browser use)
            --------------------------------------------------- */
         function toggleFullscreen() {
@@ -656,6 +732,11 @@
             window.addEventListener("load", setTicker);
             window.addEventListener("resize", setTicker);
 
+            /* the ticker width changes once Kalimati has finished loading */
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(setTicker);
+            }
+
         })();
 
 
@@ -674,10 +755,10 @@
 
         /* ---------------------------------------------------
            BACKGROUND AUDIO
-           - Kiosk: tries to start automatically (works when the
-             TV browser allows autoplay).
-           - Normal: first click / key press starts it, until the
-             user turns it off with the button.
+           - Kiosk: tries to start automatically. If the TV
+             browser blocks autoplay, the FIRST TOUCH on the
+             screen starts the music.
+           - The speaker button (touch or click) turns it on/off.
            --------------------------------------------------- */
         (function () {
 
