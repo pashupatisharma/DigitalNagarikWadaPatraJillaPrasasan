@@ -4,6 +4,7 @@
     ViewBag.Title = "सेवा तथा जानकारी";
     Layout = "~/Views/Shared/_WebSiteLayout.cshtml";
 
+
     // ---------------------------------------------------------
     // PEOPLE (representatives + employees) -> one JSON list
     // ---------------------------------------------------------
@@ -18,6 +19,7 @@
             {
                 name = p.Name ?? "",
                 post = p.PostSetup != null ? p.PostSetup.PostTitle : "",
+                department = "",
                 contact = p.Contact ?? "",
                 image = !string.IsNullOrWhiteSpace(p.Image)
                     ? Url.Content("~/JanaPratinidhiImages/" + p.Image)
@@ -35,6 +37,8 @@
             {
                 name = e.EmpName ?? "",
                 post = e.PostSetup != null ? e.PostSetup.PostTitle : "",
+                // Convert.ToString -> never null, works even if the helper returns a non-string
+                department = Convert.ToString(Utility.GetDepartmentyId(e.DepartmentId)) ?? "",
                 contact = e.Contact ?? "",
                 image = !string.IsNullOrWhiteSpace(e.Image)
                     ? Url.Content("~/EmployeeImage/" + e.Image)
@@ -552,6 +556,15 @@
         line-height: 1.35;
     }
 
+    .person-department {
+        margin-top: .1rem;
+        color: #1e3a5f;
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
     .person-contact {
         margin-top: .3rem;
         color: #334155;
@@ -717,6 +730,14 @@
         margin-top: .15rem;
         color: #64748b;
         font-size: .9rem;
+    }
+
+    .people-list-department {
+        margin-top: .1rem;
+        color: #1e3a5f;
+        font-size: .9rem;
+        font-weight: 600;
+        word-break: break-word;
     }
 
     .people-list-contact {
@@ -1373,6 +1394,13 @@
                     '<div class="person-name">' + escapeHtml(p.name) + '</div>' +
                     '<div class="person-post">' + escapeHtml(p.post) + '</div>';
 
+            /* FIX: the department line used to be a separate statement
+               (after a ';'), so it was never added to html. Now it is
+               appended to html, and only when a department exists. */
+            if (p.department) {
+                html += '<div class="person-department">' + escapeHtml(p.department) + '</div>';
+            }
+
             if (p.contact) {
                 html += '<div class="person-contact"><i class="fa fa-phone"></i>' + escapeHtml(p.contact) + '</div>';
             }
@@ -1415,6 +1443,9 @@
                         '<div class="people-list-text">' +
                             '<div class="people-list-name">' + escapeHtml(p.name) + '</div>' +
                             '<div class="people-list-post">' + escapeHtml(p.post) + '</div>' +
+                            (p.department
+                                ? '<div class="people-list-department">' + escapeHtml(p.department) + '</div>'
+                                : '') +
                             (p.contact
                                 ? '<div class="people-list-contact"><i class="fa fa-phone"></i> ' + escapeHtml(p.contact) + '</div>'
                                 : '') +

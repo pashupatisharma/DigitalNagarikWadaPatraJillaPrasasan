@@ -119,6 +119,18 @@ namespace HelpDesk
             return pstName;
         }
 
+        public static string GetDepartmentyId(int? Id)
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+            var data = db.MainModule.Where(x => x.Id == Id).FirstOrDefault();
+            var pstName = "";
+            if (data != null)
+            {
+                pstName = data.Title;
+            }
+            return pstName;
+        }
+
 
 
 
