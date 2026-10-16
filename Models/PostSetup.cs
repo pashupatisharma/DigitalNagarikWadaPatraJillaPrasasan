@@ -12,6 +12,7 @@ namespace HelpDesk.Models
         public int PostId { get; set; } 
         public string PostTitle { get; set; }
         public string PostTitleEng { get; set; }
+        public int? RankId {  get; set; }
 
     }
 }

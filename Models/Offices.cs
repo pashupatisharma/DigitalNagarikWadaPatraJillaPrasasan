@@ -26,6 +26,8 @@ namespace HelpDesk.Models
         public string Office_Email { get; set; }
         [Display(Name = "Marquee Message")]
         public string Message { get; set; }
+        public string Pradesh { get; set; }
+        public string Ministry { get; set; }
    
        
 

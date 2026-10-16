@@ -12,5 +12,7 @@ namespace HelpDesk.Models
         public int EmployeeTypeID { get; set; } 
         public string EmployeeTypeName {  get; set; }
         public string EmployeeTypeNameEng {  get; set; }
+         
+       
     }
 }

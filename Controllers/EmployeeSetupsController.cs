@@ -21,25 +21,23 @@ namespace HelpDesk.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: EmployeeSetups
+
         public ActionResult Index(string sortOrder, int? page, int? pageSize)
         {
+            int pageNumber = page ?? 1;
+            int pageSizeValue = pageSize ?? 10;
+
+            // Sort employees by post rank
+            IEnumerable<EmployeeSetup> Lists = db.EmployeeSetup
+                .OrderBy(m => m.PostSetup.RankId)
+                .ToList();
+
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParm = (sortOrder == "Date") ? "date_desc" : "Date";
+            ViewBag.PageSize = pageSizeValue;
 
-            IEnumerable<EmployeeSetup> Lists = db.EmployeeSetup.OrderByDescending(m => m.EmpId).ToList();
-
-            var num = Lists.Count<EmployeeSetup>();
-            int num2 = 10;
-            if (pageSize.HasValue)
-            {
-                num2 = pageSize.Value;
-            }
-
-            int? nullable = null;
-            int pageNumber = nullable.HasValue ? nullable.GetValueOrDefault() : 1;
-            return View(Lists.ToPagedList<EmployeeSetup>(pageNumber, num2));
+            return View(Lists.ToPagedList(pageNumber, pageSizeValue));
         }
+
 
         // GET: EmployeeSetups/Details/5
         public async Task<ActionResult> Details(int? id)

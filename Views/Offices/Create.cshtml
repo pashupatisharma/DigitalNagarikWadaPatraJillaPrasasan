@@ -31,6 +31,28 @@
                             @Html.ValidationMessageFor(model => model.Office_Code, "", new { @class = "text-danger" })
                         </div>
 
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Pradesh)
+
+                            @Html.EditorFor(model => model.Pradesh, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.Pradesh, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Ministry)
+
+                            @Html.EditorFor(model => model.Ministry, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.Ministry, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.Office_Name)
+
+                            @Html.EditorFor(model => model.Office_Name, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.Office_Name, "", new { @class = "text-danger" })
+                        </div>
+
+
 
 
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
@@ -44,7 +66,7 @@
 
 
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.Office_Location) 
+                            @Html.LabelFor(model => model.Office_Location)
                             @Html.EditorFor(model => model.Office_Location, new { htmlAttributes = new { @class = "form-control bordered-input" } })
                             @Html.ValidationMessageFor(model => model.Office_Location, "", new { @class = "text-danger" })
                         </div>

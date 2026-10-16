@@ -42,6 +42,13 @@
                             @Html.ValidationMessageFor(model => model.PostTitleEng, "", new { @class = "text-danger" })
                         </div>
 
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            @Html.LabelFor(model => model.RankId)
+
+                            @Html.EditorFor(model => model.RankId, new { htmlAttributes = new { @class = "form-control bordered-input" } })
+                            @Html.ValidationMessageFor(model => model.RankId, "", new { @class = "text-danger" })
+                        </div>
+
                     </div>
                     <div></div><br />
 

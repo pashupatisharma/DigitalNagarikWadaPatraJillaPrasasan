@@ -3629,6 +3629,9 @@
     <Content Include="packages\chosen.1.2.0\content\Content\chosen.css" />
     <Content Include="packages\chosen.jquery.1.2.0\content\Scripts\chosen.jquery.js" />
     <Content Include="packages\chosen.jquery.1.2.0\content\Scripts\chosen.jquery.min.js" />
+    <Content Include="Content\fonts\Kalimati.otf" />
+    <Content Include="Content\fonts\Kalimati.woff" />
+    <Content Include="Content\fonts\Kalimati.woff2" />
     <None Include="packages\jQuery.3.4.1\Content\Scripts\jquery-3.4.1-vsdoc.js" />
     <Content Include="packages\jQuery.3.4.1\Content\Scripts\jquery-3.4.1.js" />
     <Content Include="packages\jQuery.3.4.1\Content\Scripts\jquery-3.4.1.min.js" />

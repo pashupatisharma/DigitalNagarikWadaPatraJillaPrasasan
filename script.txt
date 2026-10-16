@@ -3,3 +3,11 @@ ADD [ResponsibleOfficer] NVARCHAR(500) NULL;
 
 ALTER TABLE [dbo].[SubModules]
 ADD [RoomNo] NVARCHAR(500) NULL;
+
+alter  table [dbo].[Offices] add 
+
+ Pradesh  nvarchar(max),
+Ministry  nvarchar(max)
+
+ALTER TABLE [dbo].[PostSetups] ADD RankId INT NULL
+alter table [dbo].[Employees] add DepartmentId int null

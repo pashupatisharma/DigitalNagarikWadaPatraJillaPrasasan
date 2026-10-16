@@ -15,8 +15,18 @@
     // ---------------------------------------------------------
     // OFFICE + NOTICES (context is disposed straight away)
     // ---------------------------------------------------------
-    var ofc = Utility.officeDetail();
+    var ofcname = string.Empty;
+    var pradesh = string.Empty;
+    var minsitry = string.Empty;
+    var adress = string.Empty;
 
+    var ofc = Utility.officeDetail();
+    if (ofc != null) {
+         ofcname = ofc.Office_Name;
+         pradesh = ofc.Pradesh;
+         minsitry = ofc.Ministry;
+
+    }
     var db = new HelpDesk.Models.ApplicationDbContext();
     var notice = db.Notice
         .OrderByDescending(x => x.NoticeId)
@@ -442,21 +452,16 @@
         <div class="office-header-content">
 
             <div class="office-name">
-                @if (ofc != null)
-                {
-                    @ofc.Office_Name
-                }
-                else
-                {
-                    <text>स्थानीय तहको कार्यालय</text>
-                }
+              
+                   @ofcname
+                
+               
             </div>
 
             <div class="office-address">
-                @if (ofc != null)
-                {
-                    @ofc.Office_Location
-                }
+              
+                    @adress
+                
             </div>
 
             <div class="office-welcome">डिजिटल नागरिक वडापत्र प्रणाली</div>

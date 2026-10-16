@@ -19,37 +19,38 @@ namespace HelpDesk.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: PeopleRepresentatives
-        public Task<ActionResult> Index(int? page, int? pageSize, string sortOrder, string PRName, int? PostId)
+
+        public ActionResult Index(int? page, int? pageSize, string sortOrder, string PRName, int? PostId)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.PRName = PRName;
             ViewBag.PostId = PostId;
-            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParm = (sortOrder == "Date") ? "date_desc" : "Date";
 
-            var Lists = from m in db.PeopleRepresentative.OrderByDescending(m => m.Id)
-                        select m;
+            int pageNumber = page ?? 1;
+            int pageSizeValue = pageSize ?? 10;
 
+            // Get representative records
+            var Lists = db.PeopleRepresentative
+                .OrderByDescending(m => m.Id)
+                .AsQueryable();
+
+            // Filter by representative name
             if (!string.IsNullOrEmpty(PRName))
             {
                 Lists = Lists.Where(x => x.Name.Contains(PRName));
             }
-            if (PostId > 0)
+
+            // Filter by post
+            if (PostId.HasValue && PostId.Value > 0)
             {
-                Lists = Lists.Where(x => x.PostId == PostId);
+                Lists = Lists.Where(x => x.PostId == PostId.Value);
             }
 
-            var num = Lists.Count<PeopleRepresentative>();
-            int num2 = 10;
-            if (pageSize.HasValue)
-            {
-                num2 = pageSize.Value;
-            }
+            ViewBag.PageSize = pageSizeValue;
 
-            int? nullable = null;
-            int pageNumber = nullable.HasValue ? nullable.GetValueOrDefault() : 1;
-            return Task.FromResult<ActionResult>(View(Lists.ToPagedList<PeopleRepresentative>(pageNumber, num2)));
+            return View(Lists.ToPagedList(pageNumber, pageSizeValue));
         }
+
 
         // GET: PeopleRepresentatives/Details/5
         public async Task<ActionResult> Details(int? id)

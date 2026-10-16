@@ -43,5 +43,6 @@ namespace HelpDesk.Models
         public HttpPostedFileBase ImageFile { get; set; }
         [NotMapped()]
         public List<EmployeeSetup> Lists { get; set; }
+        public int? DepartmentId { get; set; }
     }
 }

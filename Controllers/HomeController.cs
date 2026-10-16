@@ -70,7 +70,7 @@ namespace HelpDesk.Controllers
 
             model.employeeSetup = new EmployeeSetup();
             model.employeeSetup.Lists = new List<EmployeeSetup>();
-            model.employeeSetup.Lists = applicationDbContext.EmployeeSetup
+           model.employeeSetup.Lists = applicationDbContext.EmployeeSetup
                                          .OrderBy(e => e.DisplayOrder)
                                          .ToList();
 

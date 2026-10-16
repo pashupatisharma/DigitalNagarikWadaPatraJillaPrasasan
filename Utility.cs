@@ -79,6 +79,20 @@ namespace HelpDesk
             return lists;
         }
 
+        public static IEnumerable<SelectListItem> GetDepartmentList()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+
+            var lists = new List<SelectListItem>();
+            var subjectslists = db.MainModule.ToList();
+            lists.Add(new SelectListItem() { Value = null, Text = "छान्नुहोस्" });
+            foreach (var item in subjectslists)
+            {
+                lists.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Title });
+            }
+            return lists;
+        }
+
         public static IEnumerable<SelectListItem> GetPostList()
         {
             ApplicationDbContext db = new ApplicationDbContext();
