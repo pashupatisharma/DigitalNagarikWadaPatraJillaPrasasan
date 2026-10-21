@@ -125,7 +125,7 @@ namespace HelpDesk.Controllers
         // POST: /Account/Register
         [HttpPost]
       
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -140,7 +140,7 @@ namespace HelpDesk.Controllers
               
                     UserManager.Update(u);
 
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToAction("RegisterList", "Account");
                 }
                 else
                 {

@@ -20,24 +20,32 @@ namespace HelpDesk.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: PostSetups
-        public Task<ActionResult> Index(string sortOrder, int? page, int? pageSize)
+        public ActionResult Index(string sortOrder, int? page, int? pageSize)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = (sortOrder == "Date") ? "date_desc" : "Date";
 
-            IEnumerable<PostSetup> Lists = db.PostSetup.OrderByDescending(m => m.PostId).ToList();
+            IQueryable<PostSetup> lists = db.PostSetup;
 
-            var num = Lists.Count<PostSetup>();
-            int num2 = 10;
-            if (pageSize.HasValue)
+            switch (sortOrder)
             {
-                num2 = pageSize.Value;
+                case "name_desc":
+                    lists = lists.OrderByDescending(m => m.PostTitle);
+                    break;
+                case "Date":
+                    lists = lists.OrderBy(m => m.PostId);
+                    break;
+                case "date_desc":
+                default:
+                    lists = lists.OrderByDescending(m => m.PostId);
+                    break;
             }
 
-            int? nullable = null;
-            int pageNumber = nullable.HasValue ? nullable.GetValueOrDefault() : 1;
-            return Task.FromResult<ActionResult>(View(Lists.ToPagedList<PostSetup>(pageNumber, num2)));
+            int size = pageSize ?? 10;
+            int pageNumber = page ?? 1;
+
+            return View(lists.ToPagedList(pageNumber, size));
         }
 
         // GET: PostSetups/Details/5

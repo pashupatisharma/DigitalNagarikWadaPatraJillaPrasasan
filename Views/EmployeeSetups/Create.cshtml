@@ -5,6 +5,302 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .es-form {
+        --es-ink: #1f2d3a;
+        --es-muted: #6b7a88;
+        --es-line: #d9e2e7;
+        --es-bg: #f5f8fa;
+        --es-brand: #0b5d6b;
+        --es-brand-soft: #e3f1f3;
+    }
+
+        .es-form .es-card {
+            background: #fff;
+            border: 1px solid var(--es-line);
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(31,45,58,.06);
+        }
+
+    .es-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 16px 22px;
+        border-bottom: 1px solid var(--es-line);
+        background: var(--es-brand);
+        border-radius: 6px 6px 0 0;
+        color: #fff;
+    }
+
+        .es-head h4 {
+            margin: 0;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .es-head small {
+            display: block;
+            margin-top: 2px;
+            color: rgba(255,255,255,.78);
+        }
+
+    .es-master {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,.14);
+        padding: 8px 14px;
+        border-radius: 4px;
+    }
+
+        .es-master .es-text {
+            margin: 0;
+            font-weight: 600;
+            color: #fff;
+        }
+
+    .es-body {
+        padding: 22px;
+    }
+
+    .es-layout {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .es-photo-panel {
+        flex: 0 0 220px;
+        max-width: 100%;
+    }
+
+    .es-main {
+        flex: 1 1 520px;
+        min-width: 0;
+    }
+
+    .es-photo-box {
+        background: var(--es-bg);
+        border: 1px dashed var(--es-line);
+        border-radius: 6px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .es-photo {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 1px var(--es-line);
+        background: #fff;
+    }
+
+    .es-photo-box input[type=file] {
+        margin-top: 14px;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .es-photo-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+        text-align: left;
+    }
+
+    .es-section {
+        margin-bottom: 26px;
+    }
+
+    .es-section-title {
+        margin: 0 0 14px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--es-brand-soft);
+        color: var(--es-brand);
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .es-grid {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
+
+    .es-field {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 10px;
+        margin-bottom: 16px;
+    }
+
+        .es-field.es-wide {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+    .es-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        min-height: 24px;
+    }
+
+        .es-label-row > label:first-child {
+            margin: 0;
+            font-weight: 600;
+            color: var(--es-ink);
+        }
+
+    .es-optional {
+        font-weight: 400;
+        color: var(--es-muted);
+        font-size: 12px;
+        margin-left: 4px;
+    }
+
+    .es-form .form-control {
+        height: 38px;
+        border: 1px solid var(--es-line);
+        border-radius: 4px;
+        box-shadow: none;
+    }
+
+        .es-form .form-control:focus {
+            border-color: var(--es-brand);
+            box-shadow: 0 0 0 3px var(--es-brand-soft);
+        }
+
+    .es-form .chosen-container-single .chosen-single {
+        height: 38px;
+        line-height: 36px;
+        border: 1px solid var(--es-line);
+        border-radius: 4px;
+        background: #fff;
+        box-shadow: none;
+    }
+
+    /* Dashboard toggle */
+    .es-switch-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--es-muted);
+        margin: 0;
+        font-weight: 400;
+        cursor: pointer;
+    }
+
+    .es-switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        margin: 0;
+        flex: none;
+    }
+
+        .es-switch input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+    .es-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #c3ced6;
+        border-radius: 20px;
+        transition: background .15s;
+    }
+
+        .es-slider::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform .15s;
+        }
+
+    .es-switch input:checked ~ .es-slider {
+        background: var(--es-brand);
+    }
+
+        .es-switch input:checked ~ .es-slider::before {
+            transform: translateX(16px);
+        }
+
+    .es-switch input:focus-visible ~ .es-slider {
+        outline: 2px solid var(--es-brand);
+        outline-offset: 2px;
+    }
+
+    .es-master .es-slider {
+        background: rgba(255,255,255,.4);
+    }
+
+    .es-master .es-switch input:checked ~ .es-slider {
+        background: #3fc1a5;
+    }
+
+    .es-hint {
+        margin: 0 0 18px;
+        padding: 10px 14px;
+        background: var(--es-brand-soft);
+        border-radius: 4px;
+        color: var(--es-ink);
+        font-size: 13px;
+    }
+
+    .es-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 16px;
+        border-top: 1px solid var(--es-line);
+    }
+
+        .es-actions .btn {
+            min-width: 110px;
+        }
+
+    @@media (max-width: 767px) {
+        .es-photo-panel {
+            flex-basis: 100%;
+        }
+
+        .es-field {
+            flex-basis: 100%;
+            max-width: 100%;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .es-slider, .es-slider::before {
+            transition: none;
+        }
+    }
+</style>
+
 @using (Html.BeginForm("Create", "EmployeeSetups", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
@@ -12,122 +308,198 @@
     @Html.HiddenFor(m => m.EmpId)
     @Html.HiddenFor(m => m.Image)
 
+    <div class="es-form">
+        <div class="es-card">
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <hr />
-                <div class="card-header bg-info">
-                    <h4 class="m-b-0 text-white">कर्मचारी</h4>
+            <div class="es-head">
+                <div>
+                    <h4>कर्मचारी</h4>
+                    <small>कर्मचारीको विवरण दर्ता गर्नुहोस्</small>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <label class="es-master" title="यो कर्मचारी डासबोर्डमा देखाउने">
+                    <span class="es-switch">
+                        @Html.CheckBoxFor(model => model.ShowInDashboard)
+                        <span class="es-slider"></span>
+                    </span>
+                    <span class="es-text">@Html.DisplayNameFor(model => model.ShowInDashboard)</span>
+                </label>
+            </div>
 
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+            <div class="es-body">
+                <p class="es-hint">प्रत्येक फिल्डको छेउको स्विचले सो विवरण डासबोर्डमा देखाउने वा नदेखाउने निर्धारण गर्छ।</p>
+
+                <div class="es-layout">
+
+                    @* ---------- Photo ---------- *@
+                    <div class="es-photo-panel">
+                        <div class="es-photo-box">
                             @if (Model.Image != null)
                             {
-                                <img src="~/EmployeeImage/@Model.Image" , id="imgThumbnail" class="form-control bordered-input" style="width: 60px; height: 60px " />
+                                <img src="~/EmployeeImage/@Model.Image" id="imgThumbnail" class="es-photo" alt="फोटो" />
                             }
                             else
-
                             {
-                                <img src="~/Content/images/UserImage.png" id="imgThumbnail" class="form-control bordered-input" style="width: 70px; height: 60px " />
+                                <img src="~/Content/images/UserImage.png" id="imgThumbnail" class="es-photo" alt="फोटो" />
                             }
-                            @Html.LabelFor(model => model.Image) <span class="text-danger">*</span>
-
-                            <input type="file" name="UploadedFile" id="fileToUpload" class="form-control bordered-input" onchange="ChangeImage(this)" />
-
-                            @*@Html.TextBoxFor(model => model.Image, new { @class = "form-control", type = "file", @onchange = "ChangeImage(this)", @id = "fileupload" })*@
+                            <input type="file" name="UploadedFile" id="fileToUpload" accept="image/*" onchange="ChangeImage(this)" />
                             @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
-                        </div>
 
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.EmpName)<span class="text-danger">*</span>
-
-                            @Html.EditorFor(model => model.EmpName, new { htmlAttributes = new { @class = "form-control bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.EmpName, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.EmpNameEng)
-
-                            @Html.EditorFor(model => model.EmpNameEng, new { htmlAttributes = new { @class = "form-control bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.EmpNameEng, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.DisplayOrder)<span class="text-danger">*</span>
-
-                            @Html.EditorFor(model => model.DisplayOrder, new { htmlAttributes = new { @class = "form-control bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.DisplayOrder, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.PostId)<span class="text-danger">*</span>
-
-                            @Html.DropDownListFor(model => model.PostId, Utility.GetPostList(), new { @class = "form-control chosen-select" })
-                            @Html.ValidationMessageFor(model => model.PostId, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.DepartmentId)<span class="text-danger">*</span>
-
-                            @Html.DropDownListFor(model => model.DepartmentId, Utility.GetDepartmentList(), new { @class = "form-control chosen-select" })
-                            @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.Gender)
-
-                            @Html.DropDownListFor(model => model.Gender, Utility.GetGender(), new { @class = "form-control chosen-select" })
-                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.DateOfBirth)
-                            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control nepali-calendar bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.Address)
-
-                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.Contact)
-
-                            @Html.EditorFor(model => model.Contact, new { htmlAttributes = new { @class = "form-control bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.Contact, "", new { @class = "text-danger" })
-                        </div>
-
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            @Html.LabelFor(model => model.AppointmentDate)<span class="text-danger">*</span>
-
-                            @Html.EditorFor(model => model.AppointmentDate, new { htmlAttributes = new { @class = "form-control nepali-calendar bordered-input" } })
-                            @Html.ValidationMessageFor(model => model.AppointmentDate, "", new { @class = "text-danger" })
+                            <div class="es-photo-foot">
+                                <span>@Html.LabelFor(model => model.Image)</span>
+                                <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowImage)">
+                                    <span class="es-switch">
+                                        @Html.CheckBoxFor(model => model.ShowImage)
+                                        <span class="es-slider"></span>
+                                    </span>
+                                    डासबोर्ड
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                    </div><br />
 
-                    <div></div><br />
-                    <div class="row">
-                        <div class="form-actions text-right">
-                            <button class="btn btn-info" type="submit">
-                                <i class="ace-icon fa fa-check bigger-110"></i>
-                                बचत
-                            </button>
+                    <div class="es-main">
 
+                        @* ---------- Basic details ---------- *@
+                        <div class="es-section">
+                            <h5 class="es-section-title">व्यक्तिगत विवरण</h5>
+                            <div class="es-grid">
 
-                            <button class="btn btn-reset" type="reset">
-                                <i class="ace-icon fa fa-undo bigger-110"></i>
-                                Reset
-                            </button>
+                                <div class="es-field es-wide">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.EmpName)<span class="text-danger"> *</span></span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowEmpName)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowEmpName)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.EditorFor(model => model.EmpName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.EmpName, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="es-field">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.Gender)<span class="es-optional">(ऐच्छिक)</span></span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowGender)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowGender)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.DropDownListFor(model => model.Gender, Utility.GetGender(), "-- छान्नुहोस् --", new { @class = "form-control chosen-select" })
+                                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="es-field">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.Contact)</span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowContact)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowContact)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.EditorFor(model => model.Contact, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Contact, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="es-field es-wide">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.Address)</span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowAddress)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowAddress)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                                </div>
+
+                            </div>
                         </div>
+
+                        @* ---------- Office details ---------- *@
+                        <div class="es-section">
+                            <h5 class="es-section-title">कार्यालय विवरण</h5>
+                            <div class="es-grid">
+
+                                <div class="es-field">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.PostId)<span class="text-danger"> *</span></span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowPost)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowPost)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.DropDownListFor(model => model.PostId, Utility.GetPostList(), new { @class = "form-control chosen-select" })
+                                    @Html.ValidationMessageFor(model => model.PostId, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="es-field">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.DepartmentId)<span class="text-danger"> *</span></span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowDepartment)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowDepartment)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.DropDownListFor(model => model.DepartmentId, Utility.GetDepartmentList(), new { @class = "form-control chosen-select" })
+                                    @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="es-field">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.AppointmentDate)<span class="text-danger"> *</span></span>
+                                        <label class="es-switch-wrap" title="@Html.DisplayNameFor(model => model.ShowAppointmentDate)">
+                                            <span class="es-switch">
+                                                @Html.CheckBoxFor(model => model.ShowAppointmentDate)
+                                                <span class="es-slider"></span>
+                                            </span>
+                                            डासबोर्ड
+                                        </label>
+                                    </div>
+                                    @Html.EditorFor(model => model.AppointmentDate, new { htmlAttributes = new { @class = "form-control nepali-calendar" } })
+                                    @Html.ValidationMessageFor(model => model.AppointmentDate, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="es-field">
+                                    <div class="es-label-row">
+                                        <span>@Html.LabelFor(model => model.DisplayOrder)<span class="es-optional">(ऐच्छिक)</span></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.DisplayOrder, new { htmlAttributes = new { @class = "form-control", type = "number", min = "0" } })
+                                    @Html.ValidationMessageFor(model => model.DisplayOrder, "", new { @class = "text-danger" })
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
+                </div>
+
+                <div class="es-actions">
+                    <button class="btn btn-reset" type="reset">
+                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                        Reset
+                    </button>
+                    <button class="btn btn-info" type="submit">
+                        <i class="ace-icon fa fa-check bigger-110"></i>
+                        बचत
+                    </button>
                 </div>
             </div>
         </div>
@@ -139,21 +511,23 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        var k = jQuery.noConflict();
-
-        k(document).ready(function () {
-            k(".chosen-select").chosen({
+        // jQuery, chosen and the nepali date picker are already loaded by _Layout.
+        // Do NOT call jQuery.noConflict() here: it removes the global $ and the
+        // layout's own script (which runs after this section) then fails with
+        // "$ is not defined".
+        $(function () {
+            $(".chosen-select").chosen({
                 no_result_text: "Oops Something went wrong !!",
+                width: "100%"
             });
-            k('.nepali-calendar').nepaliDatePicker();
+            // .nepali-calendar is mask + date picker initialised by _Layout
         });
 
         function ChangeImage(input) {
-            //alert(input);
             if (input.files && input.files[0]) {
                 var ImageDir = new FileReader();
                 ImageDir.onload = function (e) {
-                    k('#imgThumbnail').attr('src', e.target.result);
+                    $('#imgThumbnail').attr('src', e.target.result);
                 }
                 ImageDir.readAsDataURL(input.files[0]);
             }

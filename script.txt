@@ -11,3 +11,14 @@ Ministry  nvarchar(max)
 
 ALTER TABLE [dbo].[PostSetups] ADD RankId INT NULL
 alter table [dbo].[Employees] add DepartmentId int null
+
+alter table [dbo].[EmployeeSetups] add ShowInDashboard bit not null default 0
+ALTER TABLE EmployeeSetups ADD
+    ShowImage bit NOT NULL DEFAULT 1,
+    ShowEmpName bit NOT NULL DEFAULT 1,
+    ShowPost bit NOT NULL DEFAULT 1,
+    ShowDepartment bit NOT NULL DEFAULT 1,
+    ShowGender bit NOT NULL DEFAULT 1,
+    ShowAddress bit NOT NULL DEFAULT 1,
+    ShowContact bit NOT NULL DEFAULT 1,
+    ShowAppointmentDate bit NOT NULL DEFAULT 1;
